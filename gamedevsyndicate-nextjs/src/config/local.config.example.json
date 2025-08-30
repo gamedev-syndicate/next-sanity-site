@@ -1,0 +1,18 @@
+{
+  "sanity": {
+    "projectId": "iu8qgjyf",
+    "dataset": "development",
+    "token": "your-local-development-token",
+    "previewSecret": "local-preview-secret-123",
+    "studioUrl": "http://localhost:3333"
+  },
+  "app": {
+    "url": "http://localhost:3000",
+    "environment": "development"
+  },
+  "features": {
+    "visualEditing": true,
+    "caching": false,
+    "analytics": false
+  }
+}

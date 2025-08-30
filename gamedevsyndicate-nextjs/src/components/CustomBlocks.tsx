@@ -1,0 +1,304 @@
+import { urlFor } from '../lib/sanity-image';
+import { PortableText } from '@portabletext/react';
+import { ImageBlock as ImageBlockType, TextBlock as TextBlockType, ButtonBlock as ButtonBlockType } from '../types/sanity';
+import { CompanyBlock, CompanyListBlock } from './CompanyBlocks';
+
+interface ImageBlockProps {
+  value: ImageBlockType;
+}
+
+interface TextBlockProps {
+  value: TextBlockType;
+}
+
+interface ButtonBlockProps {
+  value: ButtonBlockType;
+}
+
+interface CalloutProps {
+  value: {
+    type: 'info' | 'warning' | 'success' | 'error';
+    title?: string;
+    content: string;
+  };
+}
+
+interface InlineImageProps {
+  value: {
+    asset: any;
+    alt?: string;
+    caption?: string;
+    position?: 'center' | 'left' | 'right';
+  };
+}
+
+// Enhanced callout component
+export function Callout({ value }: CalloutProps) {
+  const typeStyles = {
+    info: 'bg-blue-900/30 border-blue-400 text-blue-100',
+    warning: 'bg-yellow-900/30 border-yellow-400 text-yellow-100',
+    success: 'bg-green-900/30 border-green-400 text-green-100',
+    error: 'bg-red-900/30 border-red-400 text-red-100',
+  };
+
+  const iconMap = {
+    info: 'ℹ️',
+    warning: '⚠️',
+    success: '✅',
+    error: '❌',
+  };
+
+  return (
+    <div className={`my-6 p-4 rounded-lg border-l-4 ${typeStyles[value.type]}`}>
+      <div className="flex items-start space-x-3">
+        <span className="text-xl">{iconMap[value.type]}</span>
+        <div className="flex-1">
+          {value.title && (
+            <h4 className="font-semibold mb-2">{value.title}</h4>
+          )}
+          <p className="leading-relaxed">{value.content}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Enhanced inline image component
+export function InlineImage({ value }: InlineImageProps) {
+  const positionClasses = {
+    center: 'mx-auto',
+    left: 'mr-auto',
+    right: 'ml-auto',
+  };
+
+  // Create SanityImage structure for urlFor
+  const sanityImage = {
+    _type: 'image' as const,
+    asset: value.asset,
+  };
+
+  return (
+    <figure className={`my-6 ${positionClasses[value.position || 'center']}`}>
+      <img
+        src={urlFor(sanityImage).url()}
+        alt={value.alt || ''}
+        className="max-w-full h-auto rounded-lg shadow-lg"
+      />
+      {value.caption && (
+        <figcaption className="text-center text-gray-300 text-sm mt-2 italic">
+          {value.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+export function ImageBlock({ value }: ImageBlockProps) {
+  const widthClasses = {
+    small: 'w-1/4',
+    medium: 'w-1/2',
+    large: 'w-3/4',
+    full: 'w-full',
+  };
+
+  return (
+    <div className={`mx-auto ${widthClasses[value.width]}`}>
+      <img
+        src={urlFor(value.image).url()}
+        alt={value.alt}
+        className="w-full h-auto rounded-lg shadow-lg"
+      />
+      {value.caption && (
+        <p className="text-center text-gray-300 text-sm mt-2 italic">
+          {value.caption}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export function TextBlock({ value }: TextBlockProps) {
+  const alignClasses = {
+    left: 'text-left',
+    center: 'text-center',
+    right: 'text-right',
+  };
+
+  const renderHeading = () => {
+    const className = "text-white font-bold mb-4";
+    switch (value.headingLevel) {
+      case 'h1': return <h1 className={className}>{value.heading}</h1>;
+      case 'h2': return <h2 className={className}>{value.heading}</h2>;
+      case 'h3': return <h3 className={className}>{value.heading}</h3>;
+      case 'h4': return <h4 className={className}>{value.heading}</h4>;
+      default: return <h2 className={className}>{value.heading}</h2>;
+    }
+  };
+
+  return (
+    <div className={`${alignClasses[value.textAlign]}`}>
+      {value.heading && renderHeading()}
+      <div className="prose prose-invert max-w-none">
+        <PortableText value={value.text} />
+      </div>
+    </div>
+  );
+}
+
+export function ButtonBlock({ value }: ButtonBlockProps) {
+  const baseClasses = 'inline-block rounded-lg font-semibold transition-colors';
+  
+  const styleClasses = {
+    primary: 'bg-blue-600 hover:bg-blue-700 text-white',
+    secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
+    outline: 'border-2 border-white text-white hover:bg-white hover:text-gray-900',
+  };
+
+  const sizeClasses = {
+    small: 'px-4 py-2 text-sm',
+    medium: 'px-6 py-3 text-base',
+    large: 'px-8 py-4 text-lg',
+  };
+
+  return (
+    <div className="my-6">
+      <a
+        href={value.url}
+        target={value.openInNewTab ? '_blank' : '_self'}
+        rel={value.openInNewTab ? 'noopener noreferrer' : undefined}
+        className={`${baseClasses} ${styleClasses[value.style]} ${sizeClasses[value.size]}`}
+      >
+        {value.text}
+      </a>
+    </div>
+  );
+}
+
+export const customComponents = {
+  types: {
+    imageBlock: ImageBlock,
+    textBlock: TextBlock,
+    buttonBlock: ButtonBlock,
+    companyBlock: CompanyBlock,
+    companyListBlock: CompanyListBlock,
+    callout: Callout,
+    image: InlineImage,
+  },
+  marks: {
+    link: ({ children, value }: { children: React.ReactNode; value?: { href: string; blank?: boolean } }) => {
+      if (!value?.href) return <>{children}</>;
+      return (
+        <a
+          href={value.href}
+          target={value.blank ? '_blank' : '_self'}
+          rel={value.blank ? 'noopener noreferrer' : undefined}
+          className="text-blue-400 hover:text-blue-300 underline"
+        >
+          {children}
+        </a>
+      );
+    },
+    textSize: ({ children, value }: { children: React.ReactNode; value?: { size: string } }) => {
+      const sizeClasses = {
+        'xs': 'text-xs',
+        'sm': 'text-sm',
+        'base': 'text-base',
+        'lg': 'text-lg',
+        'xl': 'text-xl',
+        '2xl': 'text-2xl',
+        '3xl': 'text-3xl',
+        '4xl': 'text-4xl',
+        '5xl': 'text-5xl',
+        '6xl': 'text-6xl',
+      };
+      if (!value?.size) return <>{children}</>;
+      return (
+        <span className={sizeClasses[value.size as keyof typeof sizeClasses] || 'text-base'}>
+          {children}
+        </span>
+      );
+    },
+    textAlign: ({ children, value }: { children: React.ReactNode; value?: { align: string } }) => {
+      const alignClasses = {
+        'left': 'text-left',
+        'center': 'text-center',
+        'right': 'text-right',
+        'justify': 'text-justify',
+      };
+      if (!value?.align) return <>{children}</>;
+      return (
+        <span className={`block ${alignClasses[value.align as keyof typeof alignClasses] || 'text-left'}`}>
+          {children}
+        </span>
+      );
+    },
+    fontWeight: ({ children, value }: { children: React.ReactNode; value?: { weight: string } }) => {
+      const weightClasses = {
+        'light': 'font-light',
+        'normal': 'font-normal',
+        'medium': 'font-medium',
+        'semibold': 'font-semibold',
+        'bold': 'font-bold',
+        'extrabold': 'font-extrabold',
+      };
+      if (!value?.weight) return <>{children}</>;
+      return (
+        <span className={weightClasses[value.weight as keyof typeof weightClasses] || 'font-normal'}>
+          {children}
+        </span>
+      );
+    },
+    highlight: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
+      if (!value?.color?.hex) return <>{children}</>;
+      return (
+        <span
+          style={{
+            backgroundColor: value.color.alpha 
+              ? `rgba(${parseInt(value.color.hex.slice(1, 3), 16)}, ${parseInt(value.color.hex.slice(3, 5), 16)}, ${parseInt(value.color.hex.slice(5, 7), 16)}, ${value.color.alpha})`
+              : value.color.hex,
+            padding: '2px 4px',
+            borderRadius: '3px',
+          }}
+        >
+          {children}
+        </span>
+      );
+    },
+    textColor: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
+      if (!value?.color?.hex) return <>{children}</>;
+      return (
+        <span
+          style={{
+            color: value.color.alpha 
+              ? `rgba(${parseInt(value.color.hex.slice(1, 3), 16)}, ${parseInt(value.color.hex.slice(3, 5), 16)}, ${parseInt(value.color.hex.slice(5, 7), 16)}, ${value.color.alpha})`
+              : value.color.hex,
+          }}
+        >
+          {children}
+        </span>
+      );
+    },
+  },
+  block: {
+    h1: ({ children }: { children?: React.ReactNode }) => (
+      <h1 className="text-4xl font-bold text-white mb-6">{children}</h1>
+    ),
+    h2: ({ children }: { children?: React.ReactNode }) => (
+      <h2 className="text-3xl font-bold text-white mb-5">{children}</h2>
+    ),
+    h3: ({ children }: { children?: React.ReactNode }) => (
+      <h3 className="text-2xl font-bold text-white mb-4">{children}</h3>
+    ),
+    h4: ({ children }: { children?: React.ReactNode }) => (
+      <h4 className="text-xl font-bold text-white mb-3">{children}</h4>
+    ),
+    blockquote: ({ children }: { children?: React.ReactNode }) => (
+      <blockquote className="border-l-4 border-blue-400 pl-4 py-2 my-4 italic text-gray-300 bg-gray-800/30 rounded-r">
+        {children}
+      </blockquote>
+    ),
+    normal: ({ children }: { children?: React.ReactNode }) => (
+      <p className="text-white leading-relaxed mb-4">{children}</p>
+    ),
+  },
+};

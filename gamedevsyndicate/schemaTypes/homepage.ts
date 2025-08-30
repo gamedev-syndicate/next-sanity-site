@@ -1,0 +1,465 @@
+import {defineType, defineField} from 'sanity'
+
+export default defineType({
+  name: 'homepage',
+  title: 'Homepage',
+  type: 'document',
+  fields: [
+    // Banner Image
+    defineField({
+      name: 'bannerImage',
+      title: 'Banner Image',
+      type: 'image',
+      description: 'Large banner image for the top of the homepage',
+      options: {
+        hotspot: true,
+      },
+      validation: Rule => Rule.required(),
+    }),
+    
+    // Banner Position Controls
+    defineField({
+      name: 'bannerPosition',
+      title: 'Banner Position',
+      type: 'object',
+      description: 'Control the position offset of the banner using percentages',
+      fields: [
+        {
+          name: 'offsetX',
+          title: 'Horizontal Offset (%)',
+          type: 'number',
+          description: 'Move banner left/right as percentage (-50% = far left, 50% = far right)',
+          initialValue: 0,
+          validation: Rule => Rule.min(-50).max(50),
+        },
+        {
+          name: 'offsetY',
+          title: 'Vertical Offset (%)',
+          type: 'number',
+          description: 'Move banner up/down as percentage (-50% = far up, 50% = far down)',
+          initialValue: 0,
+          validation: Rule => Rule.min(-50).max(50),
+        },
+        {
+          name: 'scale',
+          title: 'Scale (%)',
+          type: 'number',
+          description: 'Control banner size (100% = normal, 150% = larger, 75% = smaller)',
+          initialValue: 100,
+          validation: Rule => Rule.min(50).max(200),
+        },
+      ],
+      options: {
+        collapsible: true,
+        collapsed: true,
+      },
+    }),
+    
+    // Text Area
+    defineField({
+      name: 'textArea',
+      title: 'Text Area',
+      type: 'array',
+      description: 'Main text content for the homepage with rich formatting options',
+      of: [
+        {
+          type: 'block',
+          styles: [
+            {title: 'Normal', value: 'normal'},
+            {title: 'H1', value: 'h1'},
+            {title: 'H2', value: 'h2'},
+            {title: 'H3', value: 'h3'},
+            {title: 'H4', value: 'h4'},
+            {title: 'Quote', value: 'blockquote'},
+          ],
+          lists: [
+            {title: 'Bullet', value: 'bullet'},
+            {title: 'Numbered', value: 'number'},
+          ],
+          marks: {
+            decorators: [
+              {title: 'Strong', value: 'strong'},
+              {title: 'Emphasis', value: 'em'},
+              {title: 'Underline', value: 'underline'},
+              {title: 'Strike', value: 'strike-through'},
+              {title: 'Code', value: 'code'},
+            ],
+            annotations: [
+              {
+                title: 'URL',
+                name: 'link',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'URL',
+                    name: 'href',
+                    type: 'url',
+                    validation: Rule => Rule.uri({
+                      scheme: ['http', 'https', 'mailto', 'tel']
+                    })
+                  },
+                  {
+                    title: 'Open in new tab',
+                    name: 'blank',
+                    type: 'boolean',
+                    initialValue: false,
+                  }
+                ]
+              },
+              {
+                title: 'Text Size',
+                name: 'textSize',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'Size',
+                    name: 'size',
+                    type: 'string',
+                    options: {
+                      list: [
+                        {title: 'Extra Small', value: 'xs'},
+                        {title: 'Small', value: 'sm'},
+                        {title: 'Base', value: 'base'},
+                        {title: 'Large', value: 'lg'},
+                        {title: 'Extra Large', value: 'xl'},
+                        {title: '2X Large', value: '2xl'},
+                        {title: '3X Large', value: '3xl'},
+                        {title: '4X Large', value: '4xl'},
+                        {title: '5X Large', value: '5xl'},
+                        {title: '6X Large', value: '6xl'},
+                      ],
+                    },
+                    initialValue: 'base',
+                  }
+                ]
+              },
+              {
+                title: 'Text Alignment',
+                name: 'textAlign',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'Alignment',
+                    name: 'align',
+                    type: 'string',
+                    options: {
+                      list: [
+                        {title: 'Left', value: 'left'},
+                        {title: 'Center', value: 'center'},
+                        {title: 'Right', value: 'right'},
+                        {title: 'Justify', value: 'justify'},
+                      ],
+                    },
+                    initialValue: 'left',
+                  }
+                ]
+              },
+              {
+                title: 'Font Weight',
+                name: 'fontWeight',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'Weight',
+                    name: 'weight',
+                    type: 'string',
+                    options: {
+                      list: [
+                        {title: 'Light', value: 'light'},
+                        {title: 'Normal', value: 'normal'},
+                        {title: 'Medium', value: 'medium'},
+                        {title: 'Semibold', value: 'semibold'},
+                        {title: 'Bold', value: 'bold'},
+                        {title: 'Extra Bold', value: 'extrabold'},
+                      ],
+                    },
+                    initialValue: 'normal',
+                  }
+                ]
+              },
+              {
+                title: 'Highlight',
+                name: 'highlight',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'Highlight Color',
+                    name: 'color',
+                    type: 'color',
+                    options: {
+                      disableAlpha: false,
+                    },
+                  }
+                ]
+              },
+              {
+                title: 'Text Color',
+                name: 'textColor',
+                type: 'object',
+                fields: [
+                  {
+                    title: 'Text Color',
+                    name: 'color',
+                    type: 'color',
+                    options: {
+                      disableAlpha: false,
+                    },
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        // Inline images within text
+        {
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: 'alt',
+              title: 'Alternative text',
+              type: 'string',
+              description: 'Important for SEO and accessibility.',
+            },
+            {
+              name: 'caption',
+              title: 'Caption',
+              type: 'string',
+            },
+            {
+              name: 'position',
+              title: 'Position',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Center', value: 'center'},
+                  {title: 'Left', value: 'left'},
+                  {title: 'Right', value: 'right'},
+                ],
+              },
+              initialValue: 'center',
+            }
+          ]
+        },
+        // Call-to-action boxes
+        {
+          type: 'object',
+          name: 'callout',
+          title: 'Callout Box',
+          fields: [
+            {
+              name: 'type',
+              title: 'Callout Type',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Info', value: 'info'},
+                  {title: 'Warning', value: 'warning'},
+                  {title: 'Success', value: 'success'},
+                  {title: 'Error', value: 'error'},
+                ],
+              },
+              initialValue: 'info',
+            },
+            {
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+            },
+            {
+              name: 'content',
+              title: 'Content',
+              type: 'text',
+            }
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              type: 'type',
+            },
+            prepare({title, type}) {
+              return {
+                title: title || 'Callout',
+                subtitle: `${type} callout`,
+              }
+            },
+          },
+        }
+      ],
+    }),
+
+    // Homepage Sections
+    defineField({
+      name: 'sections',
+      title: 'Homepage Sections',
+      type: 'array',
+      description: 'Additional content sections for the homepage',
+      of: [
+        {
+          type: 'object',
+          name: 'contentSection',
+          title: 'Content Section',
+          fields: [
+            {
+              name: 'title',
+              title: 'Section Title',
+              type: 'string',
+              description: 'Optional title for this section (for organization)',
+            },
+            {
+              name: 'background',
+              title: 'Section Background',
+              type: 'object',
+              description: 'Background settings for this section',
+              fields: [
+                {
+                  name: 'type',
+                  title: 'Background Type',
+                  type: 'string',
+                  options: {
+                    list: [
+                      {title: 'None (Transparent)', value: 'none'},
+                      {title: 'Solid Color', value: 'solid'},
+                      {title: 'Gradient', value: 'gradient'},
+                      {title: 'Image', value: 'image'},
+                    ],
+                  },
+                  initialValue: 'none',
+                },
+                {
+                  name: 'solidColor',
+                  title: 'Background Color',
+                  type: 'color',
+                  hidden: ({parent}) => parent?.type !== 'solid',
+                },
+                {
+                  name: 'gradientFrom',
+                  title: 'Gradient Start Color',
+                  type: 'color',
+                  hidden: ({parent}) => parent?.type !== 'gradient',
+                },
+                {
+                  name: 'gradientTo',
+                  title: 'Gradient End Color',
+                  type: 'color',
+                  hidden: ({parent}) => parent?.type !== 'gradient',
+                },
+                {
+                  name: 'gradientDirection',
+                  title: 'Gradient Direction',
+                  type: 'string',
+                  options: {
+                    list: [
+                      {title: 'Top to Bottom', value: 'to-b'},
+                      {title: 'Left to Right', value: 'to-r'},
+                      {title: 'Diagonal', value: 'to-br'},
+                    ],
+                  },
+                  initialValue: 'to-b',
+                  hidden: ({parent}) => parent?.type !== 'gradient',
+                },
+                {
+                  name: 'backgroundImage',
+                  title: 'Background Image',
+                  type: 'image',
+                  hidden: ({parent}) => parent?.type !== 'image',
+                },
+              ],
+            },
+            {
+              name: 'padding',
+              title: 'Section Padding',
+              type: 'object',
+              description: 'Control spacing around section content',
+              fields: [
+                {
+                  name: 'top',
+                  title: 'Top Padding',
+                  type: 'string',
+                  options: {
+                    list: [
+                      {title: 'None', value: '0'},
+                      {title: 'Small', value: '2rem'},
+                      {title: 'Medium', value: '4rem'},
+                      {title: 'Large', value: '6rem'},
+                    ],
+                  },
+                  initialValue: '4rem',
+                },
+                {
+                  name: 'bottom',
+                  title: 'Bottom Padding',
+                  type: 'string',
+                  options: {
+                    list: [
+                      {title: 'None', value: '0'},
+                      {title: 'Small', value: '2rem'},
+                      {title: 'Medium', value: '4rem'},
+                      {title: 'Large', value: '6rem'},
+                    ],
+                  },
+                  initialValue: '4rem',
+                },
+              ],
+            },
+            {
+              name: 'content',
+              title: 'Section Content',
+              type: 'array',
+              description: 'Content blocks for this section',
+              of: [
+                {type: 'imageBlock'},
+                {type: 'textBlock'},
+                {type: 'buttonBlock'},
+                {type: 'companyBlock'},
+                {type: 'companyListBlock'},
+              ],
+            },
+          ],
+          preview: {
+            select: {
+              title: 'title',
+              contentCount: 'content.length',
+            },
+            prepare({title, contentCount}) {
+              return {
+                title: title || 'Untitled Section',
+                subtitle: `${contentCount || 0} content block(s)`,
+              }
+            },
+          },
+        },
+      ],
+    }),
+
+    // Legacy Block Area (for backward compatibility)
+    defineField({
+      name: 'blockArea',
+      title: 'Legacy Block Area',
+      type: 'array',
+      description: 'Legacy content blocks (use Sections instead for new content)',
+      of: [
+        {type: 'imageBlock'},
+        {type: 'textBlock'},
+        {type: 'buttonBlock'},
+        {type: 'companyBlock'},
+        {type: 'companyListBlock'},
+      ],
+    }),
+  ],
+  // Singleton pattern: only one homepage document
+  preview: {
+    select: {
+      title: 'bannerImage.asset.originalFilename',
+      sectionCount: 'sections.length',
+    },
+    prepare({title, sectionCount}) {
+      return {
+        title: 'Homepage',
+        subtitle: `Banner: ${title || 'No banner'} • ${sectionCount || 0} section(s)`,
+      }
+    },
+  },
+})

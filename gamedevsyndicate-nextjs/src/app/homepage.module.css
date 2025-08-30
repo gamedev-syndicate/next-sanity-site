@@ -1,0 +1,197 @@
+/* Homepage specific styles */
+.homepage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  /* Break out of parent container to allow full-width sections */
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  width: 100vw;
+  /* Ensure seamless section connections */
+  gap: 0;
+  min-height: 100vh;
+}
+
+.bannerSection {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 3rem 0 2rem 0;
+}
+
+.bannerImage {
+  width: 100%;
+  height: auto;
+  max-width: min(990px, 90vw); /* Smoothly adapts to viewport width */
+  max-height: 350px;
+  object-fit: contain; /* Always maintain aspect ratio */
+  object-position: center;
+  margin: 0 auto;
+  display: block;
+  transition: all 0.3s ease; /* Smooth transitions */
+}
+
+/* Only adjust height on very small screens */
+@media (max-width: 480px) {
+  .bannerImage {
+    max-height: 250px;
+  }
+}
+
+.textSection {
+  width: 100%;
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  min-height: fit-content;
+  display: flex;
+  flex-direction: column;
+  /* Ensure sections connect seamlessly */
+  margin: 0;
+  border: none;
+}
+
+/* Full-width shadow divider that splits the screen */
+.textSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 1px;
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.textContent {
+  width: 100%;
+  max-width: 1400px; /* Content width constraint */
+  margin: 0 auto; /* Center the content */
+  padding: 0 1rem; /* Add horizontal padding for mobile */
+  color: white;
+  line-height: 1.7;
+  font-size: 1.125rem;
+  flex-grow: 1; /* Allow content to grow and fill the section */
+}
+
+.textContent h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.textContent h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.textContent h3 {
+  font-size: 1.5rem;
+  font-weight: semibold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.textContent p {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Homepage sections with configurable backgrounds */
+.homepageSection {
+  width: 100%;
+  position: relative;
+  min-height: 100vh; /* Expand to fill viewport height */
+  display: flex;
+  flex-direction: column;
+  /* Ensure sections connect seamlessly */
+  margin: 0;
+  border: none;
+  /* Background should cover entire section height */
+  padding: 0;
+  /* Add subtle shadow on top edge */
+  box-shadow: 0 -4px 8px -2px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Remove shadow from first section */
+.homepageSection:first-child {
+  box-shadow: none;
+}
+
+.sectionContent {
+  width: 100%;
+  max-width: 1400px; /* Content width constraint */
+  margin: 0 auto; /* Center the content horizontally */
+  padding: 0 1rem; /* Add some horizontal padding for mobile */
+  text-align: center;
+  flex-grow: 1; /* Allow content to grow and fill the section */
+  /* Padding will be applied via inline styles from the component */
+}
+
+.blockSection {
+  width: 100%;
+  padding: 4rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  min-height: fit-content;
+  /* Ensure sections connect seamlessly */
+  margin: 0;
+  border: none;
+}
+
+.blockItem {
+  width: 100%;
+  max-width: 1400px; /* Constrain content width */
+  margin: 0 auto; /* Center the content */
+  padding: 0 1rem; /* Add horizontal padding for mobile */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .bannerImage {
+    height: 250px;
+    border-radius: 8px;
+  }
+  
+  .textSection {
+    padding: 2rem 0;
+  }
+  
+  .textContent h1 {
+    font-size: 2rem;
+  }
+  
+  .textContent h2 {
+    font-size: 1.5rem;
+  }
+  
+  .textContent {
+    padding: 0 0.75rem; /* More padding on mobile */
+  }
+  
+  .sectionContent {
+    padding: 0 0.75rem; /* More padding on mobile */
+  }
+  
+  .blockItem {
+    padding: 0 0.75rem; /* More padding on mobile */
+  }
+  
+  .blockSection {
+    padding: 2rem 0;
+    gap: 2rem;
+  }
+}

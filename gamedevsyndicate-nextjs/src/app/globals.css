@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/* Reset default margins and padding for specific elements, not all */
+html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, blockquote {
+  margin: 0;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+/* Line clamp utilities */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Honeycomb grid layout */
+.honeycomb-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.honeycomb-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: -30px; /* Overlap for tessellation */
+}
+
+.honeycomb-row:nth-child(even) {
+  margin-left: 95px; /* Offset even rows by roughly half the width + spacing */
+}
+
+.honeycomb-row > * {
+  width: 110px;
+  height: 95px; /* Height adjusted for flat-side orientation */
+  margin: 0 10px; /* Space between hexagons in same row */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .honeycomb-row:nth-child(even) {
+    margin-left: 77px;
+  }
+  
+  .honeycomb-row {
+    margin-bottom: -24px;
+  }
+  
+  .honeycomb-row > * {
+    width: 90px;
+    height: 78px;
+    margin: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .honeycomb-grid {
+    padding: 15px;
+  }
+  
+  .honeycomb-row:nth-child(even) {
+    margin-left: 59px;
+  }
+  
+  .honeycomb-row {
+    margin-bottom: -18px;
+  }
+  
+  .honeycomb-row > * {
+    width: 70px;
+    height: 61px;
+    margin: 0 6px;
+  }
+}
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+/* Global shared styles for all pages */
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  font-size: 16px;
+  /* Ensure background covers full viewport on mobile */
+  min-height: 100vh;
+  min-height: 100dvh; /* For mobile browsers with dynamic viewport */
+}
+
+/* Global content container - applies to all pages */
+.content-container {
+  width: 100%;
+  max-width: 1400px; /* Maximum width for large screens */
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Global content width restrictions */
+.content-section {
+  width: 100%;
+  max-width: 1400px; /* Content max width for large screens */
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+/* Typography defaults - centered and consistent */
+h1, h2, h3, h4, h5, h6 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Lists centered */
+ul, ol {
+  max-width: 1000px;
+  margin: 0 auto 1.5rem auto;
+  text-align: left; /* Lists look better left-aligned */
+  display: inline-block; /* Centers the list block */
+}
+
+/* Images and media centered */
+img {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-container {
+    max-width: 100%;
+    padding: 0 0.75rem;
+  }
+  
+  .content-section {
+    max-width: 100%;
+    padding: 1.5rem 0.75rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+  }
+  
+  /* Fix background gradient on mobile */
+  body {
+    background-attachment: scroll !important;
+    background-size: 100% 100% !important;
+  }
+}
+
+/* Additional mobile fixes for very small screens */
+@media (max-width: 480px) {
+  body {
+    background-attachment: scroll !important;
+  }
+}
