@@ -1,68 +1,73 @@
-import { defineType, defineField } from 'sanity'
+import { defineField, defineType } from 'sanity'
 
-export const companyListBlock = defineType({
+export default defineType({
   name: 'companyListBlock',
   title: 'Company List Block',
   type: 'object',
   fields: [
     defineField({
       name: 'title',
-      title: 'List Title',
+      title: 'Title',
       type: 'string',
-      placeholder: 'e.g., Our Partner Companies, Featured Companies',
     }),
     defineField({
       name: 'companies',
       title: 'Companies',
       type: 'array',
-      of: [
-        {
-          type: 'reference',
-          to: [{ type: 'company' }],
-        },
-      ],
-      validation: (Rule) => Rule.min(1).error('At least one company is required'),
+      of: [{ type: 'reference', to: [{ type: 'company' }] }],
     }),
     defineField({
       name: 'layout',
-      title: 'List Layout',
+      title: 'Layout',
       type: 'string',
       options: {
         list: [
-          { title: 'Grid (Cards)', value: 'grid' },
-          { title: 'List (Horizontal)', value: 'list' },
+          { title: 'Grid', value: 'grid' },
+          { title: 'List', value: 'list' },
           { title: 'Carousel', value: 'carousel' },
-          { title: 'Honeycomb Pattern', value: 'honeycomb' },
-          { title: 'Tilted Square Grid', value: 'tiltedsquare' },
+          { title: 'Honeycomb', value: 'honeycomb' },
+          { title: 'Tilted Square', value: 'tiltedsquare' },
         ],
-        layout: 'radio',
       },
       initialValue: 'grid',
+    }),
+    defineField({
+      name: 'backgroundColor',
+      title: 'Background Color',
+      type: 'color',
+      options: {
+        disableAlpha: false,
+      },
+    }),
+    defineField({
+      name: 'borderColor',
+      title: 'Border Color',
+      type: 'color',
+      options: {
+        disableAlpha: false,
+      },
     }),
     defineField({
       name: 'maxItemsPerRow',
       title: 'Max Items Per Row',
       type: 'number',
-      description: 'Maximum number of hexagons per row. Rows will alternate between this number and one less for proper tessellation.',
-      initialValue: 4,
-      validation: (Rule) => Rule.min(2).max(8).integer().error('Must be between 2 and 8'),
-      hidden: ({ parent }) => parent?.layout !== 'honeycomb',
+      validation: (Rule) => Rule.min(1).max(10),
     }),
     defineField({
       name: 'showDescription',
-      title: 'Show Company Descriptions',
+      title: 'Show Description',
       type: 'boolean',
       initialValue: true,
     }),
     defineField({
       name: 'showCEO',
-      title: 'Show CEO Information',
+      title: 'Show CEO',
       type: 'boolean',
       initialValue: true,
     }),
     defineField({
       name: 'showEmail',
-      title: 'Show Contact Email',
+      title: 'Show Email',
       type: 'boolean',
       initialValue: false,
     }),
@@ -70,14 +75,14 @@ export const companyListBlock = defineType({
   preview: {
     select: {
       title: 'title',
+      companiesCount: 'companies.length',
       layout: 'layout',
-      companies: 'companies',
     },
-    prepare({ title, layout, companies }) {
-      const companyCount = companies?.length || 0;
+    prepare(selection) {
+      const { title, companiesCount, layout } = selection
       return {
-        title: title || 'Company List',
-        subtitle: `${companyCount} companies • ${layout || 'grid'} layout`,
+        title: title || 'Company List Block',
+        subtitle: `${companiesCount || 0} companies • ${layout || 'grid'} layout`,
       }
     },
   },

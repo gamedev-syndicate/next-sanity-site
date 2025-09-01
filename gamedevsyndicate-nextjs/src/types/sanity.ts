@@ -13,11 +13,6 @@ export interface SanityImage {
   };
 }
 
-export interface SanityColor {
-  hex: string;
-  alpha?: number;
-}
-
 export interface SanitySlug {
   current: string;
   _type: 'slug';
@@ -63,9 +58,21 @@ export interface NavigationItem {
 
 export interface PageBackground {
   type: 'solid' | 'gradient' | 'image' | 'custom';
-  solidColor?: SanityColor;
-  gradientFrom?: SanityColor;
-  gradientTo?: SanityColor;
+  solidColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientFrom?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientTo?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
   gradientDirection?: 'to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl';
   gradientStartPosition?: number;
   gradientEndPosition?: number;
@@ -87,9 +94,21 @@ export interface OverlayTexture {
   customPatternSize?: string;
   tileMode?: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | 'space' | 'round';
   colorType?: 'solid' | 'gradient';
-  solidColor?: SanityColor;
-  gradientFrom?: SanityColor;
-  gradientTo?: SanityColor;
+  solidColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientFrom?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientTo?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
   gradientDirection?: 'to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl';
   gradientStartPosition?: number;
   gradientEndPosition?: number;
@@ -99,7 +118,11 @@ export interface OverlayTexture {
 export interface SiteConfig {
   _id: string;
   _type: 'siteConfig';
-  menuColor?: SanityColor;
+  menuColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
   pageBackground?: PageBackground;
   overlayTexture?: OverlayTexture;
   navigationItems?: NavigationItem[];
@@ -112,15 +135,31 @@ export interface Page {
   slug: SanitySlug;
   showInNavigation?: boolean;
   navigationOrder?: number;
-  backgroundColor?: SanityColor;
+  backgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
   content?: (any | ContentBlock)[];
 }
 
 export interface SectionBackground {
   type: 'none' | 'solid' | 'gradient' | 'image';
-  solidColor?: SanityColor;
-  gradientFrom?: SanityColor;
-  gradientTo?: SanityColor;
+  solidColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientFrom?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientTo?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
   gradientDirection?: 'to-b' | 'to-r' | 'to-br';
   gradientStartPosition?: number;
   gradientEndPosition?: number;
@@ -153,5 +192,22 @@ export interface Homepage {
   textArea?: any[];
   sections?: HomepageSection[];
   blockArea?: (ImageBlock | TextBlock | ButtonBlock)[];
-  backgroundColor?: SanityColor;
+  backgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+}
+
+import type { SanityDocument } from '@sanity/client'
+
+export interface CompanyListBlock {
+  _type: 'companyListBlock';
+  title?: string;
+  companies: Company[];
+  backgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
 }

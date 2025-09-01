@@ -27,14 +27,14 @@ interface CompanyListBlockProps {
     title?: string;
     companies: CompanyData[];
     layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare';
-    maxItemsPerRow?: number; // Maximum items per row for honeycomb tessellation
+    backgroundColor?: { hex: string; alpha?: number };
+    borderColor?: { hex: string; alpha?: number };
+    maxItemsPerRow?: number;
     showDescription?: boolean;
     showCEO?: boolean;
     showEmail?: boolean;
   };
 }
-
-
 
 const CompanyCard: React.FC<{
   company: CompanyData;
@@ -42,12 +42,34 @@ const CompanyCard: React.FC<{
   showDescription?: boolean;
   showCEO?: boolean;
   showEmail?: boolean;
-}> = ({ company, layout, showDescription = true, showCEO = true, showEmail = false }) => {
+  backgroundColor?: { hex: string; alpha?: number };
+  borderColor?: { hex: string; alpha?: number };
+}> = ({ company, layout, showDescription = true, showCEO = true, showEmail = false, backgroundColor, borderColor }) => {
   const logoUrl = company.logo ? getImageUrl(company.logo, 150, 150) : null;
+
+  const backgroundStyle = backgroundColor 
+    ? { backgroundColor: backgroundColor.hex }
+    : {};
+
+  const borderStyle = borderColor 
+    ? { borderColor: borderColor.hex }
+    : {};
+
+  const isLightBackground = backgroundColor 
+    ? getLuminance(backgroundColor.hex) > 0.5 
+    : false; // Default to dark theme
+
+  const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
+  const subTextColorClass = isLightBackground ? 'text-gray-600' : 'text-gray-300';
+  const cardBgClass = backgroundColor ? '' : 'bg-gray-800/30';
+  const borderClass = borderColor ? 'border' : 'border border-gray-700/50';
 
   if (layout === 'minimal') {
     return (
-      <div className="flex items-center space-x-4 p-4 bg-gray-800/30 rounded-lg backdrop-blur-sm">
+      <div 
+        className={`flex items-center space-x-4 p-4 rounded-lg backdrop-blur-sm ${cardBgClass} ${borderClass}`}
+        style={{...backgroundStyle, ...borderStyle}}
+      >
         {logoUrl && (
           <img
             src={logoUrl}
@@ -56,9 +78,9 @@ const CompanyCard: React.FC<{
           />
         )}
         <div>
-          <h3 className="text-lg font-semibold text-white">{company.name}</h3>
+          <h3 className={`text-lg font-semibold ${textColorClass}`}>{company.name}</h3>
           {showCEO && company.ceoName && (
-            <p className="text-sm text-gray-300">CEO: {company.ceoName}</p>
+            <p className={`text-sm ${subTextColorClass}`}>CEO: {company.ceoName}</p>
           )}
         </div>
       </div>
@@ -67,7 +89,10 @@ const CompanyCard: React.FC<{
 
   if (layout === 'horizontal') {
     return (
-      <div className="flex items-start space-x-6 p-6 bg-gray-800/30 rounded-lg backdrop-blur-sm border border-gray-700/50">
+      <div 
+        className={`flex items-start space-x-6 p-6 rounded-lg backdrop-blur-sm ${cardBgClass} ${borderClass}`}
+        style={{...backgroundStyle, ...borderStyle}}
+      >
         {logoUrl && (
           <img
             src={logoUrl}
@@ -76,9 +101,9 @@ const CompanyCard: React.FC<{
           />
         )}
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-white mb-2">{company.name}</h3>
+          <h3 className={`text-xl font-bold mb-2 ${textColorClass}`}>{company.name}</h3>
           {showCEO && company.ceoName && (
-            <p className="text-gray-300 mb-2">
+            <p className={`mb-2 ${subTextColorClass}`}>
               <span className="font-semibold">CEO:</span> {company.ceoName}
             </p>
           )}
@@ -90,7 +115,7 @@ const CompanyCard: React.FC<{
             </p>
           )}
           {showDescription && company.description && (
-            <p className="text-gray-300 leading-relaxed">{company.description}</p>
+            <p className={`leading-relaxed ${subTextColorClass}`}>{company.description}</p>
           )}
         </div>
       </div>
@@ -99,7 +124,10 @@ const CompanyCard: React.FC<{
 
   // Default card layout
   return (
-    <div className="bg-gray-800/30 rounded-lg p-6 backdrop-blur-sm border border-gray-700/50 text-center">
+    <div 
+      className={`rounded-lg p-6 backdrop-blur-sm text-center ${cardBgClass} ${borderClass}`}
+      style={{...backgroundStyle, ...borderStyle}}
+    >
       {logoUrl && (
         <img
           src={logoUrl}
@@ -107,9 +135,9 @@ const CompanyCard: React.FC<{
           className="w-24 h-24 object-contain rounded mx-auto mb-4"
         />
       )}
-      <h3 className="text-xl font-bold text-white mb-2">{company.name}</h3>
+      <h3 className={`text-xl font-bold mb-2 ${textColorClass}`}>{company.name}</h3>
       {showCEO && company.ceoName && (
-        <p className="text-gray-300 mb-2">
+        <p className={`mb-2 ${subTextColorClass}`}>
           <span className="font-semibold">CEO:</span> {company.ceoName}
         </p>
       )}
@@ -121,7 +149,7 @@ const CompanyCard: React.FC<{
         </p>
       )}
       {showDescription && company.description && (
-        <p className="text-gray-300 leading-relaxed">{company.description}</p>
+        <p className={`leading-relaxed ${subTextColorClass}`}>{company.description}</p>
       )}
     </div>
   );
@@ -143,12 +171,27 @@ export const CompanyBlock: React.FC<CompanyBlockProps> = ({ value }) => {
 };
 
 export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => {
-  if (!value.companies || value.companies.length === 0) {
+  const { 
+    title, 
+    companies, 
+    backgroundColor,
+    borderColor,
+    layout = 'grid', 
+    maxItemsPerRow, 
+    showDescription, 
+    showCEO, 
+    showEmail 
+  } = value;
+
+  if (!companies || companies.length === 0) {
     return null;
   }
 
-  const { title, companies, layout = 'grid', maxItemsPerRow, showDescription, showCEO, showEmail } = value;
+  const isLightBackground = backgroundColor 
+    ? getLuminance(backgroundColor.hex) > 0.5 
+    : false;
 
+  const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
 
   const getGridClasses = () => {
     switch (layout) {
@@ -168,7 +211,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
   return (
     <div className="w-full max-w-6xl mx-auto">
       {title && (
-        <h2 className="text-3xl font-bold text-white mb-8 text-center">{title}</h2>
+        <h2 className={`text-3xl font-bold mb-8 text-center ${textColorClass}`}>{title}</h2>
       )}
       <div className={getGridClasses()}>
         {layout === 'honeycomb' ? (
@@ -178,6 +221,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
             showDescription={showDescription}
             showCEO={showCEO}
             showEmail={showEmail}
+            backgroundColor={backgroundColor}
+            borderColor={borderColor}
           />
         ) : layout === 'tiltedsquare' ? (
           <TiltedSquareGrid
@@ -186,6 +231,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
             showCEO={showCEO}
             showEmail={showEmail}
             maxItemsPerRow={maxItemsPerRow}
+            backgroundColor={backgroundColor}
+            borderColor={borderColor}
           />
         ) : (
           companies.map((company, index) => (
@@ -196,6 +243,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
               showDescription={showDescription}
               showCEO={showCEO}
               showEmail={showEmail}
+              backgroundColor={backgroundColor}
+              borderColor={borderColor}
             />
           ))
         )}
@@ -203,3 +252,11 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     </div>
   );
 };
+
+function getLuminance(hex: string): number {
+  const rgb = hex.replace('#', '');
+  const r = parseInt(rgb.substr(0, 2), 16) / 255;
+  const g = parseInt(rgb.substr(2, 2), 16) / 255;
+  const b = parseInt(rgb.substr(4, 2), 16) / 255;
+  return 0.299 * r + 0.587 * g + 0.114 * b;
+}

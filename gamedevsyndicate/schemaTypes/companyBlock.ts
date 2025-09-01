@@ -1,6 +1,6 @@
-import { defineType, defineField } from 'sanity'
+import { defineField, defineType } from 'sanity'
 
-export const companyBlock = defineType({
+export default defineType({
   name: 'companyBlock',
   title: 'Company Block',
   type: 'object',
@@ -14,7 +14,7 @@ export const companyBlock = defineType({
     }),
     defineField({
       name: 'layout',
-      title: 'Layout Style',
+      title: 'Layout',
       type: 'string',
       options: {
         list: [
@@ -22,22 +22,22 @@ export const companyBlock = defineType({
           { title: 'Horizontal', value: 'horizontal' },
           { title: 'Minimal', value: 'minimal' },
         ],
-        layout: 'radio',
       },
       initialValue: 'card',
     }),
   ],
   preview: {
     select: {
-      companyName: 'company.name',
-      companyLogo: 'company.logo',
+      title: 'company.name',
+      media: 'company.logo',
       layout: 'layout',
     },
-    prepare({ companyName, companyLogo, layout }) {
+    prepare(selection) {
+      const { title, layout } = selection
       return {
-        title: companyName || 'Company Block',
-        subtitle: `Layout: ${layout || 'card'}`,
-        media: companyLogo,
+        title: title || 'Company Block',
+        subtitle: `${layout || 'card'} layout`,
+        media: selection.media,
       }
     },
   },

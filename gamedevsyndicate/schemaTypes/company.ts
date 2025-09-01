@@ -1,6 +1,6 @@
-import { defineType, defineField } from 'sanity'
+import { defineField, defineType } from 'sanity'
 
-export const company = defineType({
+export default defineType({
   name: 'company',
   title: 'Company',
   type: 'document',
@@ -13,19 +13,11 @@ export const company = defineType({
     }),
     defineField({
       name: 'logo',
-      title: 'Company Logo',
+      title: 'Logo',
       type: 'image',
       options: {
         hotspot: true,
       },
-      fields: [
-        {
-          name: 'alt',
-          type: 'string',
-          title: 'Alternative text',
-          description: 'Important for SEO and accessibility.',
-        },
-      ],
     }),
     defineField({
       name: 'ceoName',
@@ -34,21 +26,21 @@ export const company = defineType({
     }),
     defineField({
       name: 'email',
-      title: 'Contact Email',
-      type: 'email',
+      title: 'Email',
+      type: 'string',
+      validation: (Rule) => Rule.email(),
     }),
     defineField({
       name: 'description',
       title: 'Description',
       type: 'text',
-      rows: 4,
     }),
   ],
   preview: {
     select: {
       title: 'name',
-      subtitle: 'ceoName',
       media: 'logo',
+      subtitle: 'ceoName',
     },
   },
 })

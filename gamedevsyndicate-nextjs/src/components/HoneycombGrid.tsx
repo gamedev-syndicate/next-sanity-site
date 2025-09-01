@@ -21,6 +21,8 @@ interface HoneycombGridProps {
   showDescription?: boolean;
   showCEO?: boolean;
   showEmail?: boolean;
+  backgroundColor?: { hex: string; alpha?: number };
+  borderColor?: { hex: string; alpha?: number };
 }
 
 // Configuration object for honeycomb dimensions across different screen sizes
@@ -311,21 +313,58 @@ const arrangeFromCenter = (companies: CompanyData[]): CompanyData[] => {
   return result;
 };
 
+function getLuminance(hex: string): number {
+  const rgb = hex.replace('#', '');
+  const r = parseInt(rgb.substr(0, 2), 16) / 255;
+  const g = parseInt(rgb.substr(2, 2), 16) / 255;
+  const b = parseInt(rgb.substr(4, 2), 16) / 255;
+  return 0.299 * r + 0.587 * g + 0.114 * b;
+}
+
 const CompanyHoneycomb: React.FC<{
   company: CompanyData;
   showDescription?: boolean;
   showCEO?: boolean;
   showEmail?: boolean;
-}> = ({ company, showDescription = true, showCEO = true, showEmail = false }) => {
+  backgroundColor?: { hex: string; alpha?: number };
+  borderColor?: { hex: string; alpha?: number };
+}> = ({ company, showDescription = true, showCEO = true, showEmail = false, backgroundColor, borderColor }) => {
   const logoUrl = company.logo ? getImageUrl(company.logo, 55, 55) : null;
+
+  const backgroundStyle = backgroundColor 
+    ? { 
+        backgroundColor: backgroundColor.alpha !== undefined && backgroundColor.alpha < 1
+          ? `${backgroundColor.hex}${Math.floor(backgroundColor.alpha * 255).toString(16).padStart(2, '0')}`
+          : backgroundColor.hex
+      }
+    : {};
+
+  const borderStyle = borderColor
+    ? {
+        borderColor: borderColor.alpha !== undefined && borderColor.alpha < 1
+          ? `${borderColor.hex}${Math.floor(borderColor.alpha * 255).toString(16).padStart(2, '0')}`
+          : borderColor.hex
+      }
+    : {};
+
+  const isLightBackground = backgroundColor 
+    ? getLuminance(backgroundColor.hex) > 0.5 
+    : false;
+
+  const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
+  const subTextColorClass = isLightBackground ? 'text-gray-600' : 'text-gray-300';
+  const cardBgClass = backgroundColor ? '' : 'bg-gradient-to-br from-gray-800/70 to-gray-900/90';
+  const borderClass = borderColor ? 'border' : 'border border-gray-600/30';
 
   return (
     <div className="relative group w-full h-full">
       <div 
-        className="relative bg-gradient-to-br from-gray-800/70 to-gray-900/90 backdrop-blur-sm border border-gray-600/30 group-hover:from-gray-700/80 group-hover:to-gray-800/95 group-hover:border-gray-500/50 transition-all duration-300 flex flex-col justify-center items-center text-center w-full h-full"
+        className={`relative ${cardBgClass} backdrop-blur-sm ${borderClass} transition-all duration-300 flex flex-col justify-center items-center text-center w-full h-full`}
         style={{
           clipPath: 'polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%)',
           padding: '2px 12px',
+          ...backgroundStyle,
+          ...borderStyle
         }}
       >
         {logoUrl && (
@@ -368,7 +407,9 @@ export const HoneycombGrid: React.FC<HoneycombGridProps> = ({
   maxItemsPerRow = 4, 
   showDescription, 
   showCEO, 
-  showEmail 
+  showEmail,
+  backgroundColor,
+  borderColor 
 }) => {
   // State for responsive behavior - use consistent initial value to avoid hydration mismatch
   const [windowWidth, setWindowWidth] = useState(1024);
@@ -479,6 +520,8 @@ export const HoneycombGrid: React.FC<HoneycombGridProps> = ({
               showDescription={showDescription}
               showCEO={showCEO}
               showEmail={showEmail}
+              backgroundColor={backgroundColor}
+              borderColor={borderColor}
             />
           ))}
         </div>
