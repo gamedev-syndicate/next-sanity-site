@@ -175,6 +175,7 @@ export interface HomepageSection {
   _key: string;
   title?: string;
   background?: SectionBackground;
+  shadow?: boolean; // Add this line
   overlayTexture?: OverlayTexture;
   padding?: SectionPadding;
   content?: ContentBlock[];

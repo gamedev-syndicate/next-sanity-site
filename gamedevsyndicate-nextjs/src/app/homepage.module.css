@@ -19,7 +19,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 3rem 0 2rem 0;
+  padding: 3rem 0 1rem 0;
 }
 
 .bannerImage {
@@ -43,7 +43,7 @@
 
 .textSection {
   width: 100%;
-  padding: 4rem 0;
+  padding: 2rem 0;
   text-align: center;
   position: relative;
   min-height: fit-content;
@@ -83,10 +83,40 @@
 .homepageSection {
   width: 100%;
   position: relative; /* Required for absolute positioned overlays */
-  min-height: 200px; /* Minimum height to ensure overlays are visible */
+  min-height: fit-content; /* Changed from 100vh to fit-content */
   display: flex;
   flex-direction: column;
   overflow: hidden; /* Contain any overflow from overlays */
+}
+
+/* Homepage sections with configurable backgrounds and sharp corner inward dent */
+.homepageSection {
+  width: 100%;
+  position: relative;
+  min-height: fit-content;
+  display: flex;
+  flex-direction: column;
+  /* Ensure sections connect seamlessly */
+  margin: 0;
+  border: none;
+  /* Background should cover entire section height */
+  padding: 0;
+  /* Shadow will be applied conditionally via .withShadow class */
+}
+
+/* Add shadow when explicitly enabled */
+.homepageSection.withShadow {
+  box-shadow: 0 -4px 8px -2px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Make only the last section expand to fill viewport */
+.homepageSection:last-child {
+  min-height: 100vh;
+}
+
+/* Remove shadow from first section (override if needed) */
+.homepageSection:first-child.withShadow {
+  box-shadow: none;
 }
 
 .sectionContent {
@@ -125,11 +155,11 @@
   text-align: center;
 }
 
-/* Homepage sections with configurable backgrounds */
+/* Homepage sections with configurable backgrounds and sharp corner inward dent */
 .homepageSection {
   width: 100%;
   position: relative;
-  min-height: 100vh; /* Expand to fill viewport height */
+  min-height: fit-content;
   display: flex;
   flex-direction: column;
   /* Ensure sections connect seamlessly */
@@ -137,12 +167,21 @@
   border: none;
   /* Background should cover entire section height */
   padding: 0;
-  /* Add subtle shadow on top edge */
+  /* Shadow will be applied conditionally via .withShadow class */
+}
+
+/* Add shadow when explicitly enabled */
+.homepageSection.withShadow {
   box-shadow: 0 -4px 8px -2px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Remove shadow from first section */
-.homepageSection:first-child {
+/* Make only the last section expand to fill viewport */
+.homepageSection:last-child {
+  min-height: 100vh;
+}
+
+/* Remove shadow from first section (override if needed) */
+.homepageSection:first-child.withShadow {
   box-shadow: none;
 }
 
@@ -213,5 +252,21 @@
   .blockSection {
     padding: 2rem 0;
     gap: 2rem;
+  }
+  
+  /* Adjust corner size for mobile */
+  .homepageSection {
+    clip-path: polygon(
+      0% 0%, 
+      49% 0%, 
+      50% 15px, 
+      51% 0%, 
+      100% 0%, 
+      100% 100%, 
+      51% 100%, 
+      50% calc(100% - 15px), 
+      49% 100%, 
+      0% 100%
+    );
   }
 }

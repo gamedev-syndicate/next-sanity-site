@@ -387,6 +387,13 @@ export default defineType({
               ],
             },
             {
+              name: 'shadow',
+              title: 'Section Shadow',
+              type: 'boolean',
+              description: 'Add a subtle shadow to this section',
+              initialValue: false,
+            },
+            {
               name: 'overlayTexture',
               title: 'Overlay Texture',
               type: 'object',
@@ -572,6 +579,7 @@ export default defineType({
                 {type: 'buttonBlock'},
                 {type: 'companyBlock'},
                 {type: 'companyListBlock'},
+                {type: 'contentSeparator'}, // Add this line
               ],
             },
           ],
@@ -603,6 +611,7 @@ export default defineType({
         {type: 'buttonBlock'},
         {type: 'companyBlock'},
         {type: 'companyListBlock'},
+        {type: 'contentSeparator'}, // Add this line too
       ],
     }),
   ],

@@ -14,9 +14,22 @@ export default defineType({
     defineField({
       name: 'url',
       title: 'URL',
-      type: 'url',
-      description: 'External link or internal path (e.g., /about)',
-      validation: Rule => Rule.required(),
+      type: 'string', // Changed from 'url' to 'string' to allow relative paths
+      description: 'Internal path (e.g., /about, /contact) or external URL (e.g., https://example.com)',
+      validation: Rule => Rule.required().custom((url) => {
+        if (!url) return 'URL is required';
+        
+        // Allow relative paths starting with /
+        if (url.startsWith('/')) return true;
+        
+        // Allow absolute URLs
+        try {
+          new URL(url);
+          return true;
+        } catch {
+          return 'Must be a valid URL (https://example.com) or internal path (/about)';
+        }
+      }),
     }),
     defineField({
       name: 'style',

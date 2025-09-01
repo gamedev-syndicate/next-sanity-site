@@ -7,6 +7,7 @@ import imageBlock from './imageBlock'
 import page from './page'
 import siteConfig from './siteConfig'
 import textBlock from './textBlock'
+import contentSeparator from './blocks/contentSeparator'
 
 export const schemaTypes = [
   // Document types
@@ -21,4 +22,5 @@ export const schemaTypes = [
   companyListBlock,
   imageBlock,
   textBlock,
+  contentSeparator,
 ]

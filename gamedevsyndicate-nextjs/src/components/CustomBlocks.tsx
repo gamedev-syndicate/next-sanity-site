@@ -2,6 +2,7 @@ import { urlFor } from '../lib/sanity-image';
 import { PortableText } from '@portabletext/react';
 import { ImageBlock as ImageBlockType, TextBlock as TextBlockType, ButtonBlock as ButtonBlockType } from '../types/sanity';
 import { CompanyBlock, CompanyListBlock } from './CompanyBlocks';
+import ContentSeparatorBlock from './blocks/ContentSeparatorBlock';
 
 interface ImageBlockProps {
   value: ImageBlockType;
@@ -184,6 +185,18 @@ export const customComponents = {
     companyListBlock: CompanyListBlock,
     callout: Callout,
     image: InlineImage,
+    contentSeparator: ({ value }: { value: any }) => {
+      console.log('ContentSeparator value from Sanity:', JSON.stringify(value, null, 2));
+      return (
+        <ContentSeparatorBlock
+          lineColor={value.lineColor}
+          diamondColor={value.diamondColor}
+          strokeWidth={value.strokeWidth}
+          height={value.height}
+          margin={value.margin}
+        />
+      );
+    },
   },
   marks: {
     link: ({ children, value }: { children: React.ReactNode; value?: { href: string; blank?: boolean } }) => {
@@ -303,3 +316,27 @@ export const customComponents = {
     ),
   },
 };
+
+export default function CustomBlocks({ blocks }: { blocks: any[] }) {
+  return (
+    <div className="custom-blocks">
+      {blocks.map((block) => {
+        switch (block._type) {
+          case 'imageBlock':
+            return <ImageBlock key={block._key} {...block} />;
+          case 'textBlock':
+            return <TextBlock key={block._key} {...block} />;
+          case 'buttonBlock':
+            return <ButtonBlock key={block._key} {...block} />;
+          case 'companyBlock':
+            return <CompanyBlock key={block._key} {...block} />;
+          case 'companyListBlock':
+            return <CompanyListBlock key={block._key} {...block} />;
+          default:
+            console.warn(`Unknown block type: ${block._type}`);
+            return null;
+        }
+      })}
+    </div>
+  );
+}
