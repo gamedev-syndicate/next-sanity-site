@@ -2,6 +2,7 @@ import { PortableText } from '@portabletext/react';
 import { notFound } from 'next/navigation';
 import { customComponents } from '../../components/CustomBlocks';
 import DynamicStyles from '../../components/DynamicStyles';
+import SvgOverlay from '../../components/SvgOverlay';
 import { getPage, getSiteConfig, getAllPageSlugs } from '../../lib/sanity-queries';
 import { generateBackgroundStyle, sanityColorToCSS } from '../../lib/background-utils';
 import type { Metadata } from 'next';
@@ -53,11 +54,18 @@ export default async function Page({ params }: PageProps) {
   return (
     <div 
       style={pageBackgroundStyle} 
-      className="min-h-screen"
+      className="min-h-screen relative"
     >
       <DynamicStyles menuColor={menuColor} />
       
-      <div className="content-container" style={{ paddingTop: '3rem' }}>
+      {/* Global SVG Overlay for pages */}
+      <SvgOverlay 
+        overlayTexture={siteConfig?.overlayTexture} 
+        backgroundConfig={siteConfig?.pageBackground}
+        isSection={false} 
+      />
+      
+      <div className="content-container relative z-10" style={{ paddingTop: '3rem' }}>
         <div className="content-section">
           <h1 className="text-4xl font-bold text-white mb-8 text-center">{page.title}</h1>
           

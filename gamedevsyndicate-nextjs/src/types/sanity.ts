@@ -73,11 +73,35 @@ export interface PageBackground {
   customCSS?: string;
 }
 
+export interface OverlayTexture {
+  enabled: boolean;
+  svgFile?: {
+    _type: 'file';
+    asset: {
+      _ref: string;
+      _type: 'reference';
+      url?: string;
+    };
+  };
+  patternSize?: '200px' | '400px' | '600px' | '800px' | 'custom';
+  customPatternSize?: string;
+  tileMode?: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat' | 'space' | 'round';
+  colorType?: 'solid' | 'gradient';
+  solidColor?: SanityColor;
+  gradientFrom?: SanityColor;
+  gradientTo?: SanityColor;
+  gradientDirection?: 'to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl';
+  gradientStartPosition?: number;
+  gradientEndPosition?: number;
+  opacity?: number;
+}
+
 export interface SiteConfig {
   _id: string;
   _type: 'siteConfig';
   menuColor?: SanityColor;
   pageBackground?: PageBackground;
+  overlayTexture?: OverlayTexture;
   navigationItems?: NavigationItem[];
 }
 
@@ -98,6 +122,8 @@ export interface SectionBackground {
   gradientFrom?: SanityColor;
   gradientTo?: SanityColor;
   gradientDirection?: 'to-b' | 'to-r' | 'to-br';
+  gradientStartPosition?: number;
+  gradientEndPosition?: number;
   backgroundImage?: SanityImage;
 }
 
@@ -110,6 +136,7 @@ export interface HomepageSection {
   _key: string;
   title?: string;
   background?: SectionBackground;
+  overlayTexture?: OverlayTexture;
   padding?: SectionPadding;
   content?: ContentBlock[];
 }

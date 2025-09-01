@@ -1,11 +1,11 @@
 import imageUrlBuilder from '@sanity/image-url'
-import { config } from '../config'
+import { sanityClientConfig } from './sanity-client-config'
 import type { SanityImage } from '../types/sanity'
 
 // Create image URL builder
 const builder = imageUrlBuilder({
-  projectId: config.sanity.projectId,
-  dataset: config.sanity.dataset,
+  projectId: sanityClientConfig.projectId,
+  dataset: sanityClientConfig.dataset,
 })
 
 // Helper function to generate image URLs

@@ -1,6 +1,8 @@
 import React from 'react';
 import { getImageUrl } from '../lib/sanity-image';
 import type { SanityImage } from '../types/sanity';
+import { HoneycombGrid } from './HoneycombGrid';
+import { TiltedSquareGrid } from './TiltedSquareGrid';
 
 interface CompanyData {
   _id: string;
@@ -24,64 +26,15 @@ interface CompanyListBlockProps {
   value: {
     title?: string;
     companies: CompanyData[];
-    layout?: 'grid' | 'list' | 'carousel' | 'honeycomb';
+    layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare';
+    maxItemsPerRow?: number; // Maximum items per row for honeycomb tessellation
     showDescription?: boolean;
     showCEO?: boolean;
     showEmail?: boolean;
   };
 }
 
-const CompanyHoneycomb: React.FC<{
-  company: CompanyData;
-  showDescription?: boolean;
-  showCEO?: boolean;
-  showEmail?: boolean;
-}> = ({ company, showDescription = true, showCEO = true, showEmail = false }) => {
-  const logoUrl = company.logo ? getImageUrl(company.logo, 60, 60) : null;
 
-  return (
-    <div className="relative group w-full h-full">
-      {/* Hexagonal shape with flat sides horizontal - proper honeycomb orientation */}
-      <div 
-        className="relative bg-gradient-to-br from-gray-800/70 to-gray-900/90 backdrop-blur-sm border border-gray-600/30 group-hover:from-gray-700/80 group-hover:to-gray-800/95 group-hover:border-gray-500/50 transition-all duration-300 flex flex-col justify-center items-center text-center w-full h-full py-2 px-3"
-        style={{
-          clipPath: 'polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%)',
-        }}
-      >
-        {logoUrl && (
-          <div className="flex-shrink-0 mb-1">
-            <img
-              src={logoUrl}
-              alt={company.logo?.alt || `${company.name} logo`}
-              className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 object-contain rounded mx-auto group-hover:scale-110 transition-transform duration-300"
-            />
-          </div>
-        )}
-        
-        <div className="flex-1 flex flex-col justify-center items-center">
-          <h3 className="text-xs font-bold text-white leading-tight text-center px-1 mb-1">
-            {company.name.length > 12 ? `${company.name.slice(0, 12)}...` : company.name}
-          </h3>
-          
-          {showCEO && company.ceoName && (
-            <p className="text-gray-300 text-xs text-center px-1 mb-1 hidden md:block">
-              {company.ceoName.length > 10 ? `${company.ceoName.slice(0, 10)}...` : company.ceoName}
-            </p>
-          )}
-          
-          {showDescription && company.description && (
-            <p className="text-gray-300 text-xs text-center px-1 hidden lg:block leading-tight">
-              {company.description.length > 20 
-                ? `${company.description.slice(0, 20)}...` 
-                : company.description
-              }
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const CompanyCard: React.FC<{
   company: CompanyData;
@@ -194,39 +147,22 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     return null;
   }
 
-  const { title, companies, layout = 'grid', showDescription, showCEO, showEmail } = value;
+  const { title, companies, layout = 'grid', maxItemsPerRow, showDescription, showCEO, showEmail } = value;
+
 
   const getGridClasses = () => {
     switch (layout) {
       case 'list':
         return 'space-y-4';
       case 'carousel':
-        return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-x-auto';
+        return 'flex gap-6 overflow-x-auto pb-4';
       case 'honeycomb':
         return 'honeycomb-grid';
+      case 'tiltedsquare':
+        return ''; // TiltedSquareGrid handles its own layout
       default: // grid
-        return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+        return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
     }
-  };
-
-  // Function to organize companies into honeycomb rows
-  const organizeIntoHoneycombRows = (companies: CompanyData[]) => {
-    const rows: CompanyData[][] = [];
-    const companiesPerRow = [4, 3, 4, 3]; // Alternating pattern for true honeycomb tessellation
-    let currentIndex = 0;
-    let rowPatternIndex = 0;
-
-    while (currentIndex < companies.length) {
-      const companiesInThisRow = companiesPerRow[rowPatternIndex % companiesPerRow.length];
-      const row = companies.slice(currentIndex, currentIndex + companiesInThisRow);
-      if (row.length > 0) {
-        rows.push(row);
-      }
-      currentIndex += companiesInThisRow;
-      rowPatternIndex++;
-    }
-
-    return rows;
   };
 
   return (
@@ -236,25 +172,25 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
       )}
       <div className={getGridClasses()}>
         {layout === 'honeycomb' ? (
-          // Honeycomb layout with proper tessellation
-          organizeIntoHoneycombRows(companies).map((row, rowIndex) => (
-            <div key={rowIndex} className="honeycomb-row">
-              {row.map((company, index) => (
-                <CompanyHoneycomb
-                  key={`${company._id}-${rowIndex}-${index}`}
-                  company={company}
-                  showDescription={showDescription}
-                  showCEO={showCEO}
-                  showEmail={showEmail}
-                />
-              ))}
-            </div>
-          ))
+          <HoneycombGrid
+            companies={companies}
+            maxItemsPerRow={maxItemsPerRow}
+            showDescription={showDescription}
+            showCEO={showCEO}
+            showEmail={showEmail}
+          />
+        ) : layout === 'tiltedsquare' ? (
+          <TiltedSquareGrid
+            companies={companies}
+            showDescription={showDescription}
+            showCEO={showCEO}
+            showEmail={showEmail}
+            maxItemsPerRow={maxItemsPerRow}
+          />
         ) : (
-          // Other layouts
           companies.map((company, index) => (
             <CompanyCard
-              key={`${company._id}-${index}`} // Use company ID + index for unique keys
+              key={`${company._id}-${index}`}
               company={company}
               layout={layout === 'list' ? 'horizontal' : 'card'}
               showDescription={showDescription}

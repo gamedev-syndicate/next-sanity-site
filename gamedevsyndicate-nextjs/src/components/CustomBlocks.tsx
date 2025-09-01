@@ -174,6 +174,7 @@ export function ButtonBlock({ value }: ButtonBlockProps) {
   );
 }
 
+
 export const customComponents = {
   types: {
     imageBlock: ImageBlock,

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import DynamicStyles from '../components/DynamicStyles';
 import VisualEditingWrapper from '../components/VisualEditingWrapper';
 import { getSiteConfig } from '../lib/sanity-queries';
-import { generateBackgroundStyle } from '../lib/background-utils';
+import { generateBackgroundStyle, generateSVGPatternStyle, generateColorOverlayStyle } from '../lib/background-utils';
 import type { NavigationItem } from '../types/sanity';
 
 const geistSans = Geist({
@@ -56,7 +56,7 @@ export default async function RootLayout({
         </header>
         <DynamicStyles menuColor={menuColor} />
         <VisualEditingWrapper />
-        <main className="pt-20 px-4 content-container min-h-screen">
+        <main className="pt-20 px-4 content-container min-h-screen relative z-10">
           {children}
         </main>
       </body>

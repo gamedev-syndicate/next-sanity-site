@@ -34,6 +34,28 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
         backgroundImage,
         customCSS
       },
+      overlayTexture{
+        enabled,
+        svgFile{
+          _type,
+          asset->{
+            _ref,
+            _type,
+            url
+          }
+        },
+        patternSize,
+        customPatternSize,
+        tileMode,
+        colorType,
+        solidColor,
+        gradientFrom,
+        gradientTo,
+        gradientDirection,
+        gradientStartPosition,
+        gradientEndPosition,
+        opacity
+      },
       navigationItems
     }`;
     
@@ -69,7 +91,31 @@ export async function getHomepage(): Promise<Homepage | null> {
           gradientFrom,
           gradientTo,
           gradientDirection,
+          gradientStartPosition,
+          gradientEndPosition,
           backgroundImage
+        },
+        overlayTexture{
+          enabled,
+          svgFile{
+            _type,
+            asset->{
+              _ref,
+              _type,
+              url
+            }
+          },
+          patternSize,
+          customPatternSize,
+          tileMode,
+          colorType,
+          solidColor,
+          gradientFrom,
+          gradientTo,
+          gradientDirection,
+          gradientStartPosition,
+          gradientEndPosition,
+          opacity
         },
         padding{
           top,

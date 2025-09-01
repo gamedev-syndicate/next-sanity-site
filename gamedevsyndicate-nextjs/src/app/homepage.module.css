@@ -79,6 +79,26 @@
   flex-grow: 1; /* Allow content to grow and fill the section */
 }
 
+/* Homepage sections with overlay support */
+.homepageSection {
+  width: 100%;
+  position: relative; /* Required for absolute positioned overlays */
+  min-height: 200px; /* Minimum height to ensure overlays are visible */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Contain any overflow from overlays */
+}
+
+.sectionContent {
+  position: relative;
+  z-index: 10; /* Ensure content appears above overlays */
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  flex-grow: 1;
+}
+
 .textContent h1 {
   font-size: 2.5rem;
   font-weight: bold;

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  GameDev Syndicate – Futuristic Tri‑Grid Background Tile (repeatable)
+  Usage (CSS):
+    background-image: url('/gds-trigrid-tile.svg');
+    background-repeat: repeat;
+    background-size: 24px 24px; /* adjust density: 20/24/28 */
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <!-- Horizontal lines (0°) -->
+    <pattern id="a" width="24" height="24" patternUnits="userSpaceOnUse">
+      <!-- soft glow underlay -->
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#7FD2C7" stroke-width="6" opacity=".022"/>
+      <!-- main line + half-step minor line -->
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#7FD2C7" stroke-width="1.2" opacity=".12"/>
+      <line x1="0" y1="12" x2="24" y2="12" stroke="#7FD2C7" stroke-width="1" opacity=".06"/>
+    </pattern>
+
+    <!-- 60° lines -->
+    <pattern id="b" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(60)">
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#7FD2C7" stroke-width="6" opacity=".02"/>
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#7FD2C7" stroke-width="1.1" opacity=".10"/>
+      <line x1="0" y1="12" x2="24" y2="12" stroke="#7FD2C7" stroke-width="1" opacity=".055"/>
+    </pattern>
+
+    <!-- 120° lines (aka -60°) -->
+    <pattern id="c" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(-60)">
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#7FD2C7" stroke-width="6" opacity=".02"/>
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#7FD2C7" stroke-width="1.1" opacity=".10"/>
+      <line x1="0" y1="12" x2="24" y2="12" stroke="#7FD2C7" stroke-width="1" opacity=".055"/>
+    </pattern>
+
+    <!-- Optional HUD nodes (tiny dots). Lower opacity for subtlety. -->
+    <pattern id="n" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="0" cy="0" r="1.4" fill="#7FD2C7" opacity=".06"/>
+      <circle cx="12" cy="0" r="1.2" fill="#7FD2C7" opacity=".05"/>
+      <circle cx="0" cy="12" r="1.2" fill="#7FD2C7" opacity=".05"/>
+      <circle cx="12" cy="12" r="1.1" fill="#7FD2C7" opacity=".04"/>
+    </pattern>
+  </defs>
+
+  <!-- Stack the three orientations plus optional nodes; the tile itself is transparent. -->
+  <rect width="24" height="24" fill="url(#a)"/>
+  <rect width="24" height="24" fill="url(#b)"/>
+  <rect width="24" height="24" fill="url(#c)"/>
+  <rect width="24" height="24" fill="url(#n)"/>
+</svg>

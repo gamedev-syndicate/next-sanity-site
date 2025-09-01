@@ -41,22 +41,23 @@ html, body {
   padding: 20px;
   max-width: 1000px;
   margin: 0 auto;
+  --honeycomb-offset: -294px; /* Desktop: (145px * 2) + 4px */
 }
 
 .honeycomb-row {
   display: flex;
   justify-content: center;
-  margin-bottom: -30px; /* Overlap for tessellation */
+  margin-bottom: -27px; /* Overlap: (125px * 0.25 = 31px) - 4px gap = 27px */
 }
 
 .honeycomb-row:nth-child(even) {
-  margin-left: 95px; /* Offset even rows by roughly half the width + spacing */
+  margin-left: var(--honeycomb-offset);
 }
 
 .honeycomb-row > * {
-  width: 110px;
-  height: 95px; /* Height adjusted for flat-side orientation */
-  margin: 0 10px; /* Space between hexagons in same row */
+  width: 145px; /* 10% bigger: 132px * 1.1 */
+  height: 125px; /* 10% bigger: 114px * 1.1 */
+  margin: 0 2px; /* Minimal space between hexagons in same row - DEBUGGING: this should match vertical spacing */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,38 +66,37 @@ html, body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .honeycomb-row:nth-child(even) {
-    margin-left: 77px;
+  .honeycomb-grid {
+    --honeycomb-offset: 240px; /* Tablet: (119px * 2) + 2px */
   }
   
   .honeycomb-row {
-    margin-bottom: -24px;
+    margin-bottom: -24px; /* Overlap: (103px * 0.25 = 26px) - 2px gap = 24px */
   }
   
   .honeycomb-row > * {
-    width: 90px;
-    height: 78px;
-    margin: 0 8px;
+    width: 119px; /* 10% bigger: 108px * 1.1 */
+    height: 103px; /* 10% bigger: 94px * 1.1 */
+    margin: 0 1px;
   }
 }
 
 @media (max-width: 480px) {
   .honeycomb-grid {
     padding: 15px;
+    --honeycomb-offset: 188px; /* Mobile: (92px * 2) + 4px */
   }
   
-  .honeycomb-row:nth-child(even) {
-    margin-left: 59px;
-  }
+  /* Honeycomb row offset now calculated dynamically in JavaScript */
   
   .honeycomb-row {
-    margin-bottom: -18px;
+    margin-bottom: -16px; /* Overlap: (80px * 0.25 = 20px) - 4px gap = 16px */
   }
   
   .honeycomb-row > * {
-    width: 70px;
-    height: 61px;
-    margin: 0 6px;
+    width: 92px;  /* 10% bigger: 84px * 1.1 */
+    height: 80px; /* 10% bigger: 73px * 1.1 */
+    margin: 0 2px;
   }
 }
 

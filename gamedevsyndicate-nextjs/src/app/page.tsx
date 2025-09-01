@@ -1,6 +1,7 @@
 import { PortableText } from '@portabletext/react';
 import { customComponents } from '../components/CustomBlocks';
 import DynamicStyles from '../components/DynamicStyles';
+import SvgOverlay from '../components/SvgOverlay';
 import { getHomepage, getSiteConfig } from '../lib/sanity-queries';
 import { getImageUrl } from '../lib/sanity-image';
 import { generateSectionBackgroundStyle } from '../lib/background-utils';
@@ -47,6 +48,13 @@ export default async function Home() {
     <div className={styles.homepage}>
       <DynamicStyles menuColor={menuColor} />
       
+      {/* Global SVG Overlay for homepage */}
+      <SvgOverlay 
+        overlayTexture={siteConfig?.overlayTexture} 
+        backgroundConfig={siteConfig?.pageBackground}
+        isSection={false} 
+      />
+      
       {/* Banner Image */}
       {homepage.bannerImage && (
         <section className={`${styles.bannerSection} py-8`}>
@@ -80,13 +88,20 @@ export default async function Home() {
           {homepage.sections.map((section, index) => (
             <section 
               key={section._key || index}
-              className={styles.homepageSection}
+              className={`${styles.homepageSection} relative`}
               style={{
                 ...generateSectionBackgroundStyle(section.background),
               }}
             >
+              {/* SVG Overlay for this section */}
+              <SvgOverlay 
+                overlayTexture={section.overlayTexture} 
+                backgroundConfig={section.background}
+                isSection={true}
+              />
+              
               <div 
-                className={styles.sectionContent}
+                className={`${styles.sectionContent} relative z-10`}
                 style={{
                   paddingTop: section.padding?.top || '4rem',
                   paddingBottom: section.padding?.bottom || '4rem',
