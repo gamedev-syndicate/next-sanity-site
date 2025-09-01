@@ -56,7 +56,34 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
         gradientEndPosition,
         opacity
       },
-      navigationItems
+      navigationItems,
+      brandColors {
+        primaryColor,
+        secondaryColor,
+        buttonPrimaryColor,
+        buttonSecondaryColor
+      },
+      buttonConfig {
+        styles[] {
+          key,
+          name,
+          backgroundColor,
+          textColor,
+          borderColor,
+          hoverBackgroundColor,
+          hoverTextColor,
+          customClasses,
+          description
+        },
+        sizes[] {
+          key,
+          name,
+          padding,
+          fontSize,
+          customClasses
+        },
+        baseClasses
+      }
     }`;
     
     const client = await getQueryClient();

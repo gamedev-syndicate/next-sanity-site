@@ -1,5 +1,20 @@
 import {defineType, defineField} from 'sanity'
 
+const buttonStyleOptions = [
+  {title: 'Primary', value: 'primary'},
+  {title: 'Secondary', value: 'secondary'},
+  {title: 'Outline', value: 'outline'},
+  {title: 'Ghost', value: 'ghost'},
+  {title: 'Danger', value: 'danger'},
+];
+
+const buttonSizeOptions = [
+  {title: 'Small', value: 'small'},
+  {title: 'Medium', value: 'medium'},
+  {title: 'Large', value: 'large'},
+  {title: 'Extra Large', value: 'xl'},
+];
+
 export default defineType({
   name: 'buttonBlock',
   title: 'Button Block',
@@ -14,15 +29,13 @@ export default defineType({
     defineField({
       name: 'url',
       title: 'URL',
-      type: 'string', // Changed from 'url' to 'string' to allow relative paths
+      type: 'string',
       description: 'Internal path (e.g., /about, /contact) or external URL (e.g., https://example.com)',
       validation: Rule => Rule.required().custom((url) => {
         if (!url) return 'URL is required';
         
-        // Allow relative paths starting with /
         if (url.startsWith('/')) return true;
         
-        // Allow absolute URLs
         try {
           new URL(url);
           return true;
@@ -32,28 +45,41 @@ export default defineType({
       }),
     }),
     defineField({
+      name: 'useBrandColor',
+      title: 'Use Brand Color',
+      type: 'boolean',
+      description: 'Use primary or secondary brand color instead of style-based color',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'brandColorType',
+      title: 'Brand Color Type',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Primary Brand Color', value: 'primary'},
+          {title: 'Secondary Brand Color', value: 'secondary'},
+        ],
+      },
+      initialValue: 'primary',
+      hidden: ({parent}) => !parent?.useBrandColor,
+    }),
+    defineField({
       name: 'style',
       title: 'Button Style',
       type: 'string',
       options: {
-        list: [
-          {title: 'Primary', value: 'primary'},
-          {title: 'Secondary', value: 'secondary'},
-          {title: 'Outline', value: 'outline'},
-        ],
+        list: buttonStyleOptions,
       },
       initialValue: 'primary',
+      hidden: ({parent}) => parent?.useBrandColor,
     }),
     defineField({
       name: 'size',
       title: 'Button Size',
       type: 'string',
       options: {
-        list: [
-          {title: 'Small', value: 'small'},
-          {title: 'Medium', value: 'medium'},
-          {title: 'Large', value: 'large'},
-        ],
+        list: buttonSizeOptions,
       },
       initialValue: 'medium',
     }),
@@ -69,11 +95,14 @@ export default defineType({
       title: 'text',
       subtitle: 'url',
       style: 'style',
+      useBrandColor: 'useBrandColor',
+      brandColorType: 'brandColorType',
     },
-    prepare({title, subtitle, style}) {
+    prepare({title, subtitle, style, useBrandColor, brandColorType}) {
+      const displayStyle = useBrandColor ? `Brand ${brandColorType}` : style;
       return {
         title: title || 'Button',
-        subtitle: `${style} • ${subtitle}`,
+        subtitle: `${displayStyle} • ${subtitle}`,
       }
     },
   },

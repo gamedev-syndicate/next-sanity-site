@@ -146,28 +146,34 @@ export function TextBlock({ value }: TextBlockProps) {
   );
 }
 
-export function ButtonBlock({ value }: ButtonBlockProps) {
-  const baseClasses = 'inline-block rounded-lg font-semibold transition-colors';
+export function ButtonBlock({ value, siteConfig }: { value: ButtonBlockType; siteConfig?: any }) {
+  let backgroundColor = '';
   
-  const styleClasses = {
-    primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-    secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
-    outline: 'border-2 border-white text-white hover:bg-white hover:text-gray-900',
-  };
-
-  const sizeClasses = {
-    small: 'px-4 py-2 text-sm',
-    medium: 'px-6 py-3 text-base',
-    large: 'px-8 py-4 text-lg',
-  };
-
+  if (value.useBrandColor && siteConfig?.brandColors) {
+    const brandColor = value.brandColorType === 'secondary' 
+      ? siteConfig.brandColors.buttonSecondaryColor 
+      : siteConfig.brandColors.buttonPrimaryColor;
+    
+    if (brandColor) {
+      backgroundColor = brandColor.alpha 
+        ? `rgba(${parseInt(brandColor.hex.slice(1, 3), 16)}, ${parseInt(brandColor.hex.slice(3, 5), 16)}, ${parseInt(brandColor.hex.slice(5, 7), 16)}, ${brandColor.alpha})` 
+        : brandColor.hex;
+    }
+  }
+  
+  const baseClasses = 'inline-block rounded-lg font-semibold transition-colors px-6 py-3 text-base';
+  const styleClasses = backgroundColor 
+    ? `bg-[${backgroundColor}] text-white hover:opacity-90`
+    : value.style === 'secondary' ? 'bg-gray-600 hover:bg-gray-700 text-white'
+    : 'bg-orange-600 hover:bg-orange-700 text-white';
+  
   return (
     <div className="my-6">
       <a
         href={value.url}
         target={value.openInNewTab ? '_blank' : '_self'}
         rel={value.openInNewTab ? 'noopener noreferrer' : undefined}
-        className={`${baseClasses} ${styleClasses[value.style]} ${sizeClasses[value.size]}`}
+        className={`${baseClasses} ${styleClasses}`}
       >
         {value.text}
       </a>
@@ -317,7 +323,7 @@ export const customComponents = {
   },
 };
 
-export default function CustomBlocks({ blocks }: { blocks: any[] }) {
+export default function CustomBlocks({ blocks, siteConfig }: { blocks: any[]; siteConfig?: any }) {
   return (
     <div className="custom-blocks">
       {blocks.map((block) => {
@@ -327,7 +333,7 @@ export default function CustomBlocks({ blocks }: { blocks: any[] }) {
           case 'textBlock':
             return <TextBlock key={block._key} {...block} />;
           case 'buttonBlock':
-            return <ButtonBlock key={block._key} {...block} />;
+            return <ButtonBlock key={block._key} value={block} siteConfig={siteConfig} />;
           case 'companyBlock':
             return <CompanyBlock key={block._key} {...block} />;
           case 'companyListBlock':

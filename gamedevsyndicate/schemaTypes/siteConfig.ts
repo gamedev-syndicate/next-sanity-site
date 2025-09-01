@@ -288,6 +288,53 @@ export default defineType({
         },
       ],
     }),
+    defineField({
+      name: 'brandColors',
+      title: 'Brand Colors',
+      type: 'object',
+      fields: [
+        {
+          name: 'primaryColor',
+          title: 'Primary Brand Color',
+          type: 'color',
+          description: 'Main brand color used throughout the site',
+          options: {
+            disableAlpha: false,
+          },
+        },
+        {
+          name: 'secondaryColor',
+          title: 'Secondary Brand Color',
+          type: 'color',
+          description: 'Secondary brand color for accents and highlights',
+          options: {
+            disableAlpha: false,
+          },
+        },
+        {
+          name: 'buttonPrimaryColor',
+          title: 'Primary Button Color',
+          type: 'color',
+          description: 'Default color for primary buttons',
+          options: {
+            disableAlpha: false,
+          },
+        },
+        {
+          name: 'buttonSecondaryColor',
+          title: 'Secondary Button Color',
+          type: 'color',
+          description: 'Default color for secondary buttons',
+          options: {
+            disableAlpha: false,
+          },
+        },
+      ],
+      options: {
+        collapsible: true,
+        collapsed: false,
+      },
+    }),
   ],
   // Singleton pattern: only one config document
   preview: {
