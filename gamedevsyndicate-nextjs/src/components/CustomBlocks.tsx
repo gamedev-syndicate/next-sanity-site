@@ -146,7 +146,7 @@ export function TextBlock({ value }: TextBlockProps) {
   );
 }
 
-export function ButtonBlock({ value, siteConfig }: { value: ButtonBlockType; siteConfig?: any }) {
+export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: any }) {
   let backgroundColor = '';
   
   if (value.useBrandColor && siteConfig?.brandColors) {
@@ -161,14 +161,24 @@ export function ButtonBlock({ value, siteConfig }: { value: ButtonBlockType; sit
     }
   }
   
+  // Rest of your existing ButtonBlock logic with backgroundColor applied
   const baseClasses = 'inline-block rounded-lg font-semibold transition-colors px-6 py-3 text-base';
   const styleClasses = backgroundColor 
     ? `bg-[${backgroundColor}] text-white hover:opacity-90`
     : value.style === 'secondary' ? 'bg-gray-600 hover:bg-gray-700 text-white'
     : 'bg-orange-600 hover:bg-orange-700 text-white';
   
+
+  // Use flexbox for proper button alignment
+  const alignmentClasses = {
+    left: 'flex justify-start',
+    center: 'flex justify-center', 
+    right: 'flex justify-end',
+  };
+  const containerAlignment = alignmentClasses[value.alignment as keyof typeof alignmentClasses] || alignmentClasses.left;
+
   return (
-    <div className="my-6">
+    <div className={`my-6 ${containerAlignment}`}>
       <a
         href={value.url}
         target={value.openInNewTab ? '_blank' : '_self'}

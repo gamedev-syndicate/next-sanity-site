@@ -582,6 +582,20 @@ export default defineType({
                 {type: 'contentSeparator'}, // Add this line
               ],
             },
+            {
+              name: 'contentAlignment',
+              title: 'Content Alignment',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Left', value: 'left'},
+                  {title: 'Center', value: 'center'},
+                  {title: 'Right', value: 'right'},
+                ],
+              },
+              initialValue: 'left',
+              description: 'Align all content within this section',
+            },
           ],
           preview: {
             select: {

@@ -89,6 +89,19 @@ export default defineType({
       type: 'boolean',
       initialValue: false,
     }),
+    defineField({
+      name: 'alignment',
+      title: 'Button Alignment',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Left', value: 'left'},
+          {title: 'Center', value: 'center'},
+          {title: 'Right', value: 'right'},
+        ],
+      },
+      initialValue: 'left',
+    }),
   ],
   preview: {
     select: {
@@ -97,12 +110,13 @@ export default defineType({
       style: 'style',
       useBrandColor: 'useBrandColor',
       brandColorType: 'brandColorType',
+      alignment: 'alignment',
     },
-    prepare({title, subtitle, style, useBrandColor, brandColorType}) {
+    prepare({title, subtitle, style, useBrandColor, brandColorType, alignment}) {
       const displayStyle = useBrandColor ? `Brand ${brandColorType}` : style;
       return {
         title: title || 'Button',
-        subtitle: `${displayStyle} • ${subtitle}`,
+        subtitle: `${displayStyle} • ${alignment} • ${subtitle}`,
       }
     },
   },
