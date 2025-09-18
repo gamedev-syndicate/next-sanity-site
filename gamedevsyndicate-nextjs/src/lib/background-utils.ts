@@ -1,5 +1,13 @@
-import { PageBackground, SectionBackground, SanityColor, OverlayTexture } from '../types/sanity';
+import { PageBackground, SectionBackground, OverlayTexture } from '../types/sanity';
 import { getImageUrl } from './sanity-image';
+import { resolveBackgroundStyle, resolveSingleColor, type BackgroundConfig } from './colorUtils';
+import type { DesignSystem } from '@/types/designSystem';
+
+interface SanityColor {
+  _type: 'color';
+  hex: string;
+  alpha?: number;
+}
 
 /**
  * Converts a Sanity color object to a CSS color string
@@ -20,13 +28,62 @@ export function sanityColorToCSS(color?: SanityColor): string {
 }
 
 /**
- * Generates CSS background style from section background configuration
+ * Converts a design system color value to CSS string
  */
-export function generateSectionBackgroundCSS(sectionBackground?: SectionBackground): string {
+export function designSystemColorToCSS(colorValue?: any): string {
+  if (!colorValue) return 'transparent';
+  
+  if (colorValue.alpha !== undefined && colorValue.alpha < 1) {
+    const { r, g, b, a } = colorValue.rgb;
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+  
+  return colorValue.hex;
+}
+
+/**
+ * Generates CSS background style from section background configuration
+ * Now supports both legacy and new design system structure
+ */
+export function generateSectionBackgroundCSS(
+  sectionBackground?: SectionBackground,
+  designSystem?: DesignSystem
+): string {
   if (!sectionBackground || sectionBackground.type === 'none') {
     return 'transparent';
   }
 
+  // Use new design system approach if available
+  const backgroundConfig: BackgroundConfig = {
+    type: sectionBackground.type,
+    // New design system fields
+    solidColorSelection: (sectionBackground as any).solidColorSelection,
+    customSolidColor: (sectionBackground as any).customSolidColor,
+    gradientFromSelection: (sectionBackground as any).gradientFromSelection,
+    customGradientFrom: (sectionBackground as any).customGradientFrom,
+    gradientToSelection: (sectionBackground as any).gradientToSelection,
+    customGradientTo: (sectionBackground as any).customGradientTo,
+    gradientDirection: sectionBackground.gradientDirection,
+    gradientStartPosition: sectionBackground.gradientStartPosition,
+    gradientEndPosition: sectionBackground.gradientEndPosition,
+    // Legacy fields for backward compatibility
+    solidColor: sectionBackground.solidColor,
+    gradientFrom: sectionBackground.gradientFrom,
+    gradientTo: sectionBackground.gradientTo,
+    backgroundImage: sectionBackground.backgroundImage,
+  };
+
+  const styles = resolveBackgroundStyle(backgroundConfig, designSystem);
+  
+  if (styles.background && typeof styles.background === 'string') {
+    return styles.background;
+  }
+  
+  if (styles.backgroundColor && typeof styles.backgroundColor === 'string') {
+    return styles.backgroundColor;
+  }
+
+  // Fallback to legacy logic
   switch (sectionBackground.type) {
     case 'solid':
       return sanityColorToCSS(sectionBackground.solidColor);
@@ -62,8 +119,11 @@ export function generateSectionBackgroundCSS(sectionBackground?: SectionBackgrou
 /**
  * Generates complete background style properties for sections
  */
-export function generateSectionBackgroundStyle(sectionBackground?: SectionBackground): React.CSSProperties {
-  const backgroundCSS = generateSectionBackgroundCSS(sectionBackground);
+export function generateSectionBackgroundStyle(
+  sectionBackground?: SectionBackground, 
+  designSystem?: DesignSystem
+): React.CSSProperties {
+  const backgroundCSS = generateSectionBackgroundCSS(sectionBackground, designSystem);
   
   const baseStyle: React.CSSProperties = {
     background: backgroundCSS,
@@ -84,8 +144,9 @@ export function generateSectionBackgroundStyle(sectionBackground?: SectionBackgr
 
 /**
  * Generates CSS background style from page background configuration
+ * Now supports design system colors
  */
-export function generateBackgroundCSS(pageBackground?: PageBackground): string {
+export function generateBackgroundCSS(pageBackground?: PageBackground, designSystem?: DesignSystem): string {
   if (!pageBackground) {
     // Default gradient
     return 'linear-gradient(to bottom right, #667eea 0%, #764ba2 100%)';
@@ -93,11 +154,56 @@ export function generateBackgroundCSS(pageBackground?: PageBackground): string {
 
   switch (pageBackground.type) {
     case 'solid':
-      return sanityColorToCSS(pageBackground.solidColor);
+      // Try design system first, then fallback to legacy
+      if ((pageBackground as any).solidColorSelection) {
+        const selection = (pageBackground as any).solidColorSelection;
+        if (selection === 'custom' && (pageBackground as any).customSolidColor) {
+          return sanityColorToCSS((pageBackground as any).customSolidColor);
+        } else if (selection !== 'custom' && designSystem?.colors) {
+          const colorValue = designSystem.colors[selection as keyof typeof designSystem.colors];
+          if (colorValue) {
+            return designSystemColorToCSS(colorValue);
+          }
+        }
+      }
+      // Fallback to legacy solidColor
+      return sanityColorToCSS(pageBackground.solidColor) || '#044769'; // Fallback to primary color
 
     case 'gradient':
-      const fromColor = sanityColorToCSS(pageBackground.gradientFrom);
-      const toColor = sanityColorToCSS(pageBackground.gradientTo);
+      let fromColor = 'transparent';
+      let toColor = 'transparent';
+
+      // Try design system colors first
+      if ((pageBackground as any).gradientFromSelection) {
+        const fromSelection = (pageBackground as any).gradientFromSelection;
+        if (fromSelection === 'custom' && (pageBackground as any).customGradientFrom) {
+          fromColor = sanityColorToCSS((pageBackground as any).customGradientFrom);
+        } else if (fromSelection !== 'custom' && designSystem?.colors) {
+          const colorValue = designSystem.colors[fromSelection as keyof typeof designSystem.colors];
+          if (colorValue) {
+            fromColor = designSystemColorToCSS(colorValue);
+          }
+        }
+      } else {
+        // Fallback to legacy gradientFrom
+        fromColor = sanityColorToCSS(pageBackground.gradientFrom);
+      }
+
+      if ((pageBackground as any).gradientToSelection) {
+        const toSelection = (pageBackground as any).gradientToSelection;
+        if (toSelection === 'custom' && (pageBackground as any).customGradientTo) {
+          toColor = sanityColorToCSS((pageBackground as any).customGradientTo);
+        } else if (toSelection !== 'custom' && designSystem?.colors) {
+          const colorValue = designSystem.colors[toSelection as keyof typeof designSystem.colors];
+          if (colorValue) {
+            toColor = designSystemColorToCSS(colorValue);
+          }
+        }
+      } else {
+        // Fallback to legacy gradientTo
+        toColor = sanityColorToCSS(pageBackground.gradientTo);
+      }
+
       const direction = pageBackground.gradientDirection || 'to-br';
       const startPos = pageBackground.gradientStartPosition ?? 0;
       const endPos = pageBackground.gradientEndPosition ?? 100;
@@ -132,8 +238,8 @@ export function generateBackgroundCSS(pageBackground?: PageBackground): string {
 /**
  * Generates complete background style properties for CSS
  */
-export function generateBackgroundStyle(pageBackground?: PageBackground): React.CSSProperties {
-  const backgroundCSS = generateBackgroundCSS(pageBackground);
+export function generateBackgroundStyle(pageBackground?: PageBackground, designSystem?: DesignSystem): React.CSSProperties {
+  const backgroundCSS = generateBackgroundCSS(pageBackground, designSystem);
   
   const baseStyle: React.CSSProperties = {
     background: backgroundCSS,

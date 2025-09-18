@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { OverlayTexture, PageBackground, SectionBackground } from '../types/sanity';
-import { generateOverlayCSS, generateSVGPatternStyle } from '../lib/background-utils';
+import { generateSVGPatternStyle } from '../lib/background-utils';
 
 interface SvgOverlayProps {
   overlayTexture?: OverlayTexture;
@@ -27,17 +27,7 @@ export default function SvgOverlay({
     return null;
   }
 
-  // Generate background CSS from the background configuration
-  let backgroundCSS: string | undefined;
-  if (backgroundConfig) {
-    if (isSection) {
-      backgroundCSS = generateOverlayCSS(backgroundConfig as SectionBackground);
-    } else {
-      backgroundCSS = generateOverlayCSS(backgroundConfig as PageBackground);
-    }
-  }
-
-  // Generate the complete SVG pattern style with inherited background
+  // Generate the complete SVG pattern style
   const patternStyle = generateSVGPatternStyle(overlayTexture, isSection);
 
   return (

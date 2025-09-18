@@ -21,7 +21,7 @@ const colorToCSS = (color?: SanityColor): string => {
   return color.hex;
 };
 
-export const getBrandColor = (brandColors?: BrandColors, colorType: 'primary' | 'secondary' | 'buttonPrimary' | 'buttonSecondary'): string => {
+export const getBrandColor = (colorType: 'primary' | 'secondary' | 'buttonPrimary' | 'buttonSecondary', brandColors?: BrandColors): string => {
   if (!brandColors) return '';
   
   switch (colorType) {
@@ -43,10 +43,10 @@ export const generateCSSVariables = (brandColors?: BrandColors): string => {
   
   const variables = [];
   
-  const primaryColor = getBrandColor(brandColors, 'primary');
-  const secondaryColor = getBrandColor(brandColors, 'secondary');
-  const buttonPrimaryColor = getBrandColor(brandColors, 'buttonPrimary');
-  const buttonSecondaryColor = getBrandColor(brandColors, 'buttonSecondary');
+  const primaryColor = getBrandColor('primary', brandColors);
+  const secondaryColor = getBrandColor('secondary', brandColors);
+  const buttonPrimaryColor = getBrandColor('buttonPrimary', brandColors);
+  const buttonSecondaryColor = getBrandColor('buttonSecondary', brandColors);
   
   if (primaryColor) variables.push(`--brand-primary: ${primaryColor}`);
   if (secondaryColor) variables.push(`--brand-secondary: ${secondaryColor}`);

@@ -1,4 +1,8 @@
+'use client'
+
 import React from 'react';
+import { useDesignSystem } from '../../hooks/useDesignSystem';
+import { designSystemColorToCSS } from '../../lib/background-utils';
 
 interface SanityColor {
   _type: 'color';
@@ -10,6 +14,12 @@ interface SanityColor {
 }
 
 interface ContentSeparatorBlockProps {
+  // Design system color fields
+  lineColorSelection?: string;
+  customLineColor?: SanityColor;
+  diamondColorSelection?: string;
+  customDiamondColor?: SanityColor;
+  // Legacy color fields for backward compatibility
   lineColor?: SanityColor;
   diamondColor?: SanityColor;
   strokeWidth?: number;
@@ -41,16 +51,52 @@ const getColorValue = (color?: SanityColor): string => {
 };
 
 const ContentSeparatorBlock: React.FC<ContentSeparatorBlockProps> = ({
-  lineColor,
-  diamondColor,
+  lineColorSelection,
+  customLineColor,
+  diamondColorSelection,
+  customDiamondColor,
+  lineColor, // Legacy fallback
+  diamondColor, // Legacy fallback
   strokeWidth = 0.4,
   height = '24px',
   margin = { top: '2rem', bottom: '2rem' },
 }) => {
-  console.log('ContentSeparatorBlock props received:', JSON.stringify({ lineColor, diamondColor, strokeWidth, height, margin }, null, 2));
+  const { designSystem } = useDesignSystem();
   
-  const lineColorValue = getColorValue(lineColor);
-  const diamondColorValue = getColorValue(diamondColor);
+  console.log('ContentSeparatorBlock props received:', JSON.stringify({ 
+    lineColorSelection, customLineColor, diamondColorSelection, customDiamondColor,
+    lineColor, diamondColor, strokeWidth, height, margin 
+  }, null, 2));
+
+  const resolveColor = (
+    colorSelection?: string,
+    customColor?: SanityColor,
+    legacyColor?: SanityColor,
+    fallback: string = '#FFFFFF3D'
+  ): string => {
+    // Try design system colors first
+    if (colorSelection) {
+      if (colorSelection === 'custom' && customColor) {
+        return getColorValue(customColor);
+      } else if (colorSelection !== 'custom' && designSystem?.colors) {
+        const colorValue = designSystem.colors[colorSelection as keyof typeof designSystem.colors];
+        if (colorValue) {
+          return designSystemColorToCSS(colorValue);
+        }
+      }
+    }
+    
+    // Fallback to legacy color
+    if (legacyColor) {
+      return getColorValue(legacyColor);
+    }
+    
+    // Final fallback
+    return fallback;
+  };
+  
+  const lineColorValue = resolveColor(lineColorSelection, customLineColor, lineColor);
+  const diamondColorValue = resolveColor(diamondColorSelection, customDiamondColor, diamondColor);
   
   console.log('Final colors:', { lineColorValue, diamondColorValue });
   

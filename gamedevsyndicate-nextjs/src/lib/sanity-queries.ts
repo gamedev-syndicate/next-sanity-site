@@ -2,6 +2,7 @@ import { getClient } from '../sanityClient';
 import { draftMode } from 'next/headers';
 import { config } from '../config';
 import { SiteConfig, Page, Homepage } from '../types/sanity';
+import { DesignSystem } from '../types/designSystem';
 
 // Helper to get the right client based on draft mode
 async function getQueryClient() {
@@ -23,8 +24,17 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
       _id,
       _type,
       menuColor,
+      menuColorSelection,
+      customMenuColor,
+      brandColors{
+        primaryColor,
+        secondaryColor,
+        buttonPrimaryColor,
+        buttonSecondaryColor
+      },
       pageBackground{
         type,
+        // Legacy fields
         solidColor,
         gradientFrom,
         gradientTo,
@@ -32,7 +42,14 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
         gradientStartPosition,
         gradientEndPosition,
         backgroundImage,
-        customCSS
+        customCSS,
+        // New design system fields
+        solidColorSelection,
+        customSolidColor,
+        gradientFromSelection,
+        customGradientFrom,
+        gradientToSelection,
+        customGradientTo
       },
       overlayTexture{
         enabled,
@@ -114,13 +131,21 @@ export async function getHomepage(): Promise<Homepage | null> {
         title,
         background{
           type,
+          // Legacy fields
           solidColor,
           gradientFrom,
           gradientTo,
           gradientDirection,
           gradientStartPosition,
           gradientEndPosition,
-          backgroundImage
+          backgroundImage,
+          // New design system fields
+          solidColorSelection,
+          customSolidColor,
+          gradientFromSelection,
+          customGradientFrom,
+          gradientToSelection,
+          customGradientTo
         },
         overlayTexture{
           enabled,
@@ -176,7 +201,11 @@ export async function getHomepage(): Promise<Homepage | null> {
             layout,
             showDescription,
             showCEO,
-            showEmail
+            showEmail,
+            backgroundColorSelection,
+            customBackgroundColor,
+            borderColorSelection,
+            customBorderColor
           }
         }
       },
@@ -257,5 +286,27 @@ export async function getAllCompanies() {
   } catch (error) {
     console.error('Failed to fetch companies:', error);
     return [];
+  }
+}
+
+export async function getDesignSystem() {
+  try {
+    const query = `*[_type == "designSystem"][0]{
+      _id,
+      _type,
+      title,
+      colors{
+        primary,
+        secondary,
+        tertiary,
+        buttonPrimary,
+        buttonSecondary
+      }
+    }`;
+    const client = await getQueryClient();
+    return await client.fetch(query, {}, getCacheConfig());
+  } catch (error) {
+    console.error('Failed to fetch design system:', error);
+    return null;
   }
 }

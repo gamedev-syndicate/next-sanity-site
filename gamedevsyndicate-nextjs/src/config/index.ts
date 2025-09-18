@@ -105,7 +105,12 @@ function loadEnvConfig(): Partial<AppConfig> {
   }
 
   if (process.env.NODE_ENV) {
-    envConfig.app!.environment = process.env.NODE_ENV as 'development' | 'production' | 'preview'
+    const nodeEnv = process.env.NODE_ENV;
+    if (nodeEnv === 'development') {
+      envConfig.app!.environment = 'dev';
+    } else if (nodeEnv === 'production') {
+      envConfig.app!.environment = 'production';
+    }
   }
 
   // Feature flags

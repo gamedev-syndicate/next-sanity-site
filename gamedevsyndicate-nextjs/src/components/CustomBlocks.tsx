@@ -1,8 +1,12 @@
+'use client'
+
 import { urlFor } from '../lib/sanity-image';
 import { PortableText } from '@portabletext/react';
 import { ImageBlock as ImageBlockType, TextBlock as TextBlockType, ButtonBlock as ButtonBlockType } from '../types/sanity';
 import { CompanyBlock, CompanyListBlock } from './CompanyBlocks';
 import ContentSeparatorBlock from './blocks/ContentSeparatorBlock';
+import { useDesignSystem } from '../hooks/useDesignSystem';
+import { designSystemColorToCSS } from '../lib/background-utils';
 
 interface ImageBlockProps {
   value: ImageBlockType;
@@ -35,13 +39,51 @@ interface InlineImageProps {
 
 // Enhanced callout component
 export function Callout({ value }: CalloutProps) {
-  const typeStyles = {
-    info: 'bg-blue-900/30 border-blue-400 text-blue-100',
-    warning: 'bg-yellow-900/30 border-yellow-400 text-yellow-100',
-    success: 'bg-green-900/30 border-green-400 text-green-100',
-    error: 'bg-red-900/30 border-red-400 text-red-100',
+  const { designSystem } = useDesignSystem();
+  
+  // Default to design system colors, fallback to hardcoded colors
+  const getTypeColors = (type: string) => {
+    if (designSystem?.colors) {
+      switch (type) {
+        case 'info':
+          return {
+            bg: designSystemColorToCSS(designSystem.colors.primary) + '30', // 30% opacity
+            border: designSystemColorToCSS(designSystem.colors.primary),
+            text: 'text-white'
+          };
+        case 'warning':
+          return {
+            bg: designSystemColorToCSS(designSystem.colors.buttonPrimary) + '30',
+            border: designSystemColorToCSS(designSystem.colors.buttonPrimary),
+            text: 'text-white'
+          };
+        case 'success':
+          return {
+            bg: designSystemColorToCSS(designSystem.colors.buttonSecondary) + '30',
+            border: designSystemColorToCSS(designSystem.colors.buttonSecondary),
+            text: 'text-white'
+          };
+        case 'error':
+          return {
+            bg: designSystemColorToCSS(designSystem.colors.tertiary) + '30',
+            border: designSystemColorToCSS(designSystem.colors.tertiary),
+            text: 'text-white'
+          };
+      }
+    }
+    
+    // Fallback to original hardcoded colors
+    const fallbackStyles = {
+      info: { bg: 'rgba(30, 58, 138, 0.3)', border: '#60a5fa', text: 'text-blue-100' },
+      warning: { bg: 'rgba(133, 77, 14, 0.3)', border: '#fbbf24', text: 'text-yellow-100' },
+      success: { bg: 'rgba(20, 83, 45, 0.3)', border: '#34d399', text: 'text-green-100' },
+      error: { bg: 'rgba(153, 27, 27, 0.3)', border: '#f87171', text: 'text-red-100' },
+    };
+    
+    return fallbackStyles[type as keyof typeof fallbackStyles] || fallbackStyles.info;
   };
 
+  const colors = getTypeColors(value.type);
   const iconMap = {
     info: 'ℹ️',
     warning: '⚠️',
@@ -49,8 +91,16 @@ export function Callout({ value }: CalloutProps) {
     error: '❌',
   };
 
+  const calloutStyle: React.CSSProperties = {
+    backgroundColor: colors.bg,
+    borderLeftColor: colors.border,
+  };
+
   return (
-    <div className={`my-6 p-4 rounded-lg border-l-4 ${typeStyles[value.type]}`}>
+    <div 
+      className={`my-6 p-4 rounded-lg border-l-4 ${colors.text}`}
+      style={calloutStyle}
+    >
       <div className="flex items-start space-x-3">
         <span className="text-xl">{iconMap[value.type]}</span>
         <div className="flex-1">
@@ -147,9 +197,40 @@ export function TextBlock({ value }: TextBlockProps) {
 }
 
 export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: any }) {
-  let backgroundColor = '';
+  const { designSystem } = useDesignSystem();
   
-  if (value.useBrandColor && siteConfig?.brandColors) {
+  let backgroundColor = '';
+  let textColor = '';
+  
+  // Try design system colors first
+  if (value.backgroundColorSelection) {
+    if (value.backgroundColorSelection === 'custom' && value.customBackgroundColor) {
+      backgroundColor = value.customBackgroundColor.alpha 
+        ? `rgba(${parseInt(value.customBackgroundColor.hex.slice(1, 3), 16)}, ${parseInt(value.customBackgroundColor.hex.slice(3, 5), 16)}, ${parseInt(value.customBackgroundColor.hex.slice(5, 7), 16)}, ${value.customBackgroundColor.alpha})`
+        : value.customBackgroundColor.hex;
+    } else if (value.backgroundColorSelection !== 'custom' && designSystem?.colors) {
+      const colorValue = designSystem.colors[value.backgroundColorSelection as keyof typeof designSystem.colors];
+      if (colorValue) {
+        backgroundColor = designSystemColorToCSS(colorValue);
+      }
+    }
+  }
+  
+  if (value.textColorSelection) {
+    if (value.textColorSelection === 'custom' && value.customTextColor) {
+      textColor = value.customTextColor.alpha 
+        ? `rgba(${parseInt(value.customTextColor.hex.slice(1, 3), 16)}, ${parseInt(value.customTextColor.hex.slice(3, 5), 16)}, ${parseInt(value.customTextColor.hex.slice(5, 7), 16)}, ${value.customTextColor.alpha})`
+        : value.customTextColor.hex;
+    } else if (value.textColorSelection !== 'custom' && designSystem?.colors) {
+      const colorValue = designSystem.colors[value.textColorSelection as keyof typeof designSystem.colors];
+      if (colorValue) {
+        textColor = designSystemColorToCSS(colorValue);
+      }
+    }
+  }
+  
+  // Fallback to legacy brand colors if design system colors not set
+  if (!backgroundColor && value.useBrandColor && siteConfig?.brandColors) {
     const brandColor = value.brandColorType === 'secondary' 
       ? siteConfig.brandColors.buttonSecondaryColor 
       : siteConfig.brandColors.buttonPrimaryColor;
@@ -161,13 +242,23 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
     }
   }
   
-  // Rest of your existing ButtonBlock logic with backgroundColor applied
   const baseClasses = 'inline-block rounded-lg font-semibold transition-colors px-6 py-3 text-base';
-  const styleClasses = backgroundColor 
-    ? `bg-[${backgroundColor}] text-white hover:opacity-90`
-    : value.style === 'secondary' ? 'bg-gray-600 hover:bg-gray-700 text-white'
-    : 'bg-orange-600 hover:bg-orange-700 text-white';
   
+  // Build style classes based on available colors
+  let styleClasses = '';
+  if (backgroundColor && textColor) {
+    styleClasses = `hover:opacity-90`;
+  } else if (backgroundColor) {
+    styleClasses = `text-white hover:opacity-90`;
+  } else if (textColor) {
+    // Use default background with custom text color
+    styleClasses = value.style === 'secondary' ? 'bg-gray-600 hover:bg-gray-700'
+      : 'bg-orange-600 hover:bg-orange-700';
+  } else {
+    // Fallback to style-based colors
+    styleClasses = value.style === 'secondary' ? 'bg-gray-600 hover:bg-gray-700 text-white'
+      : 'bg-orange-600 hover:bg-orange-700 text-white';
+  }
 
   // Use flexbox for proper button alignment
   const alignmentClasses = {
@@ -177,6 +268,10 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
   };
   const containerAlignment = alignmentClasses[value.alignment as keyof typeof alignmentClasses] || alignmentClasses.left;
 
+  const buttonStyle: React.CSSProperties = {};
+  if (backgroundColor) buttonStyle.backgroundColor = backgroundColor;
+  if (textColor) buttonStyle.color = textColor;
+
   return (
     <div className={`my-6 ${containerAlignment}`}>
       <a
@@ -184,6 +279,7 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
         target={value.openInNewTab ? '_blank' : '_self'}
         rel={value.openInNewTab ? 'noopener noreferrer' : undefined}
         className={`${baseClasses} ${styleClasses}`}
+        style={buttonStyle}
       >
         {value.text}
       </a>
@@ -197,16 +293,20 @@ export const customComponents = {
     imageBlock: ImageBlock,
     textBlock: TextBlock,
     buttonBlock: ButtonBlock,
-    companyBlock: CompanyBlock,
-    companyListBlock: CompanyListBlock,
+    companyBlock: ({ value }: { value: any }) => <CompanyBlock {...value} />,
+    companyListBlock: ({ value }: { value: any }) => <CompanyListBlock value={value} />,
     callout: Callout,
     image: InlineImage,
     contentSeparator: ({ value }: { value: any }) => {
       console.log('ContentSeparator value from Sanity:', JSON.stringify(value, null, 2));
       return (
         <ContentSeparatorBlock
-          lineColor={value.lineColor}
-          diamondColor={value.diamondColor}
+          lineColorSelection={value.lineColorSelection}
+          customLineColor={value.customLineColor}
+          diamondColorSelection={value.diamondColorSelection}
+          customDiamondColor={value.customDiamondColor}
+          lineColor={value.lineColor} // Legacy fallback
+          diamondColor={value.diamondColor} // Legacy fallback
           strokeWidth={value.strokeWidth}
           height={value.height}
           margin={value.margin}
@@ -279,13 +379,18 @@ export const customComponents = {
       );
     },
     highlight: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
+      const { designSystem } = useDesignSystem();
+      
       if (!value?.color?.hex) return <>{children}</>;
+      
+      const backgroundColor = value.color.alpha 
+        ? `rgba(${parseInt(value.color.hex.slice(1, 3), 16)}, ${parseInt(value.color.hex.slice(3, 5), 16)}, ${parseInt(value.color.hex.slice(5, 7), 16)}, ${value.color.alpha})`
+        : value.color.hex;
+        
       return (
         <span
           style={{
-            backgroundColor: value.color.alpha 
-              ? `rgba(${parseInt(value.color.hex.slice(1, 3), 16)}, ${parseInt(value.color.hex.slice(3, 5), 16)}, ${parseInt(value.color.hex.slice(5, 7), 16)}, ${value.color.alpha})`
-              : value.color.hex,
+            backgroundColor,
             padding: '2px 4px',
             borderRadius: '3px',
           }}
@@ -295,13 +400,18 @@ export const customComponents = {
       );
     },
     textColor: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
+      const { designSystem } = useDesignSystem();
+      
       if (!value?.color?.hex) return <>{children}</>;
+      
+      const textColor = value.color.alpha 
+        ? `rgba(${parseInt(value.color.hex.slice(1, 3), 16)}, ${parseInt(value.color.hex.slice(3, 5), 16)}, ${parseInt(value.color.hex.slice(5, 7), 16)}, ${value.color.alpha})`
+        : value.color.hex;
+        
       return (
         <span
           style={{
-            color: value.color.alpha 
-              ? `rgba(${parseInt(value.color.hex.slice(1, 3), 16)}, ${parseInt(value.color.hex.slice(3, 5), 16)}, ${parseInt(value.color.hex.slice(5, 7), 16)}, ${value.color.alpha})`
-              : value.color.hex,
+            color: textColor,
           }}
         >
           {children}

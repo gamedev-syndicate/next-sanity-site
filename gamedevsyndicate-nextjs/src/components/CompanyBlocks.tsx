@@ -1,8 +1,12 @@
+'use client'
+
 import React from 'react';
 import { getImageUrl } from '../lib/sanity-image';
 import type { SanityImage } from '../types/sanity';
 import { HoneycombGrid } from './HoneycombGrid';
 import { TiltedSquareGrid } from './TiltedSquareGrid';
+import { useDesignSystem } from '../hooks/useDesignSystem';
+import { colorToCSS } from '../lib/colorUtils';
 
 interface CompanyData {
   _id: string;
@@ -27,12 +31,17 @@ interface CompanyListBlockProps {
     title?: string;
     companies: CompanyData[];
     layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare';
-    backgroundColor?: { hex: string; alpha?: number };
-    borderColor?: { hex: string; alpha?: number };
+    backgroundColorSelection?: string;
+    customBackgroundColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
+    borderColorSelection?: string;
+    customBorderColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
     maxItemsPerRow?: number;
     showDescription?: boolean;
     showCEO?: boolean;
     showEmail?: boolean;
+    // Legacy support for backward compatibility
+    backgroundColor?: { hex: string; alpha?: number };
+    borderColor?: { hex: string; alpha?: number };
   };
 }
 
@@ -171,24 +180,66 @@ export const CompanyBlock: React.FC<CompanyBlockProps> = ({ value }) => {
 };
 
 export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => {
+  const { designSystem } = useDesignSystem();
   const { 
     title, 
     companies, 
-    backgroundColor,
-    borderColor,
+    backgroundColorSelection,
+    customBackgroundColor,
+    borderColorSelection,
+    customBorderColor,
     layout = 'grid', 
     maxItemsPerRow, 
     showDescription, 
     showCEO, 
-    showEmail 
+    showEmail,
+    // Legacy support
+    backgroundColor: legacyBackgroundColor,
+    borderColor: legacyBorderColor
   } = value;
 
   if (!companies || companies.length === 0) {
     return null;
   }
 
-  const isLightBackground = backgroundColor 
-    ? getLuminance(backgroundColor.hex) > 0.5 
+  // Helper function to resolve color and convert to expected format
+  const resolveColorToObject = (
+    colorSelection?: string,
+    customColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } },
+    legacyColor?: { hex: string; alpha?: number }
+  ): { hex: string; alpha?: number } | undefined => {
+    if (colorSelection && colorSelection !== 'custom' && designSystem?.colors) {
+      const colorValue = designSystem.colors[colorSelection as keyof typeof designSystem.colors];
+      if (colorValue) {
+        return { hex: colorToCSS(colorValue), alpha: 1 };
+      }
+    }
+    
+    if (colorSelection === 'custom' && customColor) {
+      return { 
+        hex: customColor.hex, 
+        alpha: customColor.alpha ?? 1 
+      };
+    }
+    
+    return legacyColor;
+  };
+
+  // Resolve colors using design system
+  const finalBackgroundColor = resolveColorToObject(
+    backgroundColorSelection,
+    customBackgroundColor,
+    legacyBackgroundColor
+  );
+
+  const finalBorderColor = resolveColorToObject(
+    borderColorSelection,
+    customBorderColor,
+    legacyBorderColor
+  );
+
+  const isLightBackground = finalBackgroundColor 
+    ? getLuminance(finalBackgroundColor.hex) > 0.5 
     : false;
 
   const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
@@ -221,8 +272,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
             showDescription={showDescription}
             showCEO={showCEO}
             showEmail={showEmail}
-            backgroundColor={backgroundColor}
-            borderColor={borderColor}
+            backgroundColor={finalBackgroundColor}
+            borderColor={finalBorderColor}
           />
         ) : layout === 'tiltedsquare' ? (
           <TiltedSquareGrid
@@ -231,8 +282,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
             showCEO={showCEO}
             showEmail={showEmail}
             maxItemsPerRow={maxItemsPerRow}
-            backgroundColor={backgroundColor}
-            borderColor={borderColor}
+            backgroundColor={finalBackgroundColor}
+            borderColor={finalBorderColor}
           />
         ) : (
           companies.map((company, index) => (
@@ -243,8 +294,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
               showDescription={showDescription}
               showCEO={showCEO}
               showEmail={showEmail}
-              backgroundColor={backgroundColor}
-              borderColor={borderColor}
+              backgroundColor={finalBackgroundColor}
+              borderColor={finalBorderColor}
             />
           ))
         )}

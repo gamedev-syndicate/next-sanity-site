@@ -2,7 +2,7 @@ import { PortableText } from '@portabletext/react';
 import { customComponents } from '../components/CustomBlocks';
 import DynamicStyles from '../components/DynamicStyles';
 import SvgOverlay from '../components/SvgOverlay';
-import { getHomepage, getSiteConfig } from '../lib/sanity-queries';
+import { getHomepage, getSiteConfig, getDesignSystem } from '../lib/sanity-queries';
 import { getImageUrl } from '../lib/sanity-image';
 import { generateSectionBackgroundStyle } from '../lib/background-utils';
 import styles from './homepage.module.css';
@@ -20,8 +20,39 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   const homepage = await getHomepage();
   const siteConfig = await getSiteConfig();
+  const designSystem = await getDesignSystem();
   
-  const menuColor = siteConfig?.menuColor?.hex || 'rgba(0,0,0,0.6)';
+  console.log('Design system fetched:', designSystem);
+  
+  // Handle menu color with design system support
+  let menuColor = siteConfig?.menuColor?.hex || 'rgba(0,0,0,0.6)';
+  
+  if (siteConfig?.menuColorSelection) {
+    if (siteConfig.menuColorSelection !== 'custom') {
+      // Try design system first, fallback to brandColors
+      let colorValue = null;
+      
+      if (designSystem?.colors) {
+        colorValue = designSystem.colors[siteConfig.menuColorSelection as keyof typeof designSystem.colors];
+      } else if (siteConfig.brandColors) {
+        // Fallback to old brandColors system
+        const brandColorMapping: Record<string, any> = {
+          'primary': siteConfig.brandColors.primaryColor,
+          'secondary': siteConfig.brandColors.secondaryColor,
+          'buttonPrimary': siteConfig.brandColors.buttonPrimaryColor,
+          'buttonSecondary': siteConfig.brandColors.buttonSecondaryColor,
+        };
+        colorValue = brandColorMapping[siteConfig.menuColorSelection];
+      }
+      
+      if (colorValue?.hex) {
+        menuColor = colorValue.hex;
+      }
+    } else if (siteConfig.customMenuColor) {
+      // Use custom color
+      menuColor = siteConfig.customMenuColor.hex;
+    }
+  }
 
   // If no homepage content exists, show default content
   if (!homepage) {
@@ -90,7 +121,7 @@ export default async function Home() {
               key={section._key || index}
               className={`${styles.homepageSection} relative`}
               style={{
-                ...generateSectionBackgroundStyle(section.background),
+                ...generateSectionBackgroundStyle(section.background, designSystem),
               }}
             >
               {/* SVG Overlay for this section */}

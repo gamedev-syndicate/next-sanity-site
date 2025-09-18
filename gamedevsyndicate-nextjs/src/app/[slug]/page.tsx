@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { customComponents } from '../../components/CustomBlocks';
 import DynamicStyles from '../../components/DynamicStyles';
 import SvgOverlay from '../../components/SvgOverlay';
-import { getPage, getSiteConfig, getAllPageSlugs } from '../../lib/sanity-queries';
+import { getPage, getSiteConfig, getDesignSystem, getAllPageSlugs } from '../../lib/sanity-queries';
 import { generateBackgroundStyle, sanityColorToCSS } from '../../lib/background-utils';
 import type { Metadata } from 'next';
 
@@ -39,12 +39,43 @@ export default async function Page({ params }: PageProps) {
   const resolvedParams = await params;
   const page = await getPage(resolvedParams.slug);
   const siteConfig = await getSiteConfig();
+  const designSystem = await getDesignSystem();
   
   if (!page) {
     notFound();
   }
 
-  const menuColor = siteConfig?.menuColor?.hex || 'rgba(0,0,0,0.6)';
+  console.log('Design system fetched:', designSystem);
+  
+  // Handle menu color with design system support
+  let menuColor = siteConfig?.menuColor?.hex || 'rgba(0,0,0,0.6)';
+  
+  if (siteConfig?.menuColorSelection) {
+    if (siteConfig.menuColorSelection !== 'custom') {
+      // Try design system first, fallback to brandColors
+      let colorValue = null;
+      
+      if (designSystem?.colors) {
+        colorValue = designSystem.colors[siteConfig.menuColorSelection as keyof typeof designSystem.colors];
+      } else if (siteConfig.brandColors) {
+        // Fallback to old brandColors system
+        const brandColorMapping: Record<string, any> = {
+          'primary': siteConfig.brandColors.primaryColor,
+          'secondary': siteConfig.brandColors.secondaryColor,
+          'buttonPrimary': siteConfig.brandColors.buttonPrimaryColor,
+          'buttonSecondary': siteConfig.brandColors.buttonSecondaryColor,
+        };
+        colorValue = brandColorMapping[siteConfig.menuColorSelection];
+      }
+      
+      if (colorValue?.hex) {
+        menuColor = colorValue.hex;
+      }
+    } else if (siteConfig.customMenuColor) {
+      // Use custom color
+      menuColor = siteConfig.customMenuColor.hex;
+    }
+  }
   
   // Only apply background if page specifically has one set
   const pageBackgroundStyle = page.backgroundColor 

@@ -1,4 +1,5 @@
 import {defineType, defineField} from 'sanity'
+import { colorSelectionField, customColorField } from './utils/colorSelection'
 
 const buttonStyleOptions = [
   {title: 'Primary', value: 'primary'},
@@ -44,9 +45,30 @@ export default defineType({
         }
       }),
     }),
+    // Design system color selection
+    colorSelectionField(
+      'backgroundColorSelection',
+      'Button Background Color',
+      'Choose button background color from design system or use custom color'
+    ),
+    customColorField(
+      'customBackgroundColor',
+      'Custom Background Color',
+      'Custom background color when not using design system colors'
+    ),
+    colorSelectionField(
+      'textColorSelection',
+      'Button Text Color',
+      'Choose button text color from design system or use custom color'
+    ),
+    customColorField(
+      'customTextColor',
+      'Custom Text Color',
+      'Custom text color when not using design system colors'
+    ),
     defineField({
       name: 'useBrandColor',
-      title: 'Use Brand Color',
+      title: 'Use Brand Color (Legacy)',
       type: 'boolean',
       description: 'Use primary or secondary brand color instead of style-based color',
       initialValue: false,

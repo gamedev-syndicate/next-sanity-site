@@ -1,27 +1,53 @@
 import {defineType} from 'sanity'
+import { colorSelectionField, customColorField } from '../utils/colorSelection'
 
 export default defineType({
   name: 'contentSeparator',
   title: 'Content Separator',
   type: 'object',
   fields: [
+    // Design system color selection for line
+    colorSelectionField(
+      'lineColorSelection',
+      'Line Color',
+      'Choose line color from design system or use custom color'
+    ),
+    customColorField(
+      'customLineColor',
+      'Custom Line Color',
+      'Custom line color when not using design system colors'
+    ),
+    // Design system color selection for diamond
+    colorSelectionField(
+      'diamondColorSelection',
+      'Diamond Color',
+      'Choose diamond color from design system or use custom color'
+    ),
+    customColorField(
+      'customDiamondColor',
+      'Custom Diamond Color',
+      'Custom diamond color when not using design system colors'
+    ),
+    // Legacy color fields for backward compatibility
     {
       name: 'lineColor',
-      title: 'Line Color',
+      title: 'Line Color (Legacy)',
       type: 'color',
-      description: 'Color of the divider lines',
+      description: 'Color of the divider lines (legacy field)',
       options: {
         disableAlpha: false,
       },
+      hidden: true, // Hide from UI but keep for data migration
     },
     {
       name: 'diamondColor',
-      title: 'Diamond Color', 
+      title: 'Diamond Color (Legacy)', 
       type: 'color',
-      description: 'Color of the center diamond',
+      description: 'Color of the center diamond (legacy field)',
       options: {
         disableAlpha: false,
       },
+      hidden: true, // Hide from UI but keep for data migration
     },
     {
       name: 'strokeWidth',

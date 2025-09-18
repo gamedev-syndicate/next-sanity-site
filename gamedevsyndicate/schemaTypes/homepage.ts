@@ -1,4 +1,5 @@
 import {defineType, defineField} from 'sanity'
+import { colorSelectionField, customColorField } from './utils/colorSelection'
 
 export default defineType({
   name: 'homepage',
@@ -182,14 +183,16 @@ export default defineType({
                 name: 'highlight',
                 type: 'object',
                 fields: [
-                  {
-                    title: 'Highlight Color',
-                    name: 'color',
-                    type: 'color',
-                    options: {
-                      disableAlpha: false,
-                    },
-                  }
+                  colorSelectionField(
+                    'colorSelection',
+                    'Highlight Color',
+                    'Choose highlight color from design system or use custom color'
+                  ),
+                  customColorField(
+                    'customColor',
+                    'Custom Highlight Color',
+                    'Custom highlight color when not using design system colors'
+                  ),
                 ]
               },
               {
@@ -197,14 +200,16 @@ export default defineType({
                 name: 'textColor',
                 type: 'object',
                 fields: [
-                  {
-                    title: 'Text Color',
-                    name: 'color',
-                    type: 'color',
-                    options: {
-                      disableAlpha: false,
-                    },
-                  }
+                  colorSelectionField(
+                    'colorSelection',
+                    'Text Color',
+                    'Choose text color from design system or use custom color'
+                  ),
+                  customColorField(
+                    'customColor',
+                    'Custom Text Color',
+                    'Custom text color when not using design system colors'
+                  ),
                 ]
               }
             ]
@@ -329,22 +334,91 @@ export default defineType({
                   initialValue: 'none',
                 },
                 {
-                  name: 'solidColor',
+                  name: 'solidColorSelection',
                   title: 'Background Color',
-                  type: 'color',
+                  type: 'string',
+                  description: 'Choose from design system colors or use custom color',
+                  options: {
+                    list: [
+                      { title: 'Primary', value: 'primary' },
+                      { title: 'Secondary', value: 'secondary' },
+                      { title: 'Tertiary', value: 'tertiary' },
+                      { title: 'Button Primary', value: 'buttonPrimary' },
+                      { title: 'Button Secondary', value: 'buttonSecondary' },
+                      { title: 'Custom Color', value: 'custom' },
+                    ],
+                    layout: 'dropdown',
+                  },
+                  initialValue: 'primary',
                   hidden: ({parent}) => parent?.type !== 'solid',
                 },
                 {
-                  name: 'gradientFrom',
-                  title: 'Gradient Start Color',
+                  name: 'customSolidColor',
+                  title: 'Custom Background Color',
                   type: 'color',
+                  description: 'Custom background color when not using design system colors',
+                  options: {
+                    disableAlpha: false,
+                  },
+                  hidden: ({parent}) => parent?.type !== 'solid' || parent?.solidColorSelection !== 'custom',
+                },
+                {
+                  name: 'gradientFromSelection',
+                  title: 'Gradient Start Color',
+                  type: 'string',
+                  description: 'Choose start color from design system or use custom color',
+                  options: {
+                    list: [
+                      { title: 'Primary', value: 'primary' },
+                      { title: 'Secondary', value: 'secondary' },
+                      { title: 'Tertiary', value: 'tertiary' },
+                      { title: 'Button Primary', value: 'buttonPrimary' },
+                      { title: 'Button Secondary', value: 'buttonSecondary' },
+                      { title: 'Custom Color', value: 'custom' },
+                    ],
+                    layout: 'dropdown',
+                  },
+                  initialValue: 'primary',
                   hidden: ({parent}) => parent?.type !== 'gradient',
                 },
                 {
-                  name: 'gradientTo',
-                  title: 'Gradient End Color',
+                  name: 'customGradientFrom',
+                  title: 'Custom Gradient Start Color',
                   type: 'color',
+                  description: 'Custom start color when not using design system colors',
+                  options: {
+                    disableAlpha: false,
+                  },
+                  hidden: ({parent}) => parent?.type !== 'gradient' || parent?.gradientFromSelection !== 'custom',
+                },
+                {
+                  name: 'gradientToSelection',
+                  title: 'Gradient End Color',
+                  type: 'string',
+                  description: 'Choose end color from design system or use custom color',
+                  options: {
+                    list: [
+                      { title: 'Primary', value: 'primary' },
+                      { title: 'Secondary', value: 'secondary' },
+                      { title: 'Tertiary', value: 'tertiary' },
+                      { title: 'Button Primary', value: 'buttonPrimary' },
+                      { title: 'Button Secondary', value: 'buttonSecondary' },
+                      { title: 'Custom Color', value: 'custom' },
+                    ],
+                    layout: 'dropdown',
+                  },
+                  initialValue: 'secondary',
                   hidden: ({parent}) => parent?.type !== 'gradient',
+                },
+                {
+                  name: 'customGradientTo',
+                  title: 'Custom Gradient End Color',
+                  type: 'color',
+                  description: 'Custom end color when not using design system colors',
+                  options: {
+                    disableAlpha: false,
+                  },
+                  hidden: ({parent}) => parent?.type !== 'gradient' || parent?.gradientToSelection !== 'custom',
                 },
                 {
                   name: 'gradientDirection',

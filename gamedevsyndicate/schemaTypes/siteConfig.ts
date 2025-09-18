@@ -1,4 +1,5 @@
 import {defineType, defineField} from 'sanity'
+import { colorSelectionField, customColorField, solidColorFields, gradientColorFields } from './utils/colorSelection'
 
 export default defineType({
   name: 'siteConfig',
@@ -13,15 +14,16 @@ export default defineType({
       initialValue: 'Site Configuration',
       validation: Rule => Rule.required(),
     }),
-    defineField({
-      name: 'menuColor',
-      title: 'Menu Color',
-      type: 'color',
-      description: 'Color for the top menu',
-      options: {
-        disableAlpha: false,
-      },
-    }),
+    colorSelectionField(
+      'menuColorSelection',
+      'Menu Color',
+      'Choose menu color from design system or use custom color'
+    ),
+    customColorField(
+      'customMenuColor',
+      'Custom Menu Color',
+      'Custom menu color when not using design system colors'
+    ),
     defineField({
       name: 'pageBackground',
       title: 'Page Background',
@@ -43,25 +45,91 @@ export default defineType({
           initialValue: 'gradient',
         },
         {
-          name: 'solidColor',
-          title: 'Solid Color',
-          type: 'color',
-          description: 'Single background color',
+          name: 'solidColorSelection',
+          title: 'Background Color',
+          type: 'string',
+          description: 'Choose from design system colors or use custom color',
+          options: {
+            list: [
+              { title: 'Primary', value: 'primary' },
+              { title: 'Secondary', value: 'secondary' },
+              { title: 'Tertiary', value: 'tertiary' },
+              { title: 'Button Primary', value: 'buttonPrimary' },
+              { title: 'Button Secondary', value: 'buttonSecondary' },
+              { title: 'Custom Color', value: 'custom' },
+            ],
+            layout: 'dropdown',
+          },
+          initialValue: 'primary',
           hidden: ({parent}) => parent?.type !== 'solid',
         },
         {
-          name: 'gradientFrom',
-          title: 'Gradient Start Color',
+          name: 'customSolidColor',
+          title: 'Custom Background Color',
           type: 'color',
-          description: 'Starting color for gradient',
+          description: 'Custom background color when not using design system colors',
+          options: {
+            disableAlpha: false,
+          },
+          hidden: ({parent}) => parent?.type !== 'solid' || parent?.solidColorSelection !== 'custom',
+        },
+        {
+          name: 'gradientFromSelection',
+          title: 'Gradient Start Color',
+          type: 'string',
+          description: 'Choose start color from design system or use custom color',
+          options: {
+            list: [
+              { title: 'Primary', value: 'primary' },
+              { title: 'Secondary', value: 'secondary' },
+              { title: 'Tertiary', value: 'tertiary' },
+              { title: 'Button Primary', value: 'buttonPrimary' },
+              { title: 'Button Secondary', value: 'buttonSecondary' },
+              { title: 'Custom Color', value: 'custom' },
+            ],
+            layout: 'dropdown',
+          },
+          initialValue: 'primary',
           hidden: ({parent}) => parent?.type !== 'gradient',
         },
         {
-          name: 'gradientTo',
-          title: 'Gradient End Color',
+          name: 'customGradientFrom',
+          title: 'Custom Gradient Start Color',
           type: 'color',
-          description: 'Ending color for gradient',
+          description: 'Custom start color when not using design system colors',
+          options: {
+            disableAlpha: false,
+          },
+          hidden: ({parent}) => parent?.type !== 'gradient' || parent?.gradientFromSelection !== 'custom',
+        },
+        {
+          name: 'gradientToSelection',
+          title: 'Gradient End Color',
+          type: 'string',
+          description: 'Choose end color from design system or use custom color',
+          options: {
+            list: [
+              { title: 'Primary', value: 'primary' },
+              { title: 'Secondary', value: 'secondary' },
+              { title: 'Tertiary', value: 'tertiary' },
+              { title: 'Button Primary', value: 'buttonPrimary' },
+              { title: 'Button Secondary', value: 'buttonSecondary' },
+              { title: 'Custom Color', value: 'custom' },
+            ],
+            layout: 'dropdown',
+          },
+          initialValue: 'secondary',
           hidden: ({parent}) => parent?.type !== 'gradient',
+        },
+        {
+          name: 'customGradientTo',
+          title: 'Custom Gradient End Color',
+          type: 'color',
+          description: 'Custom end color when not using design system colors',
+          options: {
+            disableAlpha: false,
+          },
+          hidden: ({parent}) => parent?.type !== 'gradient' || parent?.gradientToSelection !== 'custom',
         },
         {
           name: 'gradientDirection',

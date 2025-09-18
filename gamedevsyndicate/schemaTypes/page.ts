@@ -1,4 +1,5 @@
 import {defineType, defineField} from 'sanity'
+import { colorSelectionField, customColorField } from './utils/colorSelection'
 
 export default defineType({
   name: 'page',
@@ -36,15 +37,16 @@ export default defineType({
       initialValue: 100,
       hidden: ({parent}) => !parent?.showInNavigation,
     }),
-    defineField({
-      name: 'backgroundColor',
-      title: 'Background Color',
-      type: 'color',
-      description: 'Background color for the page',
-      options: {
-        disableAlpha: false,
-      },
-    }),
+    colorSelectionField(
+      'backgroundColorSelection',
+      'Background Color',
+      'Choose background color from design system or use custom color'
+    ),
+    customColorField(
+      'customBackgroundColor',
+      'Custom Background Color',
+      'Custom background color when not using design system colors'
+    ),
     defineField({
       name: 'content',
       title: 'Content Blocks',

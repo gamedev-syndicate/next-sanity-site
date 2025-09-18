@@ -1,4 +1,8 @@
 // Sanity content types
+
+// Design system color selection type
+export type ColorSelection = 'primary' | 'secondary' | 'tertiary' | 'buttonPrimary' | 'buttonSecondary' | 'custom';
+
 export interface SanityImage {
   _type: 'image';
   asset: {
@@ -123,6 +127,36 @@ export interface SiteConfig {
     hex: string;
     alpha?: number;
   };
+  // New design system menu color fields
+  menuColorSelection?: ColorSelection;
+  customMenuColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  // Legacy brand colors for backward compatibility
+  brandColors?: {
+    primaryColor?: {
+      _type: 'color';
+      hex: string;
+      alpha?: number;
+    };
+    secondaryColor?: {
+      _type: 'color';
+      hex: string;
+      alpha?: number;
+    };
+    buttonPrimaryColor?: {
+      _type: 'color';
+      hex: string;
+      alpha?: number;
+    };
+    buttonSecondaryColor?: {
+      _type: 'color';
+      hex: string;
+      alpha?: number;
+    };
+  };
   pageBackground?: PageBackground;
   overlayTexture?: OverlayTexture;
   navigationItems?: NavigationItem[];
@@ -145,6 +179,7 @@ export interface Page {
 
 export interface SectionBackground {
   type: 'none' | 'solid' | 'gradient' | 'image';
+  // Legacy color fields for backward compatibility
   solidColor?: {
     _type: 'color';
     hex: string;
@@ -156,6 +191,25 @@ export interface SectionBackground {
     alpha?: number;
   };
   gradientTo?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  // New design system color selection fields
+  solidColorSelection?: ColorSelection;
+  customSolidColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientFromSelection?: ColorSelection;
+  customGradientFrom?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  gradientToSelection?: ColorSelection;
+  customGradientTo?: {
     _type: 'color';
     hex: string;
     alpha?: number;
@@ -201,6 +255,16 @@ export interface Homepage {
 }
 
 import type { SanityDocument } from '@sanity/client'
+
+export interface Company {
+  _id: string;
+  _type: 'company';
+  name: string;
+  logo?: SanityImage;
+  ceoName?: string;
+  email?: string;
+  description?: string;
+}
 
 export interface CompanyListBlock {
   _type: 'companyListBlock';

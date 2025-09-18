@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { colorSelectionField, customColorField } from './utils/colorSelection'
 
 export default defineType({
   name: 'companyListBlock',
@@ -31,22 +32,26 @@ export default defineType({
       },
       initialValue: 'grid',
     }),
-    defineField({
-      name: 'backgroundColor',
-      title: 'Background Color',
-      type: 'color',
-      options: {
-        disableAlpha: false,
-      },
-    }),
-    defineField({
-      name: 'borderColor',
-      title: 'Border Color',
-      type: 'color',
-      options: {
-        disableAlpha: false,
-      },
-    }),
+    colorSelectionField(
+      'backgroundColorSelection',
+      'Background Color',
+      'Choose background color from design system or use custom color'
+    ),
+    customColorField(
+      'customBackgroundColor',
+      'Custom Background Color',
+      'Custom background color when not using design system colors'
+    ),
+    colorSelectionField(
+      'borderColorSelection',
+      'Border Color',
+      'Choose border color from design system or use custom color'
+    ),
+    customColorField(
+      'customBorderColor',
+      'Custom Border Color',
+      'Custom border color when not using design system colors'
+    ),
     defineField({
       name: 'maxItemsPerRow',
       title: 'Max Items Per Row',

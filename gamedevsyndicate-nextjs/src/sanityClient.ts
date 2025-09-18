@@ -1,22 +1,22 @@
 import { createClient } from '@sanity/client';
-import { config } from './config';
+import { sanityClientConfig } from './lib/sanity-client-config';
 
 export const sanityClient = createClient({
-  projectId: config.sanity.projectId,
-  dataset: config.sanity.dataset,
-  apiVersion: config.sanity.apiVersion,
+  projectId: sanityClientConfig.projectId,
+  dataset: sanityClientConfig.dataset,
+  apiVersion: sanityClientConfig.apiVersion,
   useCdn: true,
-  token: config.sanity.token,
+  token: process.env.SANITY_API_TOKEN,
 });
 
 // Updated client for draft mode
 export function getClient(preview = false) {
   return createClient({
-    projectId: config.sanity.projectId,
-    dataset: config.sanity.dataset,
-    apiVersion: config.sanity.apiVersion,
-    useCdn: !preview && config.features.caching,
-    token: config.sanity.token,
+    projectId: sanityClientConfig.projectId,
+    dataset: sanityClientConfig.dataset,
+    apiVersion: sanityClientConfig.apiVersion,
+    useCdn: !preview && process.env.NODE_ENV === 'production',
+    token: process.env.SANITY_API_TOKEN,
     perspective: preview ? 'previewDrafts' : 'published',
   });
 }
