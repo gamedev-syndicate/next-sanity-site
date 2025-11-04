@@ -150,7 +150,10 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
       // Calculate how many items can fit
       let newItemsPerRow = Math.floor(containerWidth / horizontalSpacing);
       
-      // Respect the max limit
+      // Clamp to maximum of 5 items per row
+      newItemsPerRow = Math.min(newItemsPerRow, 5);
+      
+      // Respect the max limit from props
       if (maxItemsPerRow) {
         newItemsPerRow = Math.min(newItemsPerRow, maxItemsPerRow);
       }
@@ -173,10 +176,112 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [maxItemsPerRow, size, gap]);
 
-  // Split companies into rows
+  // Calculate optimal itemsPerRow for best brick pattern distribution
+  const calculateOptimalItemsPerRow = (totalItems: number, maxItemsPerRow: number): number => {
+    // If we have very few items, just use a reasonable size
+    if (totalItems <= 3) return Math.min(totalItems, maxItemsPerRow);
+    
+    // Try different itemsPerRow values and score them
+    let bestItemsPerRow = maxItemsPerRow;
+    let bestScore = -Infinity;
+    
+    // Test from maxItemsPerRow down to 70% (prefer staying closer to max)
+    const minToTest = Math.max(3, Math.floor(maxItemsPerRow * 0.7));
+    
+    for (let testPerRow = maxItemsPerRow; testPerRow >= minToTest; testPerRow--) {
+      // Simulate the distribution with this itemsPerRow
+      const simulation: number[] = [];
+      let remaining = totalItems;
+      let rowIdx = 0;
+      
+      while (remaining > 0) {
+        const isOdd = rowIdx % 2 === 1;
+        const maxForRow = isOdd ? Math.max(1, testPerRow - 1) : testPerRow;
+        const rowSize = Math.min(maxForRow, remaining);
+        simulation.push(rowSize);
+        remaining -= rowSize;
+        rowIdx++;
+      }
+      
+      // Score this distribution (higher is better)
+      let score = 0;
+      
+      // STRONG preference for using more width (multiply by 10 to make it significant)
+      score += testPerRow * 10;
+      
+      // Penalty for single-row layout when we have enough items for a brick pattern
+      if (simulation.length === 1 && totalItems >= 5) {
+        score -= 100; // Very strong penalty - we want brick pattern!
+      }
+      
+      // Heavy penalty for consecutive rows with same size (breaks brick pattern)
+      for (let i = 0; i < simulation.length - 1; i++) {
+        if (simulation[i] === simulation[i + 1]) {
+          score -= 50;
+        }
+      }
+      
+      // Moderate penalty for very small last row (< 30% of itemsPerRow) but only if it's really tiny
+      if (simulation.length > 1) {
+        const lastRow = simulation[simulation.length - 1];
+        if (lastRow === 1 && testPerRow > 4) {
+          score -= 25; // Single item last row on large grid looks bad
+        } else if (lastRow < testPerRow * 0.3) {
+          score -= 10;
+        }
+      }
+      
+      // Bonus for maintaining strict N, N-1 pattern
+      for (let i = 0; i < simulation.length - 1; i++) {
+        const isEvenRow = i % 2 === 0;
+        const expectedMax = isEvenRow ? testPerRow : testPerRow - 1;
+        if (simulation[i] === expectedMax) {
+          score += 3;
+        }
+      }
+      
+      // Bonus for having 2-3 rows (sweet spot for brick pattern)
+      if (simulation.length >= 2 && simulation.length <= 3) {
+        score += 15;
+      }
+      
+      if (score > bestScore) {
+        bestScore = score;
+        bestItemsPerRow = testPerRow;
+      }
+    }
+    
+    return bestItemsPerRow;
+  };
+  
+  // Calculate optimal itemsPerRow based on total items
+  const optimalItemsPerRow = calculateOptimalItemsPerRow(companies.length, itemsPerRow);
+  
+  console.log(`Original itemsPerRow: ${itemsPerRow}, Optimal: ${optimalItemsPerRow}, Total items: ${companies.length}`);
+
+  // Split companies into rows with strict brick pattern
+  // Even rows (0, 2, 4...): N items
+  // Odd rows (1, 3, 5...): N-1 items (creates brick/offset pattern)
+  // Strictly follows the pattern until items run out - no redistribution
   const rows: CompanyData[][] = [];
-  for (let i = 0; i < companies.length; i += itemsPerRow) {
-    rows.push(companies.slice(i, i + itemsPerRow));
+  let i = 0;
+  let rowIndex = 0;
+  
+  while (i < companies.length) {
+    const isOddRow = rowIndex % 2 === 1;
+    const remainingItems = companies.length - i;
+    
+    // Strictly follow the brick pattern: even rows get optimalItemsPerRow, odd rows get optimalItemsPerRow - 1
+    const patternMaxLength = isOddRow ? Math.max(1, optimalItemsPerRow - 1) : optimalItemsPerRow;
+    
+    // Take either the pattern max or whatever's remaining, whichever is smaller
+    const rowLength = Math.min(patternMaxLength, remainingItems);
+    
+    rows.push(companies.slice(i, i + rowLength));
+    console.log(`Row ${rowIndex}: ${rowLength} items (pattern max: ${patternMaxLength}, isOddRow: ${isOddRow}, remaining: ${remainingItems})`);
+    
+    i += rowLength;
+    rowIndex++;
   }
 
   // Calculate spacing
@@ -214,14 +319,17 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
         flexDirection: 'column',
         alignItems: 'center',
         padding: `${gap}px`,
+        paddingTop: `${size * 0.5}px`, // Extra top padding to account for rotation overflow
         overflow: 'visible',
       }}
     >
       {rows.map((row, rowIdx) => {
         const isOffsetRow = rowIdx % 2 === 1;
         const topMargin = rowIdx === 0 ? '0' : `${verticalSpacing}px`;
+        // No offset for brick pattern
+        const offsetValue = 0;
         
-        console.log(`Row ${rowIdx}: marginTop = ${topMargin}, isOffsetRow = ${isOffsetRow}`);
+        console.log(`Row ${rowIdx}: items = ${row.length}, isOffsetRow = ${isOffsetRow}, offsetValue = ${offsetValue}px, size = ${size}`);
         
         return (
           <div
@@ -238,8 +346,7 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
               style={{
                 display: 'flex',
                 gap: `${horizontalSpacing}px`,
-                position: 'relative',
-                left: isOffsetRow ? `${(size + horizontalSpacing) / 2}px` : '0px',
+                marginLeft: isOffsetRow ? `${offsetValue}px` : '0px',
               }}
             >
               {row.map((company, colIdx) => (
