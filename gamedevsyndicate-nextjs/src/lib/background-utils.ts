@@ -367,11 +367,11 @@ export function generateSVGPatternStyle(
     WebkitMaskSize: `${size}px ${size}px`,
     WebkitMaskPosition: '0 0',
     pointerEvents: 'none',
-    position: 'absolute', // <-- FIXED for page-level
+    position: isSection ? 'absolute' : 'fixed', // Fixed for page-level to cover entire viewport
     top: 0,
     left: 0,
-    width: isSection ? '100%' : '100vw',        // <-- 100vw for page-level
-    height: isSection ? '100%' : '100vh',       // <-- 100vh for page-level
+    width: isSection ? '100%' : '100vw',
+    height: isSection ? '100%' : '100vh',
     zIndex: 0,
   };
 }

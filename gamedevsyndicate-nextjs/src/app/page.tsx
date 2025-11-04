@@ -1,5 +1,4 @@
-import { PortableText } from '@portabletext/react';
-import { customComponents } from '../components/CustomBlocks';
+import RichTextRenderer from '../components/RichTextRendererClient';
 import DynamicStyles from '../components/DynamicStyles';
 import SvgOverlay from '../components/SvgOverlay';
 import { getHomepage, getSiteConfig, getDesignSystem } from '../lib/sanity-queries';
@@ -105,10 +104,7 @@ export default async function Home() {
       {homepage.textArea && (
         <section className={styles.textSection}>
           <div className={styles.textContent}>
-            <PortableText 
-              value={homepage.textArea} 
-              components={customComponents} 
-            />
+            <RichTextRenderer value={homepage.textArea} />
           </div>
         </section>
       )}
@@ -147,10 +143,7 @@ export default async function Home() {
                   <>
                     {section.content.map((block, blockIndex) => (
                       <div key={block._key || blockIndex} className={styles.blockItem}>
-                        <PortableText 
-                          value={[block]} 
-                          components={customComponents} 
-                        />
+                        <RichTextRenderer value={[block]} />
                       </div>
                     ))}
                   </>
@@ -166,10 +159,7 @@ export default async function Home() {
         <section className={styles.blockSection}>
           {homepage.blockArea.map((block, index) => (
             <div key={block._key || index} className={styles.blockItem}>
-              <PortableText 
-                value={[block]} 
-                components={customComponents} 
-              />
+              <RichTextRenderer value={[block]} />
             </div>
           ))}
         </section>

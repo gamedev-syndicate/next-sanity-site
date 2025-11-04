@@ -33,11 +33,12 @@ export function DesignSystemProvider({ children, designSystem, fallbackColors }:
       if (fallbackColors.secondaryColor) {
         fallbackCSS.push(`--color-secondary: ${fallbackColors.secondaryColor.hex};`);
       }
+      // Use kebab-case names to match generateCSSVariables and getCSSVariableForColor
       if (fallbackColors.buttonPrimaryColor) {
-        fallbackCSS.push(`--color-buttonPrimary: ${fallbackColors.buttonPrimaryColor.hex};`);
+        fallbackCSS.push(`--color-button-primary: ${fallbackColors.buttonPrimaryColor.hex};`);
       }
       if (fallbackColors.buttonSecondaryColor) {
-        fallbackCSS.push(`--color-buttonSecondary: ${fallbackColors.buttonSecondaryColor.hex};`);
+        fallbackCSS.push(`--color-button-secondary: ${fallbackColors.buttonSecondaryColor.hex};`);
       }
       
       if (fallbackCSS.length > 0) {

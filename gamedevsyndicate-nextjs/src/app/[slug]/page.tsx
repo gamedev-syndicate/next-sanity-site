@@ -1,12 +1,11 @@
-import { PortableText } from '@portabletext/react';
 import { notFound } from 'next/navigation';
-import { customComponents } from '../../components/CustomBlocks';
 import DynamicStyles from '../../components/DynamicStyles';
 import SvgOverlay from '../../components/SvgOverlay';
 import { getPage, getSiteConfig, getDesignSystem, getAllPageSlugs } from '../../lib/sanity-queries';
 import { generateBackgroundStyle, sanityColorToCSS } from '../../lib/background-utils';
 import type { Metadata } from 'next';
 
+import RichTextRenderer from '../../components/RichTextRendererClient';
 interface PageProps {
   params: { slug: string };
 }
@@ -102,7 +101,7 @@ export default async function Page({ params }: PageProps) {
           
           {page.content && (
             <div className="prose prose-invert prose-lg max-w-none">
-              <PortableText value={page.content} components={customComponents} />
+              <RichTextRenderer value={page.content} />
             </div>
           )}
         </div>
