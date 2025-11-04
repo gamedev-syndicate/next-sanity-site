@@ -71,10 +71,9 @@ const TiltedSquare: React.FC<{
         transform: "rotate(45deg)",
         background: getBackgroundColor(),
         border: `2.5px solid ${getBorderColor()}`,
-        margin: 20,
-        position: "relative",
         transition: "box-shadow 0.2s",
-        boxShadow: "0 2px 8px 0 #0002"
+        boxShadow: "0 2px 8px 0 #0002",
+        flexShrink: 0,
       }}
     >
       <div
@@ -141,79 +140,124 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
   borderColor,
 }) => {
   const [itemsPerRow, setItemsPerRow] = useState(Math.max(1, maxItemsPerRow || 5));
-  const [squareSize, setSquareSize] = useState(size);
 
   useEffect(() => {
     function handleResize() {
-      let newItemsPerRow = Math.max(1, maxItemsPerRow || 5);
-      if (window.innerWidth < 500) newItemsPerRow = 2;
-      else if (window.innerWidth < 800) newItemsPerRow = 3;
-      setItemsPerRow(newItemsPerRow);
-
-      // Responsive square size for 2 items per row
-      if (newItemsPerRow === 2) {
-        // The grid width is 2 * (size * sqrt(2) + gap)
-        // We want this to fit within window.innerWidth - some padding
-        const maxGridWidth = window.innerWidth - 140; // 16px padding on each side
-        const maxSquareSize = (maxGridWidth - 2 * gap) / (2 * Math.SQRT2);
-        setSquareSize(Math.min(size, Math.floor(maxSquareSize)));
-      } else {
-        setSquareSize(size);
+      const containerWidth = window.innerWidth - 80; // Account for padding
+      const diagonal = size * Math.SQRT2;
+      const horizontalSpacing = diagonal + gap * 2; // Space needed per item
+      
+      // Calculate how many items can fit
+      let newItemsPerRow = Math.floor(containerWidth / horizontalSpacing);
+      
+      // Respect the max limit
+      if (maxItemsPerRow) {
+        newItemsPerRow = Math.min(newItemsPerRow, maxItemsPerRow);
       }
+      
+      // Ensure at least 1 item
+      newItemsPerRow = Math.max(1, newItemsPerRow);
+      
+      // Mobile breakpoints
+      if (window.innerWidth < 500) {
+        newItemsPerRow = Math.min(newItemsPerRow, 2);
+      } else if (window.innerWidth < 800) {
+        newItemsPerRow = Math.min(newItemsPerRow, 3);
+      }
+      
+      setItemsPerRow(newItemsPerRow);
     }
+    
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [maxItemsPerRow, size, gap]);
 
+  // Split companies into rows
   const rows: CompanyData[][] = [];
   for (let i = 0; i < companies.length; i += itemsPerRow) {
     rows.push(companies.slice(i, i + itemsPerRow));
   }
 
-  const diamondHeight = squareSize * Math.SQRT2 / 2;
-  const verticalStep = diamondHeight + gap / 2;
-  const horizontalStep = squareSize * Math.SQRT2 + gap;
-  const gridWidth = itemsPerRow * horizontalStep;
+  // Calculate spacing
+  // IMPORTANT: CSS transform doesn't change layout box! 
+  // Layout box = size × size, but visual appearance = diagonal × diagonal
+  const diagonal = size * Math.SQRT2; // Visual size after rotation
+  
+  // Horizontal: account for visual overflow from rotation
+  // Visual overlap = diagonal - size (total overflow on both sides)
+  // To get 'gap' visual spacing: flex gap = gap + (diagonal - size)
+  const horizontalSpacing = gap + (diagonal - size);
+  
+  // Vertical: for snug brick pattern with minimal gap
+  // We want rows to nestle closely, with just a small gap
+  // Each row's layout is 'size' tall, but visually 'diagonal' tall
+  // For tight nesting: rows should nestle at the diamond's widest point
+  // This is approximately at the center, so we need about -size/2 overlap
+  const verticalSpacing = -size * 0.3;
+  
+  console.log('TiltedSquareGrid spacing:', {
+    size,
+    gap,
+    diagonal,
+    horizontalSpacing,
+    verticalSpacing,
+    rowCount: rows.length
+  });
 
   return (
     <div
       className="tilted-square-grid"
       style={{
-        position: 'relative',
         width: '100%',
-        maxWidth: gridWidth,
-        margin: '0 auto',
-        padding: gap,
-        minHeight: rows.length * verticalStep + squareSize / 2,
-        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: `${gap}px`,
+        overflow: 'visible',
       }}
     >
-      {rows.map((row, rowIdx) =>
-        row.map((company, colIdx) => {
-          const left = colIdx * horizontalStep + (rowIdx % 2 === 1 ? horizontalStep / 2 : 0);
-          return (
+      {rows.map((row, rowIdx) => {
+        const isOffsetRow = rowIdx % 2 === 1;
+        const topMargin = rowIdx === 0 ? '0' : `${verticalSpacing}px`;
+        
+        console.log(`Row ${rowIdx}: marginTop = ${topMargin}, isOffsetRow = ${isOffsetRow}`);
+        
+        return (
+          <div
+            key={`row-${rowIdx}`}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              marginTop: topMargin, // Apply negative margin to all rows except first
+            }}
+          >
             <div
-              key={`${company._id}-${rowIdx}-${colIdx}`}
               style={{
-                position: 'absolute',
-                left: `calc(${left}px)`,
-                top: rowIdx * verticalStep,
+                display: 'flex',
+                gap: `${horizontalSpacing}px`,
+                position: 'relative',
+                left: isOffsetRow ? `${(size + horizontalSpacing) / 2}px` : '0px',
               }}
             >
-              <TiltedSquare
-                company={company}
-                showDescription={showDescription}
-                showCEO={showCEO}
-                showEmail={showEmail}
-                size={squareSize}
-                backgroundColor={backgroundColor}
-                borderColor={borderColor}
-              />
+              {row.map((company, colIdx) => (
+                <TiltedSquare
+                  key={`${company._id}-${rowIdx}-${colIdx}`}
+                  company={company}
+                  showDescription={showDescription}
+                  showCEO={showCEO}
+                  showEmail={showEmail}
+                  size={size}
+                  backgroundColor={backgroundColor}
+                  borderColor={borderColor}
+                />
+              ))}
             </div>
-          );
-        })
-      )}
+          </div>
+        );
+      })}
     </div>
   );
 };
