@@ -2,6 +2,7 @@ import buttonBlock from './buttonBlock'
 import company from './company'
 import companyBlock from './companyBlock'
 import companyListBlock from './companyListBlock'
+import contactBlock from './contactBlock'
 import designSystem from './designSystem'
 import homepage from './homepage'
 import imageBlock from './imageBlock'
@@ -22,6 +23,7 @@ export const schemaTypes = [
   buttonBlock,
   companyBlock,
   companyListBlock,
+  contactBlock,
   imageBlock,
   textBlock,
   contentSeparator,

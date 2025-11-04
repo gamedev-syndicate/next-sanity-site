@@ -249,7 +249,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
       case 'list':
         return 'space-y-4';
       case 'carousel':
-        return 'flex gap-6 overflow-x-auto pb-4';
+        return 'flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900';
       case 'honeycomb':
         return 'honeycomb-grid';
       case 'tiltedsquare':
@@ -287,16 +287,20 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
           />
         ) : (
           companies.map((company, index) => (
-            <CompanyCard
+            <div 
               key={`${company._id}-${index}`}
-              company={company}
-              layout={layout === 'list' ? 'horizontal' : 'card'}
-              showDescription={showDescription}
-              showCEO={showCEO}
-              showEmail={showEmail}
-              backgroundColor={finalBackgroundColor}
-              borderColor={finalBorderColor}
-            />
+              className={layout === 'carousel' ? 'flex-shrink-0 w-80' : ''}
+            >
+              <CompanyCard
+                company={company}
+                layout={layout === 'list' ? 'horizontal' : 'card'}
+                showDescription={showDescription}
+                showCEO={showCEO}
+                showEmail={showEmail}
+                backgroundColor={finalBackgroundColor}
+                borderColor={finalBorderColor}
+              />
+            </div>
           ))
         )}
       </div>

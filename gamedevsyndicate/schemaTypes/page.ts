@@ -56,6 +56,7 @@ export default defineType({
         {type: 'imageBlock'},
         {type: 'textBlock'},
         {type: 'buttonBlock'},
+        {type: 'contactBlock'},
       ],
     }),
   ],

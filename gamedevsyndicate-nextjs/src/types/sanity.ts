@@ -51,7 +51,34 @@ export interface ButtonBlock {
   openInNewTab: boolean;
 }
 
-export type ContentBlock = ImageBlock | TextBlock | ButtonBlock;
+export interface ContactBlock {
+  _type: 'contactBlock';
+  _key: string;
+  title?: string;
+  description?: any[];
+  nameLabel?: string;
+  emailLabel?: string;
+  messageLabel?: string;
+  buttonText?: string;
+  buttonBackgroundColorSelection?: ColorSelection;
+  customButtonBackgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  buttonTextColorSelection?: ColorSelection;
+  customButtonTextColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  buttonSize?: 'small' | 'medium' | 'large' | 'xl';
+  successMessage?: string;
+  errorMessage?: string;
+  recipientEmail?: string;
+}
+
+export type ContentBlock = ImageBlock | TextBlock | ButtonBlock | ContactBlock;
 
 // Document types
 export interface NavigationItem {

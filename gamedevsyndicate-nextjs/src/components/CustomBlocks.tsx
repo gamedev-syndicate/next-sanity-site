@@ -5,6 +5,7 @@ import { PortableText } from '@portabletext/react';
 import { ImageBlock as ImageBlockType, TextBlock as TextBlockType, ButtonBlock as ButtonBlockType } from '../types/sanity';
 import { CompanyBlock, CompanyListBlock } from './CompanyBlocks';
 import ContentSeparatorBlock from './blocks/ContentSeparatorBlock';
+import { ContactBlock } from './blocks/ContactBlock';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { designSystemColorToCSS } from '../lib/background-utils';
 
@@ -295,6 +296,7 @@ export const customComponents = {
     buttonBlock: ButtonBlock,
     companyBlock: ({ value }: { value: any }) => <CompanyBlock {...value} />,
     companyListBlock: ({ value }: { value: any }) => <CompanyListBlock value={value} />,
+    contactBlock: ({ value }: { value: any }) => <ContactBlock value={value} />,
     callout: Callout,
     image: InlineImage,
     contentSeparator: ({ value }: { value: any }) => {
@@ -444,9 +446,13 @@ export const customComponents = {
 };
 
 export default function CustomBlocks({ blocks, siteConfig }: { blocks: any[]; siteConfig?: any }) {
+  console.log('CustomBlocks rendering blocks:', blocks);
+  
   return (
     <div className="custom-blocks">
       {blocks.map((block) => {
+        console.log('Rendering block type:', block._type, 'with key:', block._key);
+        
         switch (block._type) {
           case 'imageBlock':
             return <ImageBlock key={block._key} {...block} />;
@@ -458,6 +464,9 @@ export default function CustomBlocks({ blocks, siteConfig }: { blocks: any[]; si
             return <CompanyBlock key={block._key} {...block} />;
           case 'companyListBlock':
             return <CompanyListBlock key={block._key} {...block} />;
+          case 'contactBlock':
+            console.log('Rendering ContactBlock with data:', block);
+            return <ContactBlock key={block._key} value={block} />;
           default:
             console.warn(`Unknown block type: ${block._type}`);
             return null;
