@@ -177,7 +177,8 @@
 
 /* Make only the last section expand to fill viewport */
 .homepageSection:last-child {
-  min-height: 100vh;
+  min-height: fit-content; /* Changed from 100vh to fit-content */
+  padding-bottom: 50px; /* Add small margin at the bottom */
 }
 
 /* Remove shadow from first section (override if needed) */
@@ -191,7 +192,7 @@
   margin: 0 auto; /* Center the content horizontally */
   padding: 0 1rem; /* Add some horizontal padding for mobile */
   text-align: center;
-  flex-grow: 1; /* Allow content to grow and fill the section */
+  /* Removed flex-grow: 1 to prevent unnecessary expansion */
   /* Padding will be applied via inline styles from the component */
 }
 
