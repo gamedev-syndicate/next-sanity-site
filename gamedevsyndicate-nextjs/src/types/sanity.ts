@@ -161,6 +161,13 @@ export interface SiteConfig {
     hex: string;
     alpha?: number;
   };
+  // Navigation active indicator color fields
+  navigationActiveColorSelection?: ColorSelection;
+  customNavigationActiveColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
   pageBackground?: PageBackground;
   overlayTexture?: OverlayTexture;
   navigationItems?: NavigationItem[];

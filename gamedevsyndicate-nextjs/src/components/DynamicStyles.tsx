@@ -4,24 +4,39 @@ import { useEffect } from 'react';
 
 interface DynamicStylesProps {
   menuColor?: string;
+  navigationActiveColor?: string;
 }
 
-export default function DynamicStyles({ menuColor }: DynamicStylesProps) {
+export default function DynamicStyles({ menuColor, navigationActiveColor }: DynamicStylesProps) {
   useEffect(() => {
+    const style = document.createElement('style');
+    let styles = '';
+    
     if (menuColor) {
-      const style = document.createElement('style');
-      style.textContent = `
+      styles += `
         header {
           background-color: ${menuColor} !important;
         }
       `;
+    }
+    
+    if (navigationActiveColor) {
+      styles += `
+        .nav-link-active::after {
+          background: ${navigationActiveColor} !important;
+        }
+      `;
+    }
+    
+    if (styles) {
+      style.textContent = styles;
       document.head.appendChild(style);
       
       return () => {
         document.head.removeChild(style);
       };
     }
-  }, [menuColor]);
+  }, [menuColor, navigationActiveColor]);
 
   return null;
 }

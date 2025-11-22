@@ -24,6 +24,16 @@ export default defineType({
       'Custom Menu Color',
       'Custom menu color when not using design system colors'
     ),
+    colorSelectionField(
+      'navigationActiveColorSelection',
+      'Navigation Active Indicator Color',
+      'Choose color for the active page indicator from design system or use custom color'
+    ),
+    customColorField(
+      'customNavigationActiveColor',
+      'Custom Navigation Active Color',
+      'Custom color for active page indicator when not using design system colors'
+    ),
     defineField({
       name: 'pageBackground',
       title: 'Page Background',

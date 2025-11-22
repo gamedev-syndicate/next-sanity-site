@@ -24,6 +24,8 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
       menuColor,
       menuColorSelection,
       customMenuColor,
+      navigationActiveColorSelection,
+      customNavigationActiveColor,
       pageBackground{
         type,
         // Legacy fields

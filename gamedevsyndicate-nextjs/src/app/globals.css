@@ -53,16 +53,32 @@ html::-webkit-scrollbar {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  /* or */
-  /* font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; */
-  /* or */
-  /* font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; */
+  font-family: var(--font-roboto), 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
   font-size: 16px;
   /* Ensure background covers full viewport on mobile */
   min-height: 100vh;
   min-height: 100dvh; /* For mobile browsers with dynamic viewport */
+  position: relative;
+}
+
+/* Vignette effect - fade to edges */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 30%,
+    rgba(0, 0, 0, 0.3) 70%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
 }
 
 /* Global content container - applies to all pages */
@@ -75,6 +91,8 @@ body {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  position: relative;
+  z-index: 10;
 }
 
 /* Global content width restrictions */
@@ -193,3 +211,51 @@ textarea:focus,
 select:focus {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Navigation link styles */
+.nav-link {
+  position: relative;
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+/* Hover effect - subtle color change only */
+.nav-link:hover {
+  color: rgb(147, 197, 253);
+}
+
+/* Active page indicator - text remains white, only the line below shows */
+/* Simple underline effect directly under the text */
+.nav-link-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0.35rem; /* Account for padding-bottom and center under text */
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgb(255, 255, 255);
+  border: none;
+  outline: none;
+  /* box-shadow: 
+    0 0 8px rgba(147, 197, 253, 0.8),
+    0 0 16px rgba(147, 197, 253, 0.4),
+    0 2px 24px rgba(147, 197, 253, 0.3); */
+  /* animation: pulseGlow 2s ease-in-out infinite; */
+}
+/* 
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 
+      0 0 8px rgba(147, 197, 253, 0.8),
+      0 0 16px rgba(147, 197, 253, 0.4),
+      0 2px 24px rgba(147, 197, 253, 0.3);
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 
+      0 0 12px rgba(147, 197, 253, 1),
+      0 0 24px rgba(147, 197, 253, 0.6),
+      0 2px 32px rgba(147, 197, 253, 0.4);
+  }
+} */
