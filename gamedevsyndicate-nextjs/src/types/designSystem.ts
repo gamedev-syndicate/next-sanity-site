@@ -27,6 +27,8 @@ export interface ColorPalette {
   tertiary: ColorValue
   buttonPrimary: ColorValue
   buttonSecondary: ColorValue
+  buttonTextPrimary: ColorValue
+  buttonTextSecondary: ColorValue
 }
 
 export interface AccessibilitySettings {

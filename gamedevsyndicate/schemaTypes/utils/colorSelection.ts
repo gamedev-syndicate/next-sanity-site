@@ -13,6 +13,8 @@ export const colorSelectionField = (name: string, title: string, description?: s
         { title: 'Tertiary', value: 'tertiary' },
         { title: 'Button Primary', value: 'buttonPrimary' },
         { title: 'Button Secondary', value: 'buttonSecondary' },
+        { title: 'Button Text Primary', value: 'buttonTextPrimary' },
+        { title: 'Button Text Secondary', value: 'buttonTextSecondary' },
         { title: 'Custom Color', value: 'custom' },
       ],
       layout: 'dropdown',

@@ -40,24 +40,12 @@ export default async function RootLayout({
   
   if (siteConfig?.menuColorSelection) {
     if (siteConfig.menuColorSelection !== 'custom') {
-      // Try design system first, fallback to brandColors
-      let colorValue = null;
-      
+      // Use design system colors
       if (designSystem?.colors) {
-        colorValue = designSystem.colors[siteConfig.menuColorSelection as keyof typeof designSystem.colors];
-      } else if (siteConfig.brandColors) {
-        // Fallback to old brandColors system
-        const brandColorMapping: Record<string, any> = {
-          'primary': siteConfig.brandColors.primaryColor,
-          'secondary': siteConfig.brandColors.secondaryColor,
-          'buttonPrimary': siteConfig.brandColors.buttonPrimaryColor,
-          'buttonSecondary': siteConfig.brandColors.buttonSecondaryColor,
-        };
-        colorValue = brandColorMapping[siteConfig.menuColorSelection];
-      }
-      
-      if (colorValue?.hex) {
-        menuColor = colorValue.hex;
+        const colorValue = designSystem.colors[siteConfig.menuColorSelection as keyof typeof designSystem.colors];
+        if (colorValue?.hex) {
+          menuColor = colorValue.hex;
+        }
       }
     } else if (siteConfig.customMenuColor) {
       // Use custom color
@@ -74,7 +62,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
         style={backgroundStyle}
       >
-        <DesignSystemProvider designSystem={designSystem} fallbackColors={siteConfig?.brandColors}>
+        <DesignSystemProvider designSystem={designSystem}>
           <header className="w-full py-4 flex items-center justify-center bg-black/60 backdrop-blur-md shadow-lg fixed top-0 left-0 z-50" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <nav className="space-x-6">
               {navigationItems.map((item, index) => (

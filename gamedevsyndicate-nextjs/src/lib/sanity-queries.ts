@@ -12,10 +12,8 @@ async function getQueryClient() {
 
 // Helper to get cache settings
 function getCacheConfig() {
-  if (!config.features.caching || config.app.environment === 'dev') {
-    return { next: { revalidate: 0 } };
-  }
-  return { next: { revalidate: 60 } };
+  // Always disable cache for immediate updates during development
+  return { next: { revalidate: 0 } };
 }
 
 export async function getSiteConfig(): Promise<SiteConfig | null> {
@@ -26,12 +24,6 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
       menuColor,
       menuColorSelection,
       customMenuColor,
-      brandColors{
-        primaryColor,
-        secondaryColor,
-        buttonPrimaryColor,
-        buttonSecondaryColor
-      },
       pageBackground{
         type,
         // Legacy fields
@@ -74,12 +66,6 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
         opacity
       },
       navigationItems,
-      brandColors {
-        primaryColor,
-        secondaryColor,
-        buttonPrimaryColor,
-        buttonSecondaryColor
-      },
       buttonConfig {
         styles[] {
           key,
@@ -300,7 +286,9 @@ export async function getDesignSystem() {
         secondary,
         tertiary,
         buttonPrimary,
-        buttonSecondary
+        buttonSecondary,
+        buttonTextPrimary,
+        buttonTextSecondary
       }
     }`;
     const client = await getQueryClient();

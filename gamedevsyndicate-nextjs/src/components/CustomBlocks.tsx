@@ -203,7 +203,7 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
   let backgroundColor = '';
   let textColor = '';
   
-  // Try design system colors first
+  // Resolve background color
   if (value.backgroundColorSelection) {
     if (value.backgroundColorSelection === 'custom' && value.customBackgroundColor) {
       backgroundColor = value.customBackgroundColor.alpha 
@@ -215,8 +215,12 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
         backgroundColor = designSystemColorToCSS(colorValue);
       }
     }
+  } else if (designSystem?.colors?.buttonPrimary) {
+    // Default to buttonPrimary if no color selection specified
+    backgroundColor = designSystemColorToCSS(designSystem.colors.buttonPrimary);
   }
   
+  // Resolve text color
   if (value.textColorSelection) {
     if (value.textColorSelection === 'custom' && value.customTextColor) {
       textColor = value.customTextColor.alpha 
@@ -228,22 +232,15 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
         textColor = designSystemColorToCSS(colorValue);
       }
     }
+  } else if (designSystem?.colors?.buttonTextPrimary) {
+    // Default to buttonTextPrimary if no text color selection specified
+    textColor = designSystemColorToCSS(designSystem.colors.buttonTextPrimary);
+  } else if (!textColor && backgroundColor) {
+    // Fallback to white text if we have a background color but no design system text color
+    textColor = '#ffffff';
   }
   
-  // Fallback to legacy brand colors if design system colors not set
-  if (!backgroundColor && value.useBrandColor && siteConfig?.brandColors) {
-    const brandColor = value.brandColorType === 'secondary' 
-      ? siteConfig.brandColors.buttonSecondaryColor 
-      : siteConfig.brandColors.buttonPrimaryColor;
-    
-    if (brandColor) {
-      backgroundColor = brandColor.alpha 
-        ? `rgba(${parseInt(brandColor.hex.slice(1, 3), 16)}, ${parseInt(brandColor.hex.slice(3, 5), 16)}, ${parseInt(brandColor.hex.slice(5, 7), 16)}, ${brandColor.alpha})` 
-        : brandColor.hex;
-    }
-  }
-  
-  const baseClasses = 'inline-block rounded-lg font-semibold transition-colors px-6 py-3 text-base';
+  const baseClasses = 'inline-block rounded-lg font-semibold transition-colors px-6 py-3 text-base shadow-xl hover:shadow-2xl';
   
   // Build style classes based on available colors
   let styleClasses = '';
@@ -254,11 +251,11 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
   } else if (textColor) {
     // Use default background with custom text color
     styleClasses = value.style === 'secondary' ? 'bg-gray-600 hover:bg-gray-700'
-      : 'bg-orange-600 hover:bg-orange-700';
+      : 'bg-purple-600 hover:bg-purple-700';
   } else {
-    // Fallback to style-based colors
+    // Fallback to hard purple to easily spot missing configuration
     styleClasses = value.style === 'secondary' ? 'bg-gray-600 hover:bg-gray-700 text-white'
-      : 'bg-orange-600 hover:bg-orange-700 text-white';
+      : 'bg-purple-600 hover:bg-purple-700 text-white';
   }
 
   // Use flexbox for proper button alignment

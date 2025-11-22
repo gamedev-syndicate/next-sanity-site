@@ -161,29 +161,6 @@ export interface SiteConfig {
     hex: string;
     alpha?: number;
   };
-  // Legacy brand colors for backward compatibility
-  brandColors?: {
-    primaryColor?: {
-      _type: 'color';
-      hex: string;
-      alpha?: number;
-    };
-    secondaryColor?: {
-      _type: 'color';
-      hex: string;
-      alpha?: number;
-    };
-    buttonPrimaryColor?: {
-      _type: 'color';
-      hex: string;
-      alpha?: number;
-    };
-    buttonSecondaryColor?: {
-      _type: 'color';
-      hex: string;
-      alpha?: number;
-    };
-  };
   pageBackground?: PageBackground;
   overlayTexture?: OverlayTexture;
   navigationItems?: NavigationItem[];

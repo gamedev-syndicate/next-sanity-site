@@ -67,26 +67,6 @@ export default defineType({
       'Custom text color when not using design system colors'
     ),
     defineField({
-      name: 'useBrandColor',
-      title: 'Use Brand Color (Legacy)',
-      type: 'boolean',
-      description: 'Use primary or secondary brand color instead of style-based color',
-      initialValue: false,
-    }),
-    defineField({
-      name: 'brandColorType',
-      title: 'Brand Color Type',
-      type: 'string',
-      options: {
-        list: [
-          {title: 'Primary Brand Color', value: 'primary'},
-          {title: 'Secondary Brand Color', value: 'secondary'},
-        ],
-      },
-      initialValue: 'primary',
-      hidden: ({parent}) => !parent?.useBrandColor,
-    }),
-    defineField({
       name: 'style',
       title: 'Button Style',
       type: 'string',
@@ -94,7 +74,6 @@ export default defineType({
         list: buttonStyleOptions,
       },
       initialValue: 'primary',
-      hidden: ({parent}) => parent?.useBrandColor,
     }),
     defineField({
       name: 'size',
@@ -130,15 +109,12 @@ export default defineType({
       title: 'text',
       subtitle: 'url',
       style: 'style',
-      useBrandColor: 'useBrandColor',
-      brandColorType: 'brandColorType',
       alignment: 'alignment',
     },
-    prepare({title, subtitle, style, useBrandColor, brandColorType, alignment}) {
-      const displayStyle = useBrandColor ? `Brand ${brandColorType}` : style;
+    prepare({title, subtitle, style, alignment}) {
       return {
         title: title || 'Button',
-        subtitle: `${displayStyle} • ${alignment} • ${subtitle}`,
+        subtitle: `${style} • ${alignment} • ${subtitle}`,
       }
     },
   },

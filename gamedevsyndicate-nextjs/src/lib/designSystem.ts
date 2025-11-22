@@ -44,6 +44,8 @@ export function generateCSSVariables(designSystem: DesignSystem): string {
       --color-tertiary: ${colorToCSS(colors.tertiary)};
       --color-button-primary: ${colorToCSS(colors.buttonPrimary)};
       --color-button-secondary: ${colorToCSS(colors.buttonSecondary)};
+      --color-button-text-primary: ${colorToCSS(colors.buttonTextPrimary)};
+      --color-button-text-secondary: ${colorToCSS(colors.buttonTextSecondary)};
       
       /* RGB values for Tailwind CSS */
       --color-primary-rgb: ${colors.primary?.rgb ? `${colors.primary.rgb.r} ${colors.primary.rgb.g} ${colors.primary.rgb.b}` : '0 0 0'};
@@ -51,6 +53,8 @@ export function generateCSSVariables(designSystem: DesignSystem): string {
       --color-tertiary-rgb: ${colors.tertiary?.rgb ? `${colors.tertiary.rgb.r} ${colors.tertiary.rgb.g} ${colors.tertiary.rgb.b}` : '0 0 0'};
       --color-button-primary-rgb: ${colors.buttonPrimary?.rgb ? `${colors.buttonPrimary.rgb.r} ${colors.buttonPrimary.rgb.g} ${colors.buttonPrimary.rgb.b}` : '0 0 0'};
       --color-button-secondary-rgb: ${colors.buttonSecondary?.rgb ? `${colors.buttonSecondary.rgb.r} ${colors.buttonSecondary.rgb.g} ${colors.buttonSecondary.rgb.b}` : '0 0 0'};
+      --color-button-text-primary-rgb: ${colors.buttonTextPrimary?.rgb ? `${colors.buttonTextPrimary.rgb.r} ${colors.buttonTextPrimary.rgb.g} ${colors.buttonTextPrimary.rgb.b}` : '255 255 255'};
+      --color-button-text-secondary-rgb: ${colors.buttonTextSecondary?.rgb ? `${colors.buttonTextSecondary.rgb.r} ${colors.buttonTextSecondary.rgb.g} ${colors.buttonTextSecondary.rgb.b}` : '255 255 255'};
     }
   `
 }
@@ -94,6 +98,20 @@ export const defaultDesignSystem: DesignSystem = {
       hsl: { h: 220, s: 9, l: 46, a: 1 },
       hsv: { h: 220, s: 16, v: 50, a: 1 },
       rgb: { r: 107, g: 114, b: 128, a: 1 }
+    },
+    buttonTextPrimary: {
+      hex: '#ffffff',
+      alpha: 1,
+      hsl: { h: 0, s: 0, l: 100, a: 1 },
+      hsv: { h: 0, s: 0, v: 100, a: 1 },
+      rgb: { r: 255, g: 255, b: 255, a: 1 }
+    },
+    buttonTextSecondary: {
+      hex: '#ffffff',
+      alpha: 1,
+      hsl: { h: 0, s: 0, l: 100, a: 1 },
+      hsv: { h: 0, s: 0, v: 100, a: 1 },
+      rgb: { r: 255, g: 255, b: 255, a: 1 }
     }
   },
   accessibility: {

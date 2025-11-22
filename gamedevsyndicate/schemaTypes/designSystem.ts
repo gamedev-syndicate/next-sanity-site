@@ -68,6 +68,26 @@ export default defineType({
             disableAlpha: false,
           },
         }),
+        defineField({
+          name: 'buttonTextPrimary',
+          title: 'Primary Button Text Color',
+          type: 'color',
+          description: 'Text color for primary action buttons',
+          validation: (rule) => rule.required(),
+          options: {
+            disableAlpha: false,
+          },
+        }),
+        defineField({
+          name: 'buttonTextSecondary',
+          title: 'Secondary Button Text Color',
+          type: 'color',
+          description: 'Text color for secondary action buttons',
+          validation: (rule) => rule.required(),
+          options: {
+            disableAlpha: false,
+          },
+        }),
       ],
     }),
     defineField({

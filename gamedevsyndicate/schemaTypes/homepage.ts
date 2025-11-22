@@ -47,7 +47,7 @@ export default defineType({
           type: 'number',
           description: 'Control banner size (100% = normal, 150% = larger, 75% = smaller)',
           initialValue: 100,
-          validation: Rule => Rule.min(50).max(200),
+          validation: Rule => Rule.min(1).max(300),
         },
       ],
       options: {

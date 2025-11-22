@@ -4,46 +4,18 @@ import { useEffect } from 'react'
 import { generateCSSVariables } from '@/lib/designSystem'
 import type { DesignSystem } from '@/types/designSystem'
 
-interface FallbackColors {
-  primaryColor?: { _type: 'color'; hex: string; alpha?: number };
-  secondaryColor?: { _type: 'color'; hex: string; alpha?: number };
-  buttonPrimaryColor?: { _type: 'color'; hex: string; alpha?: number };
-  buttonSecondaryColor?: { _type: 'color'; hex: string; alpha?: number };
-}
-
 interface DesignSystemProviderProps {
   children: React.ReactNode
   designSystem?: DesignSystem | null
-  fallbackColors?: FallbackColors
 }
 
-export function DesignSystemProvider({ children, designSystem, fallbackColors }: DesignSystemProviderProps) {
+export function DesignSystemProvider({ children, designSystem }: DesignSystemProviderProps) {
   useEffect(() => {
     let cssContent = '';
     
     if (designSystem) {
       // Use the design system to generate CSS variables
       cssContent = generateCSSVariables(designSystem);
-    } else if (fallbackColors) {
-      // Generate CSS variables from fallback colors (old brandColors)
-      const fallbackCSS = [];
-      if (fallbackColors.primaryColor) {
-        fallbackCSS.push(`--color-primary: ${fallbackColors.primaryColor.hex};`);
-      }
-      if (fallbackColors.secondaryColor) {
-        fallbackCSS.push(`--color-secondary: ${fallbackColors.secondaryColor.hex};`);
-      }
-      // Use kebab-case names to match generateCSSVariables and getCSSVariableForColor
-      if (fallbackColors.buttonPrimaryColor) {
-        fallbackCSS.push(`--color-button-primary: ${fallbackColors.buttonPrimaryColor.hex};`);
-      }
-      if (fallbackColors.buttonSecondaryColor) {
-        fallbackCSS.push(`--color-button-secondary: ${fallbackColors.buttonSecondaryColor.hex};`);
-      }
-      
-      if (fallbackCSS.length > 0) {
-        cssContent = `:root { ${fallbackCSS.join(' ')} }`;
-      }
     }
     
     if (cssContent) {
@@ -58,7 +30,7 @@ export function DesignSystemProvider({ children, designSystem, fallbackColors }:
       
       styleElement.textContent = cssContent;
     }
-  }, [designSystem, fallbackColors])
+  }, [designSystem])
 
   return <>{children}</>
 }

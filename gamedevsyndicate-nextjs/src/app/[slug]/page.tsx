@@ -51,24 +51,12 @@ export default async function Page({ params }: PageProps) {
   
   if (siteConfig?.menuColorSelection) {
     if (siteConfig.menuColorSelection !== 'custom') {
-      // Try design system first, fallback to brandColors
-      let colorValue = null;
-      
+      // Use design system colors
       if (designSystem?.colors) {
-        colorValue = designSystem.colors[siteConfig.menuColorSelection as keyof typeof designSystem.colors];
-      } else if (siteConfig.brandColors) {
-        // Fallback to old brandColors system
-        const brandColorMapping: Record<string, any> = {
-          'primary': siteConfig.brandColors.primaryColor,
-          'secondary': siteConfig.brandColors.secondaryColor,
-          'buttonPrimary': siteConfig.brandColors.buttonPrimaryColor,
-          'buttonSecondary': siteConfig.brandColors.buttonSecondaryColor,
-        };
-        colorValue = brandColorMapping[siteConfig.menuColorSelection];
-      }
-      
-      if (colorValue?.hex) {
-        menuColor = colorValue.hex;
+        const colorValue = designSystem.colors[siteConfig.menuColorSelection as keyof typeof designSystem.colors];
+        if (colorValue?.hex) {
+          menuColor = colorValue.hex;
+        }
       }
     } else if (siteConfig.customMenuColor) {
       // Use custom color
