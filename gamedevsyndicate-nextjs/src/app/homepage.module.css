@@ -32,6 +32,7 @@
   margin: 0 auto;
   display: block;
   transition: all 0.3s ease; /* Smooth transitions */
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 /* Only adjust height on very small screens */
