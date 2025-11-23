@@ -6,10 +6,17 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
-      name: 'heading',
-      title: 'Heading',
+      name: 'internalLabel',
+      title: 'Internal Label',
       type: 'string',
-      description: 'Optional heading for this text block',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this block in the editor (e.g., "About Section", "Mission Statement")',
+      placeholder: 'e.g., About Section',
+    }),
+    defineField({
+      name: 'heading',
+      title: 'Heading (Optional)',
+      type: 'string',
+      description: '📝 Optional heading displayed above the text block on the website. Leave empty to hide.',
     }),
     defineField({
       name: 'headingLevel',
@@ -49,15 +56,18 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'heading',
-      subtitle: 'text',
+      internalLabel: 'internalLabel',
+      heading: 'heading',
+      text: 'text',
     },
-    prepare({title, subtitle}) {
+    prepare({internalLabel, heading, text}) {
+      const contentPreview = text && text[0]?.children?.[0]?.text
+        ? `${text[0].children[0].text.substring(0, 50)}...`
+        : 'Rich text content';
+      
       return {
-        title: title || 'Text Block',
-        subtitle: subtitle && subtitle[0]?.children?.[0]?.text
-          ? `${subtitle[0].children[0].text.substring(0, 50)}...`
-          : 'Rich text content',
+        title: internalLabel || heading || 'Text Block',
+        subtitle: `📝 Text Block • ${contentPreview}`,
       }
     },
   },

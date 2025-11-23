@@ -2,14 +2,18 @@ import buttonBlock from './buttonBlock'
 import company from './company'
 import companyBlock from './companyBlock'
 import companyListBlock from './companyListBlock'
+import compactCompanyListBlock from './compactCompanyListBlock'
 import contactBlock from './contactBlock'
 import designSystem from './designSystem'
 import homepage from './homepage'
 import imageBlock from './imageBlock'
+import imageTextBlock from './imageTextBlock'
 import page from './page'
 import siteConfig from './siteConfig'
 import textBlock from './textBlock'
+import shortArticleBlock from './shortArticleBlock'
 import contentSeparator from './blocks/contentSeparator'
+import socialMediaLink from './socialMediaLink'
 
 export const schemaTypes = [
   // Document types
@@ -23,8 +27,14 @@ export const schemaTypes = [
   buttonBlock,
   companyBlock,
   companyListBlock,
+  compactCompanyListBlock,
   contactBlock,
   imageBlock,
+  imageTextBlock,
   textBlock,
+  shortArticleBlock,
   contentSeparator,
+  
+  // Object types
+  socialMediaLink,
 ]

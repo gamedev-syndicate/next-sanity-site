@@ -14,9 +14,6 @@ interface CompanyData {
 
 interface TiltedSquareGridProps {
   companies: CompanyData[];
-  showDescription?: boolean;
-  showCEO?: boolean;
-  showEmail?: boolean;
   size?: number; // px size of the square
   gap?: number; // px gap between squares
   maxItemsPerRow?: number;
@@ -26,14 +23,11 @@ interface TiltedSquareGridProps {
 
 const TiltedSquare: React.FC<{
   company: CompanyData;
-  showDescription?: boolean;
-  showCEO?: boolean;
-  showEmail?: boolean;
   size: number;
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
-}> = ({ company, showDescription = true, showCEO = true, showEmail = false, size, backgroundColor, borderColor }) => {
-  const logoUrl = company.logo ? getImageUrl(company.logo, 55, 55) : null;
+}> = ({ company, size, backgroundColor, borderColor }) => {
+  const logoUrl = company.logo ? getImageUrl(company.logo, 107, 107) : null;
 
   const getBackgroundColor = () => {
     if (!backgroundColor) return "linear-gradient(135deg, #23272f 80%, #1a1d22 100%)";
@@ -58,9 +52,6 @@ const TiltedSquare: React.FC<{
     : false;
 
   const textColor = isLightBackground ? '#000' : '#fff';
-  const subTextColor = isLightBackground ? '#666' : '#ccc';
-  const descTextColor = isLightBackground ? '#888' : '#bbb';
-  const emailTextColor = isLightBackground ? '#999' : '#aaa';
 
   return (
     <div
@@ -93,27 +84,12 @@ const TiltedSquare: React.FC<{
           <img
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
-            style={{ width: 32, height: 32, objectFit: "contain", marginBottom: 4, borderRadius: 4 }}
+            style={{ width: 53, height: 53, objectFit: "contain", marginBottom: 8, borderRadius: 4 }}
           />
         )}
-        <div style={{ fontWeight: 700, color: textColor, fontSize: 14, marginBottom: 2, wordBreak: "break-word" }}>
-          {company.name.length > 12 ? `${company.name.slice(0, 12)}...` : company.name}
+        <div style={{ fontWeight: 700, color: textColor, fontSize: 14, wordBreak: "break-word", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+          {company.name}
         </div>
-        {showCEO && company.ceoName && (
-          <div style={{ color: subTextColor, fontSize: 12, marginBottom: 2 }}>
-            {company.ceoName.length > 10 ? `${company.ceoName.slice(0, 10)}...` : company.ceoName}
-          </div>
-        )}
-        {showDescription && company.description && (
-          <div style={{ color: descTextColor, fontSize: 11, marginBottom: 2 }}>
-            {company.description.length > 18 ? `${company.description.slice(0, 18)}...` : company.description}
-          </div>
-        )}
-        {showEmail && company.email && (
-          <div style={{ color: emailTextColor, fontSize: 10, marginTop: 2 }}>
-            {company.email.length > 16 ? `${company.email.slice(0, 16)}...` : company.email}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -130,9 +106,6 @@ function getLuminance(hex: string): number {
 
 export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
   companies,
-  showDescription,
-  showCEO,
-  showEmail,
   size = 140,
   gap = 4,
   maxItemsPerRow = 5,
@@ -353,9 +326,6 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
                 <TiltedSquare
                   key={`${company._id}-${rowIdx}-${colIdx}`}
                   company={company}
-                  showDescription={showDescription}
-                  showCEO={showCEO}
-                  showEmail={showEmail}
                   size={size}
                   backgroundColor={backgroundColor}
                   borderColor={borderColor}

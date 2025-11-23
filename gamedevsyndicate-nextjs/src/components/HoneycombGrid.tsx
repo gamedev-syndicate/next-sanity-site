@@ -18,9 +18,6 @@ interface CompanyData {
 interface HoneycombGridProps {
   companies: CompanyData[];
   maxItemsPerRow?: number;
-  showDescription?: boolean;
-  showCEO?: boolean;
-  showEmail?: boolean;
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
 }
@@ -138,13 +135,10 @@ function getLuminance(hex: string): number {
 
 const CompanyHoneycomb: React.FC<{
   company: CompanyData;
-  showDescription?: boolean;
-  showCEO?: boolean;
-  showEmail?: boolean;
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
-}> = ({ company, showDescription = true, showCEO = true, showEmail = false, backgroundColor, borderColor }) => {
-  const logoUrl = company.logo ? getImageUrl(company.logo, 55, 55) : null;
+}> = ({ company, backgroundColor, borderColor }) => {
+  const logoUrl = company.logo ? getImageUrl(company.logo, 88, 88) : null;
 
   const backgroundStyle = backgroundColor 
     ? { 
@@ -207,30 +201,15 @@ const CompanyHoneycomb: React.FC<{
             <img
               src={logoUrl}
               alt={company.logo?.alt || `${company.name} logo`}
-              className="w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 object-contain rounded mx-auto group-hover:scale-110 transition-transform duration-300"
+              className="w-[1.925rem] h-[1.925rem] md:w-[2.2rem] md:h-[2.2rem] lg:w-11 lg:h-11 object-contain rounded mx-auto group-hover:scale-110 transition-transform duration-300"
             />
           </div>
         )}
         
         <div className="flex-1 flex flex-col justify-center items-center overflow-hidden max-w-full">
-          <h3 className="text-sm md:text-sm lg:text-base font-bold text-white leading-none text-center mb-1 break-words max-w-full">
-            {company.name.length > 12 ? `${company.name.slice(0, 12)}...` : company.name}
+          <h3 className="text-sm md:text-sm lg:text-base font-bold text-white leading-none text-center break-words max-w-full">
+            {company.name}
           </h3>
-          
-          {showCEO && company.ceoName && (
-            <p className="text-gray-300 text-xs md:text-sm leading-none text-center mb-1 hidden md:block break-words max-w-full">
-              {company.ceoName.length > 10 ? `${company.ceoName.slice(0, 10)}...` : company.ceoName}
-            </p>
-          )}
-          
-          {showDescription && company.description && (
-            <p className="text-gray-300 text-xs leading-tight text-center hidden lg:block break-words max-w-full">
-              {company.description.length > 18 
-                ? `${company.description.slice(0, 18)}...` 
-                : company.description
-              }
-            </p>
-          )}
         </div>
       </div>
     </div>
@@ -239,10 +218,7 @@ const CompanyHoneycomb: React.FC<{
 
 export const HoneycombGrid: React.FC<HoneycombGridProps> = ({ 
   companies, 
-  maxItemsPerRow = 4, 
-  showDescription, 
-  showCEO, 
-  showEmail,
+  maxItemsPerRow = 4,
   backgroundColor,
   borderColor 
 }) => {
@@ -310,9 +286,6 @@ export const HoneycombGrid: React.FC<HoneycombGridProps> = ({
               >
                 <CompanyHoneycomb
                   company={company}
-                  showDescription={showDescription}
-                  showCEO={showCEO}
-                  showEmail={showEmail}
                   backgroundColor={backgroundColor}
                   borderColor={borderColor}
                 />

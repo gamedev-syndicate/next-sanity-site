@@ -6,6 +6,13 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
+      name: 'internalLabel',
+      title: 'Internal Label',
+      type: 'string',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this image block in the editor (e.g., "Hero Image", "Team Photo")',
+      placeholder: 'e.g., Hero Image',
+    }),
+    defineField({
       name: 'image',
       title: 'Image',
       type: 'image',
@@ -44,8 +51,17 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'alt',
+      internalLabel: 'internalLabel',
+      alt: 'alt',
+      caption: 'caption',
       media: 'image',
+    },
+    prepare({internalLabel, alt, caption, media}) {
+      return {
+        title: internalLabel || alt || 'Image Block',
+        subtitle: `🖼️ Image Block${caption ? ` • ${caption}` : ''}`,
+        media,
+      }
     },
   },
 })

@@ -6,6 +6,12 @@ import { ContactBlock as ContactBlockType } from '../../types/sanity';
 import { useDesignSystem } from '../../hooks/useDesignSystem';
 import { resolveColor } from '../../lib/colorUtils';
 import { designSystemColorToCSS } from '../../lib/background-utils';
+import { 
+  FaTwitter, FaLinkedin, FaFacebook, FaInstagram, FaYoutube, 
+  FaGithub, FaDiscord, FaTwitch, FaTiktok, FaReddit, 
+  FaMedium, FaMastodon, FaGlobe, FaEnvelope 
+} from 'react-icons/fa';
+import { SiBluesky, SiThreads } from 'react-icons/si';
 
 interface ContactBlockProps {
   value: ContactBlockType;
@@ -110,6 +116,52 @@ export function ContactBlock({ value }: ContactBlockProps) {
   const buttonSize = value.buttonSize || 'large';
   const sizeClass = buttonSizeClasses[buttonSize as keyof typeof buttonSizeClasses] || buttonSizeClasses.large;
 
+  // Social media icon mapper
+  const getSocialIcon = (platform: string) => {
+    const iconProps = { size: 24 };
+    switch (platform) {
+      case 'twitter': return <FaTwitter {...iconProps} />;
+      case 'linkedin': return <FaLinkedin {...iconProps} />;
+      case 'facebook': return <FaFacebook {...iconProps} />;
+      case 'instagram': return <FaInstagram {...iconProps} />;
+      case 'youtube': return <FaYoutube {...iconProps} />;
+      case 'github': return <FaGithub {...iconProps} />;
+      case 'discord': return <FaDiscord {...iconProps} />;
+      case 'twitch': return <FaTwitch {...iconProps} />;
+      case 'tiktok': return <FaTiktok {...iconProps} />;
+      case 'reddit': return <FaReddit {...iconProps} />;
+      case 'medium': return <FaMedium {...iconProps} />;
+      case 'mastodon': return <FaMastodon {...iconProps} />;
+      case 'bluesky': return <SiBluesky {...iconProps} />;
+      case 'threads': return <SiThreads {...iconProps} />;
+      case 'website': return <FaGlobe {...iconProps} />;
+      case 'email': return <FaEnvelope {...iconProps} />;
+      default: return <FaGlobe {...iconProps} />;
+    }
+  };
+
+  const getPlatformLabel = (platform: string) => {
+    const labels: Record<string, string> = {
+      twitter: 'Twitter / X',
+      linkedin: 'LinkedIn',
+      facebook: 'Facebook',
+      instagram: 'Instagram',
+      youtube: 'YouTube',
+      github: 'GitHub',
+      discord: 'Discord',
+      twitch: 'Twitch',
+      tiktok: 'TikTok',
+      reddit: 'Reddit',
+      medium: 'Medium',
+      mastodon: 'Mastodon',
+      bluesky: 'Bluesky',
+      threads: 'Threads',
+      website: 'Website',
+      email: 'Email',
+    };
+    return labels[platform] || platform;
+  };
+
   return (
     <div className="w-full mx-auto my-12 px-4">
       {/* Header Section */}
@@ -137,21 +189,55 @@ export function ContactBlock({ value }: ContactBlockProps) {
             </div>
           )}
           
-          {/* Decorative Element */}
-          <div 
-            className="hidden lg:block relative h-64 rounded-lg overflow-hidden"
-            style={{
-              background: `linear-gradient(135deg, ${accentColor}20 0%, ${buttonBgColor}20 100%)`,
-              border: '1px solid rgba(255,255,255,0.05)',
-            }}
-          >
-            <div 
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-30 blur-3xl"
-              style={{
-                background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)`,
-              }}
-            />
-          </div>
+          {/* Social Media Links */}
+          {value.socialLinks && value.socialLinks.length > 0 && (
+            <div className="flex flex-col items-center gap-6 pt-4">
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
+              
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                {value.socialLinks.map((link) => (
+                  <a
+                    key={link._key}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 backdrop-blur-sm"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                    title={link.label || getPlatformLabel(link.platform)}
+                  >
+                    {/* Hover glow effect */}
+                    <div 
+                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{
+                        background: `linear-gradient(135deg, ${accentColor}20 0%, ${buttonBgColor}20 100%)`,
+                        boxShadow: `0 0 20px ${accentColor}40`,
+                      }}
+                    />
+                    
+                    {/* Icon */}
+                    <span 
+                      className="relative z-10 text-gray-300 group-hover:text-white transition-colors duration-300"
+                      style={{
+                        filter: 'drop-shadow(0 0 8px rgba(255,255,255,0))',
+                      }}
+                    >
+                      {getSocialIcon(link.platform)}
+                    </span>
+                    
+                    {/* Label */}
+                    {link.label && (
+                      <span className="relative z-10 text-gray-300 group-hover:text-white transition-colors duration-300 font-medium text-sm">
+                        {link.label}
+                      </span>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column - Form Container with Glass Morphism (3 cols) */}

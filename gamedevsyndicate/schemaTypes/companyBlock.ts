@@ -6,6 +6,13 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
+      name: 'internalLabel',
+      title: 'Internal Label',
+      type: 'string',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this company block in the editor (e.g., "Featured Company", "Partner Showcase")',
+      placeholder: 'e.g., Featured Company',
+    }),
+    defineField({
       name: 'company',
       title: 'Company',
       type: 'reference',
@@ -28,15 +35,16 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'company.name',
+      internalLabel: 'internalLabel',
+      companyName: 'company.name',
       media: 'company.logo',
       layout: 'layout',
     },
     prepare(selection) {
-      const { title, layout } = selection
+      const { internalLabel, companyName, layout } = selection
       return {
-        title: title || 'Company Block',
-        subtitle: `${layout || 'card'} layout`,
+        title: internalLabel || companyName || 'Company Block',
+        subtitle: `🏢 Company Block • ${layout || 'card'} layout`,
         media: selection.media,
       }
     },

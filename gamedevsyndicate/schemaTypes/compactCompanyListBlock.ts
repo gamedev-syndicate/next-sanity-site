@@ -2,22 +2,37 @@ import { defineField, defineType } from 'sanity'
 import { colorSelectionField, customColorField } from './utils/colorSelection'
 
 export default defineType({
-  name: 'companyListBlock',
-  title: 'Company List Block (Vertical)',
+  name: 'compactCompanyListBlock',
+  title: 'Compact Company List Block',
   type: 'object',
   fields: [
     defineField({
       name: 'internalLabel',
       title: 'Internal Label',
       type: 'string',
-      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this company list in the editor (e.g., "Homepage Partners", "All Members")',
-      placeholder: 'e.g., Homepage Partners',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this compact list in the editor (e.g., "Footer Companies", "Sidebar Partners")',
+      placeholder: 'e.g., Footer Companies',
     }),
     defineField({
       name: 'title',
       title: 'Title (Optional)',
       type: 'string',
       description: '📝 Title displayed above the company list on the website. Leave empty to hide.',
+    }),
+    defineField({
+      name: 'layout',
+      title: 'Layout',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Grid', value: 'grid' },
+          { title: 'List', value: 'list' },
+          { title: 'Carousel', value: 'carousel' },
+          { title: 'Honeycomb', value: 'honeycomb' },
+          { title: 'Tilted Square', value: 'tiltedsquare' },
+        ],
+      },
+      initialValue: 'grid',
     }),
     colorSelectionField(
       'backgroundColorSelection',
@@ -39,17 +54,24 @@ export default defineType({
       'Custom Border Color',
       'Custom border color when not using design system colors'
     ),
+    defineField({
+      name: 'maxItemsPerRow',
+      title: 'Max Items Per Row',
+      type: 'number',
+      validation: (Rule) => Rule.min(1).max(10),
+    }),
   ],
   preview: {
     select: {
       internalLabel: 'internalLabel',
       title: 'title',
+      layout: 'layout',
     },
     prepare(selection) {
-      const { internalLabel, title } = selection
+      const { internalLabel, title, layout } = selection
       return {
-        title: internalLabel || title || 'Company List Block',
-        subtitle: `📋 Vertical List • All companies with full details`,
+        title: internalLabel || title || 'Compact Company List Block',
+        subtitle: `🏢 Compact List • All companies • ${layout || 'grid'} layout`,
       }
     },
   },

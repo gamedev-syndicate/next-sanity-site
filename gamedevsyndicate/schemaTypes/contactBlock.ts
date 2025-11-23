@@ -7,10 +7,17 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
-      name: 'title',
-      title: 'Form Title',
+      name: 'internalLabel',
+      title: 'Internal Label',
       type: 'string',
-      description: 'Title displayed above the contact form',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this block in the editor (e.g., "Homepage Contact Form", "Footer Contact")',
+      placeholder: 'e.g., Homepage Contact Form',
+    }),
+    defineField({
+      name: 'title',
+      title: 'Form Title (Optional)',
+      type: 'string',
+      description: '📝 Title displayed above the contact form on the website. Leave empty to hide.',
       initialValue: 'Get in Touch',
     }),
     defineField({
@@ -101,16 +108,24 @@ export default defineType({
       description: 'Email address where form submissions should be sent. Leave empty to use default site contact email.',
       validation: Rule => Rule.email(),
     }),
+    defineField({
+      name: 'socialLinks',
+      title: 'Social Media Links',
+      type: 'array',
+      description: 'Add social media links to display below the contact form',
+      of: [{type: 'socialMediaLink'}],
+    }),
   ],
   preview: {
     select: {
+      internalLabel: 'internalLabel',
       title: 'title',
       buttonText: 'buttonText',
     },
-    prepare({title, buttonText}) {
+    prepare({internalLabel, title, buttonText}) {
       return {
-        title: title || 'Contact Form',
-        subtitle: `Button: "${buttonText || 'Send'}"`,
+        title: internalLabel || title || 'Contact Form',
+        subtitle: `📧 Contact Block • Button: "${buttonText || 'Send'}"`,
       }
     },
   },

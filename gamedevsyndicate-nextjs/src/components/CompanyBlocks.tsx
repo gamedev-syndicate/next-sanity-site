@@ -30,15 +30,10 @@ interface CompanyListBlockProps {
   value: {
     title?: string;
     companies: CompanyData[];
-    layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare';
     backgroundColorSelection?: string;
     customBackgroundColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
     borderColorSelection?: string;
     customBorderColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
-    maxItemsPerRow?: number;
-    showDescription?: boolean;
-    showCEO?: boolean;
-    showEmail?: boolean;
     // Legacy support for backward compatibility
     backgroundColor?: { hex: string; alpha?: number };
     borderColor?: { hex: string; alpha?: number };
@@ -54,7 +49,7 @@ const CompanyCard: React.FC<{
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
 }> = ({ company, layout, showDescription = true, showCEO = true, showEmail = false, backgroundColor, borderColor }) => {
-  const logoUrl = company.logo ? getImageUrl(company.logo, 150, 150) : null;
+  const logoUrl = company.logo ? getImageUrl(company.logo, 220, 220) : null;
 
   const backgroundStyle = backgroundColor 
     ? { backgroundColor: backgroundColor.hex }
@@ -83,7 +78,7 @@ const CompanyCard: React.FC<{
           <img
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
-            className="w-12 h-12 object-contain rounded"
+            className="w-[4.4rem] h-[4.4rem] object-contain rounded"
           />
         )}
         <div>
@@ -106,7 +101,7 @@ const CompanyCard: React.FC<{
           <img
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
-            className="w-20 h-20 object-contain rounded flex-shrink-0"
+            className="w-[6.6rem] h-[6.6rem] object-contain rounded flex-shrink-0"
           />
         )}
         <div className="flex-1">
@@ -141,7 +136,7 @@ const CompanyCard: React.FC<{
         <img
           src={logoUrl}
           alt={company.logo?.alt || `${company.name} logo`}
-          className="w-24 h-24 object-contain rounded mx-auto mb-4"
+          className="w-[8.8rem] h-[8.8rem] object-contain rounded mx-auto mb-4"
         />
       )}
       <h3 className={`text-xl font-bold mb-2 ${textColorClass}`}>{company.name}</h3>
@@ -188,11 +183,6 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     customBackgroundColor,
     borderColorSelection,
     customBorderColor,
-    layout = 'grid', 
-    maxItemsPerRow, 
-    showDescription, 
-    showCEO, 
-    showEmail,
     // Legacy support
     backgroundColor: legacyBackgroundColor,
     borderColor: legacyBorderColor
@@ -243,6 +233,161 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     : false;
 
   const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
+  const subTextColorClass = isLightBackground ? 'text-gray-600' : 'text-gray-300';
+  const cardBgClass = finalBackgroundColor ? '' : 'bg-gray-800/30';
+  const borderClass = finalBorderColor ? 'border' : 'border border-gray-700/50';
+
+  const backgroundStyle = finalBackgroundColor 
+    ? { backgroundColor: finalBackgroundColor.hex }
+    : {};
+
+  const borderStyle = finalBorderColor 
+    ? { borderColor: finalBorderColor.hex }
+    : {};
+
+  return (
+    <div className="w-full max-w-5xl mx-auto">
+      {title && (
+        <h2 className={`text-3xl font-bold mb-8 text-center ${textColorClass}`}>{title}</h2>
+      )}
+      <div className="space-y-6">
+        {companies.map((company, index) => {
+          const logoUrl = company.logo ? getImageUrl(company.logo, 120, 120) : null;
+          
+          return (
+            <div 
+              key={`${company._id}-${index}`}
+              className={`flex items-start gap-6 p-6 rounded-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] ${cardBgClass} ${borderClass}`}
+              style={{...backgroundStyle, ...borderStyle}}
+            >
+              {/* Logo */}
+              {logoUrl && (
+                <div className="flex-shrink-0">
+                  <img
+                    src={logoUrl}
+                    alt={company.logo?.alt || `${company.name} logo`}
+                    className="w-[120px] h-[120px] object-contain rounded-lg"
+                  />
+                </div>
+              )}
+              
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                {/* Company Name */}
+                <h3 className={`text-2xl font-bold mb-3 ${textColorClass}`}>
+                  {company.name}
+                </h3>
+                
+                {/* CEO */}
+                {company.ceoName && (
+                  <p className={`mb-3 ${subTextColorClass}`}>
+                    <span className="font-semibold">CEO:</span> {company.ceoName}
+                  </p>
+                )}
+                
+                {/* Email */}
+                {company.email && (
+                  <p className="mb-3">
+                    <a 
+                      href={`mailto:${company.email}`} 
+                      className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                    >
+                      {company.email}
+                    </a>
+                  </p>
+                )}
+                
+                {/* Description */}
+                {company.description && (
+                  <p className={`leading-relaxed ${subTextColorClass}`}>
+                    {company.description}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// CompactCompanyListBlock: Shows all companies with layout options (grid, list, carousel, honeycomb, tiltedsquare)
+interface CompactCompanyListBlockProps {
+  value: {
+    title?: string;
+    companies: CompanyData[];
+    layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare';
+    maxItemsPerRow?: number;
+    backgroundColorSelection?: string;
+    customBackgroundColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
+    borderColorSelection?: string;
+    customBorderColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
+    // Legacy support
+    backgroundColor?: { hex: string; alpha?: number };
+    borderColor?: { hex: string; alpha?: number };
+  };
+}
+
+export const CompactCompanyListBlock: React.FC<CompactCompanyListBlockProps> = ({ value }) => {
+  const { designSystem } = useDesignSystem();
+  const { 
+    title, 
+    companies, 
+    layout = 'grid',
+    maxItemsPerRow,
+    backgroundColorSelection,
+    customBackgroundColor,
+    borderColorSelection,
+    customBorderColor,
+    backgroundColor: legacyBackgroundColor,
+    borderColor: legacyBorderColor
+  } = value;
+
+  if (!companies || companies.length === 0) {
+    return null;
+  }
+
+  // Helper function to resolve color and convert to expected format
+  const resolveColorToObject = (
+    colorSelection?: string,
+    customColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } },
+    legacyColor?: { hex: string; alpha?: number }
+  ): { hex: string; alpha?: number } | undefined => {
+    if (colorSelection && colorSelection !== 'custom' && designSystem?.colors) {
+      const colorValue = designSystem.colors[colorSelection as keyof typeof designSystem.colors];
+      if (colorValue) {
+        return { hex: colorToCSS(colorValue), alpha: 1 };
+      }
+    }
+    
+    if (colorSelection === 'custom' && customColor) {
+      return { 
+        hex: customColor.hex, 
+        alpha: customColor.alpha ?? 1 
+      };
+    }
+    
+    return legacyColor;
+  };
+
+  const finalBackgroundColor = resolveColorToObject(
+    backgroundColorSelection,
+    customBackgroundColor,
+    legacyBackgroundColor
+  );
+
+  const finalBorderColor = resolveColorToObject(
+    borderColorSelection,
+    customBorderColor,
+    legacyBorderColor
+  );
+
+  const isLightBackground = finalBackgroundColor 
+    ? getLuminance(finalBackgroundColor.hex) > 0.5 
+    : false;
+
+  const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
 
   const getGridClasses = () => {
     switch (layout) {
@@ -253,7 +398,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
       case 'honeycomb':
         return 'honeycomb-grid';
       case 'tiltedsquare':
-        return ''; // TiltedSquareGrid handles its own layout
+        return '';
       default: // grid
         return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
     }
@@ -269,18 +414,12 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
           <HoneycombGrid
             companies={companies}
             maxItemsPerRow={maxItemsPerRow}
-            showDescription={showDescription}
-            showCEO={showCEO}
-            showEmail={showEmail}
             backgroundColor={finalBackgroundColor}
             borderColor={finalBorderColor}
           />
         ) : layout === 'tiltedsquare' ? (
           <TiltedSquareGrid
             companies={companies}
-            showDescription={showDescription}
-            showCEO={showCEO}
-            showEmail={showEmail}
             maxItemsPerRow={maxItemsPerRow}
             backgroundColor={finalBackgroundColor}
             borderColor={finalBorderColor}
@@ -294,9 +433,9 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
               <CompanyCard
                 company={company}
                 layout={layout === 'list' ? 'horizontal' : 'card'}
-                showDescription={showDescription}
-                showCEO={showCEO}
-                showEmail={showEmail}
+                showDescription={false}
+                showCEO={false}
+                showEmail={false}
                 backgroundColor={finalBackgroundColor}
                 borderColor={finalBorderColor}
               />

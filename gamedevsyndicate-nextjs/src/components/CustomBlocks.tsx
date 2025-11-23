@@ -3,9 +3,11 @@
 import { urlFor } from '../lib/sanity-image';
 import { PortableText } from '@portabletext/react';
 import { ImageBlock as ImageBlockType, TextBlock as TextBlockType, ButtonBlock as ButtonBlockType } from '../types/sanity';
-import { CompanyBlock, CompanyListBlock } from './CompanyBlocks';
+import { CompanyBlock, CompanyListBlock, CompactCompanyListBlock } from './CompanyBlocks';
 import ContentSeparatorBlock from './blocks/ContentSeparatorBlock';
 import { ContactBlock } from './blocks/ContactBlock';
+import { ImageTextBlock } from './blocks/ImageTextBlock';
+import { ShortArticleBlock } from './blocks/ShortArticleBlock';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { designSystemColorToCSS } from '../lib/background-utils';
 
@@ -293,7 +295,10 @@ export const customComponents = {
     buttonBlock: ButtonBlock,
     companyBlock: ({ value }: { value: any }) => <CompanyBlock {...value} />,
     companyListBlock: ({ value }: { value: any }) => <CompanyListBlock value={value} />,
+    compactCompanyListBlock: ({ value }: { value: any }) => <CompactCompanyListBlock value={value} />,
     contactBlock: ({ value }: { value: any }) => <ContactBlock value={value} />,
+    imageTextBlock: ({ value }: { value: any }) => <ImageTextBlock value={value} />,
+    shortArticleBlock: ({ value }: { value: any }) => <ShortArticleBlock value={value} />,
     callout: Callout,
     image: InlineImage,
     contentSeparator: ({ value }: { value: any }) => {
@@ -460,10 +465,16 @@ export default function CustomBlocks({ blocks, siteConfig }: { blocks: any[]; si
           case 'companyBlock':
             return <CompanyBlock key={block._key} {...block} />;
           case 'companyListBlock':
-            return <CompanyListBlock key={block._key} {...block} />;
+            return <CompanyListBlock key={block._key} value={block} />;
+          case 'compactCompanyListBlock':
+            return <CompactCompanyListBlock key={block._key} value={block} />;
           case 'contactBlock':
             console.log('Rendering ContactBlock with data:', block);
             return <ContactBlock key={block._key} value={block} />;
+          case 'imageTextBlock':
+            return <ImageTextBlock key={block._key} value={block} />;
+          case 'shortArticleBlock':
+            return <ShortArticleBlock key={block._key} value={block} />;
           default:
             console.warn(`Unknown block type: ${block._type}`);
             return null;

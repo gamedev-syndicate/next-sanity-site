@@ -6,6 +6,13 @@ export default defineType({
   title: 'Content Separator',
   type: 'object',
   fields: [
+    {
+      name: 'internalLabel',
+      title: 'Internal Label',
+      type: 'string',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this separator in the editor (e.g., "After Hero", "Section Divider")',
+      placeholder: 'e.g., Section Divider',
+    },
     // Design system color selection for line
     colorSelectionField(
       'lineColorSelection',
@@ -114,10 +121,13 @@ export default defineType({
     },
   ],
   preview: {
-    prepare() {
+    select: {
+      internalLabel: 'internalLabel',
+    },
+    prepare({internalLabel}) {
       return {
-        title: 'Content Separator',
-        subtitle: 'Divider with diamond center',
+        title: internalLabel || 'Content Separator',
+        subtitle: '➖ Divider with diamond center',
       }
     },
   },

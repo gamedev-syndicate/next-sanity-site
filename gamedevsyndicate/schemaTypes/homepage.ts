@@ -652,7 +652,7 @@ export default defineType({
                 {type: 'textBlock'},
                 {type: 'buttonBlock'},
                 {type: 'companyBlock'},
-                {type: 'companyListBlock'},
+                {type: 'compactCompanyListBlock'},
                 {type: 'contactBlock'},
                 {type: 'contentSeparator'}, // Add this line
               ],
@@ -699,7 +699,7 @@ export default defineType({
         {type: 'textBlock'},
         {type: 'buttonBlock'},
         {type: 'companyBlock'},
-        {type: 'companyListBlock'},
+        {type: 'compactCompanyListBlock'},
         {type: 'contactBlock'},
         {type: 'contentSeparator'}, // Add this line too
       ],

@@ -22,6 +22,13 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
+      name: 'internalLabel',
+      title: 'Internal Label',
+      type: 'string',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this button in the editor (e.g., "CTA Button", "Download Link")',
+      placeholder: 'e.g., CTA Button',
+    }),
+    defineField({
       name: 'text',
       title: 'Button Text',
       type: 'string',
@@ -106,15 +113,16 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'text',
-      subtitle: 'url',
+      internalLabel: 'internalLabel',
+      text: 'text',
+      url: 'url',
       style: 'style',
       alignment: 'alignment',
     },
-    prepare({title, subtitle, style, alignment}) {
+    prepare({internalLabel, text, url, style, alignment}) {
       return {
-        title: title || 'Button',
-        subtitle: `${style} • ${alignment} • ${subtitle}`,
+        title: internalLabel || text || 'Button',
+        subtitle: `🔘 Button • ${style} • ${alignment} • ${url}`,
       }
     },
   },

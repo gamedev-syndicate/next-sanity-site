@@ -180,7 +180,7 @@ export async function getHomepage(): Promise<Homepage | null> {
           },
           _type == "companyListBlock" => {
             title,
-            companies[]->{
+            "companies": *[_type == "company"] | order(name asc) {
               _id,
               name,
               logo,
@@ -188,14 +188,38 @@ export async function getHomepage(): Promise<Homepage | null> {
               email,
               description
             },
+            backgroundColorSelection,
+            customBackgroundColor,
+            borderColorSelection,
+            customBorderColor,
+            backgroundColor,
+            borderColor
+          },
+          _type == "compactCompanyListBlock" => {
+            title,
+            "companies": *[_type == "company"] | order(name asc) {
+              _id,
+              name,
+              logo
+            },
             layout,
-            showDescription,
-            showCEO,
-            showEmail,
             backgroundColorSelection,
             customBackgroundColor,
             borderColorSelection,
             customBorderColor
+          },
+          _type == "imageTextBlock" => {
+            title,
+            image{
+              ...,
+              asset->
+            },
+            text,
+            imagePosition,
+            imageSize,
+            backgroundColorSelection,
+            customBackgroundColor,
+            verticalAlignment
           }
         }
       },
@@ -218,8 +242,119 @@ export async function getPage(slug: string): Promise<Page | null> {
       _type,
       title,
       slug,
+      showInNavigation,
+      navigationOrder,
       backgroundColor,
-      content
+      sections[]{
+        _key,
+        title,
+        background{
+          type,
+          // Legacy fields
+          solidColor,
+          gradientFrom,
+          gradientTo,
+          gradientDirection,
+          gradientStartPosition,
+          gradientEndPosition,
+          backgroundImage,
+          // New design system fields
+          solidColorSelection,
+          customSolidColor,
+          gradientFromSelection,
+          customGradientFrom,
+          gradientToSelection,
+          customGradientTo
+        },
+        shadow,
+        overlayTexture{
+          enabled,
+          svgFile{
+            _type,
+            asset->{
+              _ref,
+              _type,
+              url
+            }
+          },
+          patternSize,
+          customPatternSize,
+          tileMode,
+          colorType,
+          solidColor,
+          gradientFrom,
+          gradientTo,
+          gradientDirection,
+          gradientStartPosition,
+          gradientEndPosition,
+          opacity
+        },
+        padding{
+          top,
+          bottom
+        },
+        contentAlignment,
+        content[]{
+          _key,
+          _type,
+          ...,
+          _type == "companyBlock" => {
+            company->{
+              _id,
+              name,
+              logo,
+              ceoName,
+              email,
+              description
+            },
+            layout
+          },
+          _type == "companyListBlock" => {
+            title,
+            "companies": *[_type == "company"] | order(name asc) {
+              _id,
+              name,
+              logo,
+              ceoName,
+              email,
+              description
+            },
+            backgroundColorSelection,
+            customBackgroundColor,
+            borderColorSelection,
+            customBorderColor,
+            backgroundColor,
+            borderColor
+          },
+          _type == "compactCompanyListBlock" => {
+            title,
+            "companies": *[_type == "company"] | order(name asc) {
+              _id,
+              name,
+              logo
+            },
+            layout,
+            backgroundColorSelection,
+            customBackgroundColor,
+            borderColorSelection,
+            customBorderColor,
+            maxItemsPerRow
+          },
+          _type == "imageTextBlock" => {
+            title,
+            image{
+              ...,
+              asset->
+            },
+            text,
+            imagePosition,
+            imageSize,
+            backgroundColorSelection,
+            customBackgroundColor,
+            verticalAlignment
+          }
+        }
+      }
     }`;
     
     const client = await getQueryClient();
