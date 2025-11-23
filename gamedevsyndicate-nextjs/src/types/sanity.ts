@@ -104,7 +104,7 @@ export interface PageBackground {
     hex: string;
     alpha?: number;
   };
-  gradientDirection?: 'to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl';
+  gradientDirection?: 'to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl' | 'radial';
   gradientStartPosition?: number;
   gradientEndPosition?: number;
   backgroundImage?: SanityImage;
@@ -140,7 +140,7 @@ export interface OverlayTexture {
     hex: string;
     alpha?: number;
   };
-  gradientDirection?: 'to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl';
+  gradientDirection?: 'to-b' | 'to-t' | 'to-r' | 'to-l' | 'to-br' | 'to-bl' | 'radial';
   gradientStartPosition?: number;
   gradientEndPosition?: number;
   opacity?: number;
@@ -157,6 +157,13 @@ export interface SiteConfig {
   // New design system menu color fields
   menuColorSelection?: ColorSelection;
   customMenuColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  // Navigation text color fields
+  navigationTextColorSelection?: ColorSelection;
+  customNavigationTextColor?: {
     _type: 'color';
     hex: string;
     alpha?: number;
@@ -225,7 +232,7 @@ export interface SectionBackground {
     hex: string;
     alpha?: number;
   };
-  gradientDirection?: 'to-b' | 'to-r' | 'to-br';
+  gradientDirection?: 'to-b' | 'to-r' | 'to-br' | 'radial';
   gradientStartPosition?: number;
   gradientEndPosition?: number;
   backgroundImage?: SanityImage;

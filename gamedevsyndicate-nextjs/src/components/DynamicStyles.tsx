@@ -4,10 +4,11 @@ import { useEffect } from 'react';
 
 interface DynamicStylesProps {
   menuColor?: string;
+  navigationTextColor?: string;
   navigationActiveColor?: string;
 }
 
-export default function DynamicStyles({ menuColor, navigationActiveColor }: DynamicStylesProps) {
+export default function DynamicStyles({ menuColor, navigationTextColor, navigationActiveColor }: DynamicStylesProps) {
   useEffect(() => {
     const style = document.createElement('style');
     let styles = '';
@@ -16,6 +17,14 @@ export default function DynamicStyles({ menuColor, navigationActiveColor }: Dyna
       styles += `
         header {
           background-color: ${menuColor} !important;
+        }
+      `;
+    }
+    
+    if (navigationTextColor) {
+      styles += `
+        .nav-link {
+          color: ${navigationTextColor} !important;
         }
       `;
     }
@@ -36,7 +45,7 @@ export default function DynamicStyles({ menuColor, navigationActiveColor }: Dyna
         document.head.removeChild(style);
       };
     }
-  }, [menuColor, navigationActiveColor]);
+  }, [menuColor, navigationTextColor, navigationActiveColor]);
 
   return null;
 }

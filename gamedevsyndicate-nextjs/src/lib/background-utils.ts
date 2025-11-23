@@ -95,6 +95,11 @@ export function generateSectionBackgroundCSS(
       const startPos = sectionBackground.gradientStartPosition ?? 0;
       const endPos = sectionBackground.gradientEndPosition ?? 100;
       
+      // Handle radial gradient
+      if (direction === 'radial') {
+        return `radial-gradient(circle, ${fromColor} ${startPos}%, ${toColor} ${endPos}%)`;
+      }
+      
       // Convert direction to CSS
       const cssDirection = {
         'to-b': 'to bottom',
@@ -208,6 +213,11 @@ export function generateBackgroundCSS(pageBackground?: PageBackground, designSys
       const startPos = pageBackground.gradientStartPosition ?? 0;
       const endPos = pageBackground.gradientEndPosition ?? 100;
       
+      // Handle radial gradient
+      if (direction === 'radial') {
+        return `radial-gradient(circle, ${fromColor} ${startPos}%, ${toColor} ${endPos}%)`;
+      }
+      
       // Convert Tailwind-style direction to CSS
       const cssDirection = {
         'to-b': 'to bottom',
@@ -313,6 +323,11 @@ export function generateOverlayCSS(overlayTexture?: OverlayTexture): string {
       const direction = overlayTexture.gradientDirection || 'to-br';
       const startPos = overlayTexture.gradientStartPosition ?? 0;
       const endPos = overlayTexture.gradientEndPosition ?? 100;
+
+      // Handle radial gradient
+      if (direction === 'radial') {
+        return `radial-gradient(circle, ${fromColor} ${startPos}%, ${toColor} ${endPos}%)`;
+      }
 
       const cssDirection = {
         'to-b': 'to bottom',

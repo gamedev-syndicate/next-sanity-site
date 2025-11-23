@@ -50,6 +50,24 @@ export default async function RootLayout({
     }
   }
   
+  // Handle navigation text color with design system support
+  let navigationTextColor = 'rgb(255, 255, 255)'; // Default white color
+  
+  if (siteConfig?.navigationTextColorSelection) {
+    if (siteConfig.navigationTextColorSelection !== 'custom') {
+      // Use design system colors
+      if (designSystem?.colors) {
+        const colorValue = designSystem.colors[siteConfig.navigationTextColorSelection as keyof typeof designSystem.colors];
+        if (colorValue?.hex) {
+          navigationTextColor = colorValue.hex;
+        }
+      }
+    } else if (siteConfig.customNavigationTextColor) {
+      // Use custom color
+      navigationTextColor = siteConfig.customNavigationTextColor.hex;
+    }
+  }
+  
   // Handle navigation active indicator color with design system support
   let navigationActiveColor = 'rgb(147, 197, 253)'; // Default blue color
   
@@ -81,7 +99,7 @@ export default async function RootLayout({
           <header className="w-full py-4 flex items-center justify-center bg-black/60 backdrop-blur-md shadow-lg fixed top-0 left-0 z-50" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
             <DynamicNavigation items={navigationItems} />
           </header>
-          <DynamicStyles menuColor={menuColor} navigationActiveColor={navigationActiveColor} />
+          <DynamicStyles menuColor={menuColor} navigationTextColor={navigationTextColor} navigationActiveColor={navigationActiveColor} />
           <VisualEditingWrapper />
           <main className="pt-20 px-4 content-container min-h-screen relative z-10">
             {children}

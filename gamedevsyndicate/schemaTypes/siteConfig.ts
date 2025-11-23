@@ -25,6 +25,16 @@ export default defineType({
       'Custom menu color when not using design system colors'
     ),
     colorSelectionField(
+      'navigationTextColorSelection',
+      'Navigation Text Color',
+      'Choose color for navigation text from design system or use custom color'
+    ),
+    customColorField(
+      'customNavigationTextColor',
+      'Custom Navigation Text Color',
+      'Custom color for navigation text when not using design system colors'
+    ),
+    colorSelectionField(
       'navigationActiveColorSelection',
       'Navigation Active Indicator Color',
       'Choose color for the active page indicator from design system or use custom color'
@@ -153,6 +163,7 @@ export default defineType({
               {title: 'Right to Left', value: 'to-l'},
               {title: 'Top-Left to Bottom-Right', value: 'to-br'},
               {title: 'Top-Right to Bottom-Left', value: 'to-bl'},
+              {title: 'Center Outwards (Radial)', value: 'radial'},
             ],
           },
           initialValue: 'to-br',
@@ -304,6 +315,7 @@ export default defineType({
               {title: 'Right to Left', value: 'to-l'},
               {title: 'Top-Left to Bottom-Right', value: 'to-br'},
               {title: 'Top-Right to Bottom-Left', value: 'to-bl'},
+              {title: 'Center Outwards (Radial)', value: 'radial'},
             ],
           },
           initialValue: 'to-br',
