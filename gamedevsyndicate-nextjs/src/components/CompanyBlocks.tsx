@@ -30,6 +30,7 @@ interface CompanyListBlockProps {
   value: {
     title?: string;
     companies: CompanyData[];
+    alternateImagePosition?: boolean;
     backgroundColorSelection?: string;
     customBackgroundColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
     borderColorSelection?: string;
@@ -178,7 +179,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
   const { designSystem } = useDesignSystem();
   const { 
     title, 
-    companies, 
+    companies,
+    alternateImagePosition = false,
     backgroundColorSelection,
     customBackgroundColor,
     borderColorSelection,
@@ -246,60 +248,65 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     : {};
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       {title && (
         <h2 className={`text-3xl font-bold mb-8 text-center ${textColorClass}`}>{title}</h2>
       )}
-      <div className="space-y-6">
+      <div className="space-y-4">
         {companies.map((company, index) => {
-          const logoUrl = company.logo ? getImageUrl(company.logo, 120, 120) : null;
+          const logoUrl = company.logo ? getImageUrl(company.logo, 100, 100) : null;
+          // Determine image position based on alternateImagePosition setting
+          const isImageRight = alternateImagePosition && index % 2 === 1;
+          const containerClasses = isImageRight
+            ? `flex flex-col md:flex-row-reverse gap-4 md:gap-6 items-start`
+            : `flex flex-col md:flex-row gap-4 md:gap-6 items-start`;
           
           return (
             <div 
               key={`${company._id}-${index}`}
-              className={`flex items-start gap-6 p-6 rounded-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] ${cardBgClass} ${borderClass}`}
+              className={`${containerClasses} p-4 rounded-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] ${cardBgClass} ${borderClass}`}
               style={{...backgroundStyle, ...borderStyle}}
             >
               {/* Logo */}
               {logoUrl && (
-                <div className="flex-shrink-0">
+                <div className="w-full md:w-[25%] flex-shrink-0">
                   <img
                     src={logoUrl}
                     alt={company.logo?.alt || `${company.name} logo`}
-                    className="w-[120px] h-[120px] object-contain rounded-lg"
+                    className="w-full h-auto object-cover rounded-lg shadow-md"
                   />
                 </div>
               )}
               
               {/* Content */}
-              <div className="flex-1 min-w-0">
-                {/* Company Name */}
-                <h3 className={`text-2xl font-bold mb-3 ${textColorClass}`}>
-                  {company.name}
-                </h3>
-                
-                {/* CEO */}
-                {company.ceoName && (
-                  <p className={`mb-3 ${subTextColorClass}`}>
-                    <span className="font-semibold">CEO:</span> {company.ceoName}
-                  </p>
-                )}
-                
-                {/* Email */}
-                {company.email && (
-                  <p className="mb-3">
-                    <a 
-                      href={`mailto:${company.email}`} 
-                      className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
-                    >
-                      {company.email}
-                    </a>
-                  </p>
-                )}
+              <div className="w-full md:w-[75%] flex-shrink-0 text-left">
+                {/* Company Name, CEO, and Email with minimal spacing */}
+                <div className="mb-3 leading-none w-full text-left">
+                  <h3 className="text-xl md:text-2xl font-bold text-white text-left">
+                    {company.name}
+                  </h3>
+                  
+                  {company.ceoName && (
+                    <p className={`mt-0.5 ${subTextColorClass} text-left`}>
+                      <span className="font-semibold">CEO:</span> {company.ceoName}
+                    </p>
+                  )}
+                  
+                  {company.email && (
+                    <p className="mt-0.5 text-left">
+                      <a 
+                        href={`mailto:${company.email}`} 
+                        className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                      >
+                        {company.email}
+                      </a>
+                    </p>
+                  )}
+                </div>
                 
                 {/* Description */}
                 {company.description && (
-                  <p className={`leading-relaxed ${subTextColorClass}`}>
+                  <p className={`leading-relaxed ${subTextColorClass} w-full text-left`}>
                     {company.description}
                   </p>
                 )}

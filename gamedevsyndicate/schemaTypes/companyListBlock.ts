@@ -19,6 +19,13 @@ export default defineType({
       type: 'string',
       description: '📝 Title displayed above the company list on the website. Leave empty to hide.',
     }),
+    defineField({
+      name: 'alternateImagePosition',
+      title: 'Alternate Image Position',
+      type: 'boolean',
+      description: '🔄 When enabled, every other company will have its image on the opposite side',
+      initialValue: false,
+    }),
     colorSelectionField(
       'backgroundColorSelection',
       'Background Color',
