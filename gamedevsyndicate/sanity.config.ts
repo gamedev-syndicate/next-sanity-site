@@ -19,9 +19,9 @@ export default defineConfig({
     colorInput(),
     presentationTool({
       previewUrl: {
-        origin: 'http://localhost:3000',
+        origin: process.env.PREVIEW_URL || 'http://localhost:3000',
         previewMode: {
-          enable: '/api/draft?secret=FiP5aWHffnAr2UlELJvkQHdA0jp0TQCo&slug=',
+          enable: `/api/draft?secret=${process.env.SANITY_PREVIEW_SECRET || 'use-env-variable'}&slug=`,
           disable: '/api/disable-draft'
         }
       },
