@@ -13,7 +13,7 @@ interface ShortArticleBlockProps {
       _id: string;
       title: string;
       text: unknown[];
-      image: SanityImage & { alt?: string };
+      image?: SanityImage & { alt?: string };
     };
     imageAlignment?: 'left' | 'right';
     imageSize?: 'small' | 'medium' | 'large';
