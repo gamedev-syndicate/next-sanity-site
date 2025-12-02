@@ -66,7 +66,7 @@ export interface BackgroundConfig {
   solidColor?: { hex: string; alpha?: number }
   gradientFrom?: { hex: string; alpha?: number }
   gradientTo?: { hex: string; alpha?: number }
-  backgroundImage?: any
+  backgroundImage?: unknown
   customCSS?: string
 }
 
@@ -183,8 +183,10 @@ export function resolveBackgroundStyle(
     case 'image': {
       if (config.backgroundImage) {
         // Handle Sanity image
+        const bgImage = config.backgroundImage as { url?: string } | string;
+        const imageUrl = typeof bgImage === 'string' ? bgImage : bgImage.url || '';
         return {
-          backgroundImage: `url(${config.backgroundImage.url || config.backgroundImage})`,
+          backgroundImage: `url(${imageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',

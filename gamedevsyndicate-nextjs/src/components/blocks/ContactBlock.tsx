@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { PortableText } from '@portabletext/react';
+import type { PortableTextBlock } from '@portabletext/types';
 import { ContactBlock as ContactBlockType } from '../../types/sanity';
 import { useDesignSystem } from '../../hooks/useDesignSystem';
 import { resolveColor } from '../../lib/colorUtils';
@@ -30,7 +31,7 @@ export function ContactBlock({ value }: ContactBlockProps) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   // Convert Sanity color to ColorReference format
-  const convertToColorReference = (sanityColor: any) => {
+  const convertToColorReference = (sanityColor: { hex: string; alpha?: number } | undefined) => {
     if (!sanityColor) return undefined;
     const r = parseInt(sanityColor.hex.slice(1, 3), 16);
     const g = parseInt(sanityColor.hex.slice(3, 5), 16);
@@ -185,7 +186,7 @@ export function ContactBlock({ value }: ContactBlockProps) {
         <div className="lg:col-span-2 space-y-6">
           {value.description && (
             <div className="prose prose-invert prose-lg max-w-none text-gray-300">
-              <PortableText value={value.description} />
+              <PortableText value={value.description as PortableTextBlock[]} />
             </div>
           )}
           

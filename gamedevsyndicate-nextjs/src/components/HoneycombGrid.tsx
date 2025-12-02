@@ -154,11 +154,6 @@ const CompanyHoneycomb: React.FC<{
         : borderColor.hex)
     : 'rgba(156, 163, 175, 0.3)';
 
-  const isLightBackground = backgroundColor 
-    ? getLuminance(backgroundColor.hex) > 0.5 
-    : false;
-
-  const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
   const cardBgClass = backgroundColor ? '' : 'bg-gradient-to-br from-gray-800/70 to-gray-900/90';
 
   return (
@@ -223,10 +218,8 @@ export const HoneycombGrid: React.FC<HoneycombGridProps> = ({
   borderColor 
 }) => {
   const [windowWidth, setWindowWidth] = useState(1024);
-  const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
-    setIsClient(true);
     setWindowWidth(window.innerWidth);
     
     const handleResize = () => {

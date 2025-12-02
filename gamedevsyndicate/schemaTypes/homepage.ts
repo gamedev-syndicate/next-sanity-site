@@ -654,6 +654,8 @@ export default defineType({
                 {type: 'companyBlock'},
                 {type: 'compactCompanyListBlock'},
                 {type: 'contactBlock'},
+                {type: 'shortArticleBlock'},
+                {type: 'shortArticleListBlock'},
                 {type: 'contentSeparator'}, // Add this line
               ],
             },
@@ -701,6 +703,8 @@ export default defineType({
         {type: 'companyBlock'},
         {type: 'compactCompanyListBlock'},
         {type: 'contactBlock'},
+        {type: 'shortArticleBlock'},
+        {type: 'shortArticleListBlock'},
         {type: 'contentSeparator'}, // Add this line too
       ],
     }),

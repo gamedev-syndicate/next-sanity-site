@@ -1,11 +1,10 @@
 import { notFound } from 'next/navigation';
 import DynamicStyles from '../../components/DynamicStyles';
 import SvgOverlay from '../../components/SvgOverlay';
+import CustomBlocks from '../../components/CustomBlocks';
 import { getPage, getSiteConfig, getDesignSystem, getAllPageSlugs } from '../../lib/sanity-queries';
-import { generateBackgroundStyle, sanityColorToCSS, generateSectionBackgroundStyle } from '../../lib/background-utils';
+import { sanityColorToCSS, generateSectionBackgroundStyle } from '../../lib/background-utils';
 import type { Metadata } from 'next';
-
-import RichTextRenderer from '../../components/RichTextRendererClient';
 interface PageProps {
   params: { slug: string };
 }
@@ -143,13 +142,7 @@ export default async function Page({ params }: PageProps) {
                   </h2>
                 )}
                 {section.content && section.content.length > 0 && (
-                  <div className="space-y-6">
-                    {section.content.map((block, blockIndex) => (
-                      <div key={block._key || blockIndex}>
-                        <RichTextRenderer value={[block]} />
-                      </div>
-                    ))}
-                  </div>
+                  <CustomBlocks blocks={section.content} siteConfig={siteConfig} />
                 )}
               </div>
             </section>

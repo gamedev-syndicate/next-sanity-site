@@ -1,4 +1,5 @@
 import RichTextRenderer from '../components/RichTextRendererClient';
+import CustomBlocks from '../components/CustomBlocks';
 import DynamicStyles from '../components/DynamicStyles';
 import SvgOverlay from '../components/SvgOverlay';
 import { getHomepage, getSiteConfig, getDesignSystem } from '../lib/sanity-queries';
@@ -6,10 +7,9 @@ import { getImageUrl } from '../lib/sanity-image';
 import { generateSectionBackgroundStyle } from '../lib/background-utils';
 import styles from './homepage.module.css';
 import type { Metadata } from 'next';
+import type { PortableTextBlock } from '@portabletext/types';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const homepage = await getHomepage();
-  
   return {
     title: 'GameDev Syndicate',
     description: 'Your ultimate destination for game development resources, tutorials, and community.',
@@ -54,7 +54,7 @@ export default async function Home() {
             </h1>
             
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Create a "Homepage" document in Sanity Studio to customize this content.
+              Create a &quot;Homepage&quot; document in Sanity Studio to customize this content.
             </p>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default async function Home() {
       {homepage.textArea && (
         <section className={styles.textSection}>
           <div className={styles.textContent}>
-            <RichTextRenderer value={homepage.textArea} />
+            <RichTextRenderer value={homepage.textArea as PortableTextBlock[]} />
           </div>
         </section>
       )}
@@ -128,13 +128,7 @@ export default async function Home() {
                   </h2>
                 )}
                 {section.content && section.content.length > 0 && (
-                  <>
-                    {section.content.map((block, blockIndex) => (
-                      <div key={block._key || blockIndex} className={styles.blockItem}>
-                        <RichTextRenderer value={[block]} />
-                      </div>
-                    ))}
-                  </>
+                  <CustomBlocks blocks={section.content} siteConfig={siteConfig} />
                 )}
               </div>
             </section>

@@ -6,11 +6,11 @@ import { designSystemColorToCSS } from '../../lib/background-utils';
 
 interface SanityColor {
   _type: 'color';
-  alpha: number;
+  alpha?: number;
   hex: string;
-  hsl: object;
-  hsv: object;
-  rgb: object;
+  hsl?: Record<string, unknown>;
+  hsv?: Record<string, unknown>;
+  rgb?: Record<string, unknown>;
 }
 
 interface ContentSeparatorBlockProps {

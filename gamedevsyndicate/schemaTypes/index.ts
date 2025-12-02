@@ -11,7 +11,9 @@ import imageTextBlock from './imageTextBlock'
 import page from './page'
 import siteConfig from './siteConfig'
 import textBlock from './textBlock'
+import shortArticle from './shortArticle'
 import shortArticleBlock from './shortArticleBlock'
+import shortArticleListBlock from './shortArticleListBlock'
 import contentSeparator from './blocks/contentSeparator'
 import socialMediaLink from './socialMediaLink'
 
@@ -21,6 +23,7 @@ export const schemaTypes = [
   designSystem,
   homepage,
   page,
+  shortArticle,
   siteConfig,
   
   // Block types
@@ -33,6 +36,7 @@ export const schemaTypes = [
   imageTextBlock,
   textBlock,
   shortArticleBlock,
+  shortArticleListBlock,
   contentSeparator,
   
   // Object types

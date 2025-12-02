@@ -1,8 +1,7 @@
 import { getClient } from '../sanityClient';
 import { draftMode } from 'next/headers';
-import { config } from '../config';
 import { SiteConfig, Page, Homepage } from '../types/sanity';
-import { DesignSystem } from '../types/designSystem';
+import type { DesignSystem } from '../types/designSystem';
 
 // Helper to get the right client based on draft mode
 async function getQueryClient() {
@@ -220,6 +219,48 @@ export async function getHomepage(): Promise<Homepage | null> {
             backgroundColorSelection,
             customBackgroundColor,
             verticalAlignment
+          },
+          _type == "shortArticleBlock" => {
+            internalLabel,
+            article->{
+              _id,
+              title,
+              text,
+              image{
+                ...,
+                asset->,
+                alt
+              },
+              excerpt,
+              publishedAt
+            },
+            imageAlignment,
+            imageSize,
+            verticalAlignment,
+            textAlign
+          },
+          _type == "shortArticleListBlock" => {
+            internalLabel,
+            title,
+            articles[]->{
+              _id,
+              title,
+              text,
+              image{
+                ...,
+                asset->,
+                alt
+              },
+              publishedAt
+            },
+            layout,
+            imagePosition,
+            imageAlignment,
+            imageSize,
+            verticalAlignment,
+            spacing,
+            backgroundColorSelection,
+            customBackgroundColor
           }
         }
       },
@@ -352,6 +393,48 @@ export async function getPage(slug: string): Promise<Page | null> {
             backgroundColorSelection,
             customBackgroundColor,
             verticalAlignment
+          },
+          _type == "shortArticleBlock" => {
+            internalLabel,
+            article->{
+              _id,
+              title,
+              text,
+              image{
+                ...,
+                asset->,
+                alt
+              },
+              excerpt,
+              publishedAt
+            },
+            imageAlignment,
+            imageSize,
+            verticalAlignment,
+            textAlign
+          },
+          _type == "shortArticleListBlock" => {
+            internalLabel,
+            title,
+            articles[]->{
+              _id,
+              title,
+              text,
+              image{
+                ...,
+                asset->,
+                alt
+              },
+              publishedAt
+            },
+            layout,
+            imagePosition,
+            imageAlignment,
+            imageSize,
+            verticalAlignment,
+            spacing,
+            backgroundColorSelection,
+            customBackgroundColor
           }
         }
       }
@@ -435,5 +518,48 @@ export async function getDesignSystem() {
   } catch (error) {
     console.error('Failed to fetch design system:', error);
     return null;
+  }
+}
+
+// Short Article queries
+export async function getShortArticle(id: string) {
+  try {
+    const query = `*[_type == "shortArticle" && _id == $id][0]{
+      _id,
+      title,
+      text,
+      image{
+        ...,
+        asset->,
+        alt
+      },
+      publishedAt
+    }`;
+    const client = await getQueryClient();
+    return await client.fetch(query, { id }, getCacheConfig());
+  } catch (error) {
+    console.error('Failed to fetch short article:', error);
+    return null;
+  }
+}
+
+export async function getAllShortArticles() {
+  try {
+    const query = `*[_type == "shortArticle"] | order(publishedAt desc) {
+      _id,
+      title,
+      text,
+      image{
+        ...,
+        asset->,
+        alt
+      },
+      publishedAt
+    }`;  
+    const client = await getQueryClient();
+    return await client.fetch(query, {}, getCacheConfig());
+  } catch (error) {
+    console.error('Failed to fetch short articles:', error);
+    return [];
   }
 }

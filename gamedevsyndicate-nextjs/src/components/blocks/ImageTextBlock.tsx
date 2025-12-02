@@ -6,13 +6,14 @@ import type { SanityImage } from '../../types/sanity';
 import { useDesignSystem } from '../../hooks/useDesignSystem';
 import { colorToCSS } from '../../lib/colorUtils';
 import RichTextRendererClient from '../RichTextRendererClient';
+import type { PortableTextBlock } from '@portabletext/types';
 
 interface ImageTextBlockProps {
   value: {
     _key: string;
     title?: string;
     image?: SanityImage & { alt?: string };
-    text?: any[];
+    text?: unknown[];
     imagePosition?: 'left' | 'right';
     imageSize?: 'small' | 'medium' | 'large' | 'half';
     backgroundColorSelection?: string;
@@ -145,7 +146,7 @@ export const ImageTextBlock: React.FC<ImageTextBlockProps> = ({ value }) => {
           
           {text && text.length > 0 && (
             <div className={`prose prose-lg max-w-none ${subTextColorClass}`}>
-              <RichTextRendererClient value={text} />
+              <RichTextRendererClient value={text as PortableTextBlock[]} />
             </div>
           )}
         </div>

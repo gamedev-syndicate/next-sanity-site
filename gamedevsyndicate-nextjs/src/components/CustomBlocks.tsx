@@ -8,6 +8,7 @@ import ContentSeparatorBlock from './blocks/ContentSeparatorBlock';
 import { ContactBlock } from './blocks/ContactBlock';
 import { ImageTextBlock } from './blocks/ImageTextBlock';
 import { ShortArticleBlock } from './blocks/ShortArticleBlock';
+import { ShortArticleListBlock } from './blocks/ShortArticleListBlock';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { designSystemColorToCSS } from '../lib/background-utils';
 
@@ -17,10 +18,6 @@ interface ImageBlockProps {
 
 interface TextBlockProps {
   value: TextBlockType;
-}
-
-interface ButtonBlockProps {
-  value: ButtonBlockType;
 }
 
 interface CalloutProps {
@@ -33,7 +30,10 @@ interface CalloutProps {
 
 interface InlineImageProps {
   value: {
-    asset: any;
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
     alt?: string;
     caption?: string;
     position?: 'center' | 'left' | 'right';
@@ -193,13 +193,13 @@ export function TextBlock({ value }: TextBlockProps) {
     <div className={`${alignClasses[value.textAlign]}`}>
       {value.heading && renderHeading()}
       <div className="prose prose-invert max-w-none">
-        <PortableText value={value.text} />
+        <PortableText value={value.text as import('@portabletext/types').PortableTextBlock[]} />
       </div>
     </div>
   );
 }
 
-export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: any }) {
+export function ButtonBlock({ value }: { value: ButtonBlockType }) {
   const { designSystem } = useDesignSystem();
   
   let backgroundColor = '';
@@ -288,20 +288,23 @@ export function ButtonBlock({ value, siteConfig }: { value: any; siteConfig?: an
 }
 
 
+import type { CompanyBlock as CompanyBlockType, CompanyListBlock as CompanyListBlockType, CompactCompanyListBlock as CompactCompanyListBlockType, ContactBlock as ContactBlockType, ImageTextBlock as ImageTextBlockType, ShortArticleBlock as ShortArticleBlockType, ShortArticleListBlock as ShortArticleListBlockType, ContentSeparatorBlock as ContentSeparatorBlockType } from '../types/sanity';
+
 export const customComponents = {
   types: {
     imageBlock: ImageBlock,
     textBlock: TextBlock,
     buttonBlock: ButtonBlock,
-    companyBlock: ({ value }: { value: any }) => <CompanyBlock {...value} />,
-    companyListBlock: ({ value }: { value: any }) => <CompanyListBlock value={value} />,
-    compactCompanyListBlock: ({ value }: { value: any }) => <CompactCompanyListBlock value={value} />,
-    contactBlock: ({ value }: { value: any }) => <ContactBlock value={value} />,
-    imageTextBlock: ({ value }: { value: any }) => <ImageTextBlock value={value} />,
-    shortArticleBlock: ({ value }: { value: any }) => <ShortArticleBlock value={value} />,
+    companyBlock: ({ value }: { value: CompanyBlockType }) => <CompanyBlock value={value} />,
+    companyListBlock: ({ value }: { value: CompanyListBlockType }) => <CompanyListBlock value={value} />,
+    compactCompanyListBlock: ({ value }: { value: CompactCompanyListBlockType }) => <CompactCompanyListBlock value={value} />,
+    contactBlock: ({ value }: { value: ContactBlockType }) => <ContactBlock value={value} />,
+    imageTextBlock: ({ value }: { value: ImageTextBlockType }) => <ImageTextBlock value={value} />,
+    shortArticleBlock: ({ value }: { value: ShortArticleBlockType }) => <ShortArticleBlock value={value} />,
+    shortArticleListBlock: ({ value }: { value: ShortArticleListBlockType }) => <ShortArticleListBlock value={value} />,
     callout: Callout,
     image: InlineImage,
-    contentSeparator: ({ value }: { value: any }) => {
+    contentSeparator: ({ value }: { value: ContentSeparatorBlockType }) => {
       console.log('ContentSeparator value from Sanity:', JSON.stringify(value, null, 2));
       return (
         <ContentSeparatorBlock
@@ -383,8 +386,6 @@ export const customComponents = {
       );
     },
     highlight: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
-      const { designSystem } = useDesignSystem();
-      
       if (!value?.color?.hex) return <>{children}</>;
       
       const backgroundColor = value.color.alpha 
@@ -404,8 +405,6 @@ export const customComponents = {
       );
     },
     textColor: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
-      const { designSystem } = useDesignSystem();
-      
       if (!value?.color?.hex) return <>{children}</>;
       
       const textColor = value.color.alpha 
@@ -447,7 +446,9 @@ export const customComponents = {
   },
 };
 
-export default function CustomBlocks({ blocks, siteConfig }: { blocks: any[]; siteConfig?: any }) {
+import type { ContentBlock } from '../types/sanity';
+
+export default function CustomBlocks({ blocks, siteConfig }: { blocks: ContentBlock[]; siteConfig?: unknown }) {
   console.log('CustomBlocks rendering blocks:', blocks);
   
   return (
@@ -457,13 +458,13 @@ export default function CustomBlocks({ blocks, siteConfig }: { blocks: any[]; si
         
         switch (block._type) {
           case 'imageBlock':
-            return <ImageBlock key={block._key} {...block} />;
+            return <ImageBlock key={block._key} value={block} />;
           case 'textBlock':
-            return <TextBlock key={block._key} {...block} />;
+            return <TextBlock key={block._key} value={block} />;
           case 'buttonBlock':
-            return <ButtonBlock key={block._key} value={block} siteConfig={siteConfig} />;
+            return <ButtonBlock key={block._key} value={block} />;
           case 'companyBlock':
-            return <CompanyBlock key={block._key} {...block} />;
+            return <CompanyBlock key={block._key} value={block} />;
           case 'companyListBlock':
             return <CompanyListBlock key={block._key} value={block} />;
           case 'compactCompanyListBlock':
@@ -475,8 +476,27 @@ export default function CustomBlocks({ blocks, siteConfig }: { blocks: any[]; si
             return <ImageTextBlock key={block._key} value={block} />;
           case 'shortArticleBlock':
             return <ShortArticleBlock key={block._key} value={block} />;
+          case 'shortArticleListBlock':
+            return <ShortArticleListBlock key={block._key} value={block} />;
+          case 'contentSeparator': {
+            const separatorBlock = block as import('../types/sanity').ContentSeparatorBlock;
+            return (
+              <ContentSeparatorBlock
+                key={separatorBlock._key}
+                lineColorSelection={separatorBlock.lineColorSelection}
+                customLineColor={separatorBlock.customLineColor}
+                diamondColorSelection={separatorBlock.diamondColorSelection}
+                customDiamondColor={separatorBlock.customDiamondColor}
+                lineColor={separatorBlock.lineColor}
+                diamondColor={separatorBlock.diamondColor}
+                strokeWidth={separatorBlock.strokeWidth}
+                height={separatorBlock.height}
+                margin={separatorBlock.margin}
+              />
+            );
+          }
           default:
-            console.warn(`Unknown block type: ${block._type}`);
+            console.warn(`Unknown block type: ${(block as ContentBlock)._type}`);
             return null;
         }
       })}

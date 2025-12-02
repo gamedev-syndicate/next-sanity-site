@@ -18,7 +18,6 @@ interface SvgOverlayProps {
  */
 export default function SvgOverlay({ 
   overlayTexture, 
-  backgroundConfig, 
   className = '', 
   isSection = false 
 }: SvgOverlayProps) {

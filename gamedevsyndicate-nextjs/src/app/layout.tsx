@@ -6,8 +6,7 @@ import DynamicStyles from '../components/DynamicStyles';
 import VisualEditingWrapper from '../components/VisualEditingWrapper';
 import { DesignSystemProvider } from '../components/DesignSystemProvider';
 import { getSiteConfig, getDesignSystem } from '../lib/sanity-queries';
-import { resolveSingleColor } from '../lib/colorUtils';
-import { generateBackgroundStyle, generateSVGPatternStyle, generateColorOverlayStyle } from '../lib/background-utils';
+import { generateBackgroundStyle } from '../lib/background-utils';
 import type { NavigationItem } from '../types/sanity';
 
 const roboto = Roboto({

@@ -415,6 +415,7 @@ export default defineType({
                 {type: 'compactCompanyListBlock'},
                 {type: 'contactBlock'},
                 {type: 'shortArticleBlock'},
+                {type: 'shortArticleListBlock'},
                 {type: 'contentSeparator'},
               ],
             },

@@ -39,7 +39,7 @@ export interface TextBlock {
   internalLabel?: string; // For CMS organization only - not displayed on website
   heading?: string;
   headingLevel: 'h1' | 'h2' | 'h3' | 'h4';
-  text: any[];
+  text: unknown[];
   textAlign: 'left' | 'center' | 'right';
 }
 
@@ -52,6 +52,19 @@ export interface ButtonBlock {
   style: 'primary' | 'secondary' | 'outline';
   size: 'small' | 'medium' | 'large';
   openInNewTab: boolean;
+  alignment?: 'left' | 'center' | 'right';
+  backgroundColorSelection?: ColorSelection;
+  customBackgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  textColorSelection?: ColorSelection;
+  customTextColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
 }
 
 export interface SocialMediaLink {
@@ -67,7 +80,7 @@ export interface ContactBlock {
   _key: string;
   internalLabel?: string; // For CMS organization only - not displayed on website
   title?: string;
-  description?: any[];
+  description?: unknown[];
   nameLabel?: string;
   emailLabel?: string;
   messageLabel?: string;
@@ -97,7 +110,7 @@ export interface ImageTextBlock {
   internalLabel?: string; // For CMS organization only - not displayed on website
   title?: string;
   image?: SanityImage & { alt?: string };
-  text?: any[];
+  text?: unknown[];
   imagePosition?: 'left' | 'right';
   imageSize?: 'small' | 'medium' | 'large' | 'half';
   backgroundColorSelection?: string;
@@ -109,20 +122,47 @@ export interface ImageTextBlock {
   verticalAlignment?: 'start' | 'center' | 'end';
 }
 
+export interface ShortArticle {
+  _id: string;
+  _type: 'shortArticle';
+  title: string;
+  text: unknown[];
+  image?: SanityImage & { alt?: string };
+  publishedAt?: string;
+}
+
 export interface ShortArticleBlock {
   _type: 'shortArticleBlock';
   _key: string;
   internalLabel?: string; // For CMS organization only - not displayed on website
-  title: string;
-  text: any[];
-  image: SanityImage & { alt?: string };
+  article: ShortArticle;
   imageAlignment?: 'left' | 'right';
   imageSize?: 'small' | 'medium' | 'large';
   verticalAlignment?: 'start' | 'center' | 'end';
   textAlign?: 'left' | 'center' | 'right';
 }
 
-export type ContentBlock = ImageBlock | TextBlock | ButtonBlock | ContactBlock | CompanyBlock | CompanyListBlock | CompactCompanyListBlock | ContentSeparatorBlock | ImageTextBlock | ShortArticleBlock;
+export interface ShortArticleListBlock {
+  _type: 'shortArticleListBlock';
+  _key: string;
+  internalLabel?: string;
+  title?: string;
+  articles: ShortArticle[];
+  layout?: 'vertical' | 'horizontal';
+  imagePosition?: 'top' | 'left' | 'right' | 'bottom';
+  imageAlignment?: boolean;
+  imageSize?: 'small' | 'medium' | 'large';
+  verticalAlignment?: 'start' | 'center' | 'end';
+  spacing?: 'compact' | 'normal' | 'relaxed';
+  backgroundColorSelection?: string;
+  customBackgroundColor?: {
+    hex: string;
+    alpha?: number;
+    rgb: { r: number; g: number; b: number; a: number };
+  };
+}
+
+export type ContentBlock = ImageBlock | TextBlock | ButtonBlock | ContactBlock | CompanyBlock | CompanyListBlock | CompactCompanyListBlock | ContentSeparatorBlock | ImageTextBlock | ShortArticleBlock | ShortArticleListBlock;
 
 // Document types
 export interface NavigationItem {
@@ -308,7 +348,7 @@ export interface Homepage {
     offsetY: number;
     scale: number;
   };
-  textArea?: any[];
+  textArea?: unknown[];
   sections?: HomepageSection[];
   blockArea?: (ImageBlock | TextBlock | ButtonBlock)[];
   backgroundColor?: {
@@ -317,8 +357,6 @@ export interface Homepage {
     alpha?: number;
   };
 }
-
-import type { SanityDocument } from '@sanity/client'
 
 export interface Company {
   _id: string;
@@ -338,33 +376,26 @@ export interface CompanyBlock {
   layout?: 'card' | 'horizontal' | 'minimal';
 }
 
+export interface SanityColorFull {
+  _type: 'color';
+  hex: string;
+  alpha?: number;
+  hsl?: Record<string, unknown>;
+  hsv?: Record<string, unknown>;
+  rgb?: Record<string, unknown>;
+}
+
 export interface ContentSeparatorBlock {
   _type: 'contentSeparator';
   _key: string;
   internalLabel?: string;
   lineColorSelection?: string;
-  customLineColor?: {
-    hex: string;
-    alpha?: number;
-    rgb: { r: number; g: number; b: number; a: number };
-  };
+  customLineColor?: SanityColorFull;
   diamondColorSelection?: string;
-  customDiamondColor?: {
-    hex: string;
-    alpha?: number;
-    rgb: { r: number; g: number; b: number; a: number };
-  };
+  customDiamondColor?: SanityColorFull;
   // Legacy support
-  lineColor?: {
-    _type: 'color';
-    hex: string;
-    alpha?: number;
-  };
-  diamondColor?: {
-    _type: 'color';
-    hex: string;
-    alpha?: number;
-  };
+  lineColor?: SanityColorFull;
+  diamondColor?: SanityColorFull;
   strokeWidth?: number;
   height?: string;
   margin?: {

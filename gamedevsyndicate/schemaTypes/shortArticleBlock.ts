@@ -13,94 +13,12 @@ export default defineType({
       placeholder: 'e.g., Feature Highlight',
     }),
     defineField({
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-      description: '📝 Article title displayed at the top',
+      name: 'article',
+      title: 'Article',
+      type: 'reference',
+      description: '📄 Select an article to display',
+      to: [{ type: 'shortArticle' }],
       validation: Rule => Rule.required(),
-    }),
-    defineField({
-      name: 'text',
-      title: 'Text Content',
-      type: 'array',
-      description: '📄 Article text content displayed below the title',
-      of: [
-        {
-          type: 'block',
-          styles: [
-            { title: 'Normal', value: 'normal' },
-            { title: 'H3', value: 'h3' },
-            { title: 'H4', value: 'h4' },
-            { title: 'Quote', value: 'blockquote' },
-          ],
-          marks: {
-            decorators: [
-              { title: 'Strong', value: 'strong' },
-              { title: 'Emphasis', value: 'em' },
-              { title: 'Code', value: 'code' },
-            ],
-            annotations: [
-              {
-                name: 'link',
-                type: 'object',
-                title: 'Link',
-                fields: [
-                  {
-                    name: 'href',
-                    type: 'string',
-                    title: 'URL',
-                  },
-                  {
-                    name: 'blank',
-                    type: 'boolean',
-                    title: 'Open in new tab',
-                    initialValue: false,
-                  },
-                ],
-              },
-              {
-                name: 'textAlign',
-                type: 'object',
-                title: 'Text Alignment',
-                fields: [
-                  {
-                    name: 'align',
-                    type: 'string',
-                    title: 'Alignment',
-                    options: {
-                      list: [
-                        { title: 'Left', value: 'left' },
-                        { title: 'Center', value: 'center' },
-                        { title: 'Right', value: 'right' },
-                        { title: 'Justify', value: 'justify' },
-                      ],
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      ],
-      validation: Rule => Rule.required(),
-    }),
-    defineField({
-      name: 'image',
-      title: 'Image',
-      type: 'image',
-      description: '🖼️ Article image displayed to the side of the content',
-      options: {
-        hotspot: true,
-      },
-      validation: Rule => Rule.required(),
-      fields: [
-        {
-          name: 'alt',
-          type: 'string',
-          title: 'Alternative text',
-          description: 'Important for SEO and accessibility',
-        },
-      ],
     }),
     defineField({
       name: 'imageAlignment',
@@ -164,8 +82,8 @@ export default defineType({
   preview: {
     select: {
       internalLabel: 'internalLabel',
-      title: 'title',
-      media: 'image',
+      title: 'article.title',
+      media: 'article.image',
       imageAlignment: 'imageAlignment',
     },
     prepare(selection) {

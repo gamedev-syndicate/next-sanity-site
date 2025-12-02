@@ -3,9 +3,10 @@
 import React from 'react'
 import { PortableText } from '@portabletext/react'
 import { customComponents } from './CustomBlocks'
+import type { PortableTextBlock } from '@portabletext/types'
 
 interface Props {
-  value: any
+  value: PortableTextBlock | PortableTextBlock[]
 }
 
 export default function RichTextRendererClient({ value }: Props) {

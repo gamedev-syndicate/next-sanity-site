@@ -4,13 +4,17 @@ import React from 'react';
 import { getImageUrl } from '../../lib/sanity-image';
 import type { SanityImage } from '../../types/sanity';
 import RichTextRendererClient from '../RichTextRendererClient';
+import type { PortableTextBlock } from '@portabletext/types';
 
 interface ShortArticleBlockProps {
   value: {
     _key: string;
-    title: string;
-    text: any[];
-    image: SanityImage & { alt?: string };
+    article: {
+      _id: string;
+      title: string;
+      text: unknown[];
+      image: SanityImage & { alt?: string };
+    };
     imageAlignment?: 'left' | 'right';
     imageSize?: 'small' | 'medium' | 'large';
     verticalAlignment?: 'start' | 'center' | 'end';
@@ -20,16 +24,38 @@ interface ShortArticleBlockProps {
 
 export const ShortArticleBlock: React.FC<ShortArticleBlockProps> = ({ value }) => {
   const {
-    title,
-    text,
-    image,
+    article,
     imageAlignment = 'left',
     imageSize = 'medium',
     verticalAlignment = 'start',
     textAlign = 'left',
   } = value;
 
+  if (!article) {
+    return null;
+  }
+
+  const { title, text, image } = article;
   const imageUrl = image ? getImageUrl(image, 400, 400) : null;
+
+  if (!imageUrl) {
+    // Render without image
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="flex flex-col">
+          <h2 className="text-xl md:text-2xl font-bold mb-3 text-white" style={{ textAlign }}>
+            {title}
+          </h2>
+          
+          {text && text.length > 0 && (
+            <div className="prose prose-base max-w-none text-gray-300" style={{ textAlign }}>
+              <RichTextRendererClient value={text as PortableTextBlock[]} />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   // Get image size classes
   const getImageSizeClasses = () => {
@@ -100,7 +126,7 @@ export const ShortArticleBlock: React.FC<ShortArticleBlockProps> = ({ value }) =
           
           {text && text.length > 0 && (
             <div className="prose prose-base max-w-none text-gray-300" style={{ textAlign }}>
-              <RichTextRendererClient value={text} />
+              <RichTextRendererClient value={text as PortableTextBlock[]} />
             </div>
           )}
         </div>

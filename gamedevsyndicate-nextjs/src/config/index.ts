@@ -1,5 +1,4 @@
 import fs from 'fs'
-import path from 'path'
 
 interface AppConfig {
   sanity: {
@@ -72,58 +71,65 @@ function loadLocalConfig(): Partial<AppConfig> {
 
 // Load configuration from environment variables
 function loadEnvConfig(): Partial<AppConfig> {
-  const envConfig: Partial<AppConfig> = {
-    sanity: {},
-    app: {},
-    features: {}
-  } as any
+  const envConfig: Partial<AppConfig> = {}
 
   // Sanity configuration
   if (process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
-    envConfig.sanity!.projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
+    if (!envConfig.sanity) envConfig.sanity = {} as AppConfig['sanity'];
+    envConfig.sanity.projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
   }
 
   if (process.env.NEXT_PUBLIC_SANITY_DATASET) {
-    envConfig.sanity!.dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
+    if (!envConfig.sanity) envConfig.sanity = {} as AppConfig['sanity'];
+    envConfig.sanity.dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
   }
 
   if (process.env.SANITY_API_TOKEN) {
-    envConfig.sanity!.token = process.env.SANITY_API_TOKEN
+    if (!envConfig.sanity) envConfig.sanity = {} as AppConfig['sanity'];
+    envConfig.sanity.token = process.env.SANITY_API_TOKEN
   }
 
   if (process.env.SANITY_PREVIEW_SECRET) {
-    envConfig.sanity!.previewSecret = process.env.SANITY_PREVIEW_SECRET
+    if (!envConfig.sanity) envConfig.sanity = {} as AppConfig['sanity'];
+    envConfig.sanity.previewSecret = process.env.SANITY_PREVIEW_SECRET
   }
 
   if (process.env.NEXT_PUBLIC_SANITY_STUDIO_URL) {
-    envConfig.sanity!.studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL
+    if (!envConfig.sanity) envConfig.sanity = {} as AppConfig['sanity'];
+    envConfig.sanity.studioUrl = process.env.NEXT_PUBLIC_SANITY_STUDIO_URL
   }
 
   // App configuration
   if (process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL) {
-    envConfig.app!.url = process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`
+    if (!envConfig.app) envConfig.app = {} as AppConfig['app'];
+    envConfig.app.url = process.env.NEXT_PUBLIC_APP_URL || `https://${process.env.VERCEL_URL}`
   }
 
   if (process.env.NODE_ENV) {
     const nodeEnv = process.env.NODE_ENV;
     if (nodeEnv === 'development') {
-      envConfig.app!.environment = 'dev';
+      if (!envConfig.app) envConfig.app = {} as AppConfig['app'];
+      envConfig.app.environment = 'dev';
     } else if (nodeEnv === 'production') {
-      envConfig.app!.environment = 'production';
+      if (!envConfig.app) envConfig.app = {} as AppConfig['app'];
+      envConfig.app.environment = 'production';
     }
   }
 
   // Feature flags
   if (process.env.ENABLE_VISUAL_EDITING !== undefined) {
-    envConfig.features!.visualEditing = process.env.ENABLE_VISUAL_EDITING === 'true'
+    if (!envConfig.features) envConfig.features = {} as AppConfig['features'];
+    envConfig.features.visualEditing = process.env.ENABLE_VISUAL_EDITING === 'true'
   }
 
   if (process.env.ENABLE_CACHING !== undefined) {
-    envConfig.features!.caching = process.env.ENABLE_CACHING === 'true'
+    if (!envConfig.features) envConfig.features = {} as AppConfig['features'];
+    envConfig.features.caching = process.env.ENABLE_CACHING === 'true'
   }
 
   if (process.env.ENABLE_ANALYTICS !== undefined) {
-    envConfig.features!.analytics = process.env.ENABLE_ANALYTICS === 'true'
+    if (!envConfig.features) envConfig.features = {} as AppConfig['features'];
+    envConfig.features.analytics = process.env.ENABLE_ANALYTICS === 'true'
   }
 
   // Clean up empty objects
@@ -140,7 +146,7 @@ function deepMerge<T>(target: T, source: Partial<T>): T {
   
   for (const key in source) {
     if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key], source[key] as any)
+      result[key] = deepMerge(result[key], source[key] as Partial<T[Extract<keyof T, string>]>)
     } else if (source[key] !== undefined) {
       result[key] = source[key] as T[Extract<keyof T, string>]
     }
