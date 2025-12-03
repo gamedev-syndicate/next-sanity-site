@@ -10,7 +10,6 @@ interface DynamicStylesProps {
 
 export default function DynamicStyles({ menuColor, navigationTextColor, navigationActiveColor }: DynamicStylesProps) {
   useEffect(() => {
-    const style = document.createElement('style');
     let styles = '';
     
     if (menuColor) {
@@ -38,12 +37,19 @@ export default function DynamicStyles({ menuColor, navigationTextColor, navigati
     }
     
     if (styles) {
-      style.textContent = styles;
-      document.head.appendChild(style);
+      // Create or update the style element
+      let styleElement = document.getElementById('dynamic-nav-styles')
       
-      return () => {
-        document.head.removeChild(style);
-      };
+      if (!styleElement) {
+        styleElement = document.createElement('style');
+        styleElement.id = 'dynamic-nav-styles';
+        // Add data attributes to prevent tree-shaking/removal
+        styleElement.setAttribute('data-critical', 'true');
+        styleElement.setAttribute('data-navigation', 'true');
+        document.head.appendChild(styleElement);
+      }
+      
+      styleElement.textContent = styles;
     }
   }, [menuColor, navigationTextColor, navigationActiveColor]);
 

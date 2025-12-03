@@ -19,13 +19,21 @@ export function DesignSystemProvider({ children, designSystem }: DesignSystemPro
     }
     
     if (cssContent) {
-      // Create or update the style element
+      // Create or update the style element with data attribute to prevent removal
       let styleElement = document.getElementById('design-system-colors')
       
       if (!styleElement) {
         styleElement = document.createElement('style')
         styleElement.id = 'design-system-colors'
-        document.head.appendChild(styleElement)
+        // Add data attribute to prevent tree-shaking/removal
+        styleElement.setAttribute('data-critical', 'true')
+        styleElement.setAttribute('data-design-system', 'true')
+        // Insert as first child of head for priority
+        if (document.head.firstChild) {
+          document.head.insertBefore(styleElement, document.head.firstChild)
+        } else {
+          document.head.appendChild(styleElement)
+        }
       }
       
       styleElement.textContent = cssContent;

@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+/* Ensure these CSS custom properties are always defined to prevent tree-shaking issues */
+/* Default fallback values for design system colors */
+:root {
+  /* Design system color variables - will be overridden by DesignSystemProvider */
+  --color-primary: #3b82f6;
+  --color-secondary: #10b981;
+  --color-tertiary: #f59e0b;
+  --color-button-primary: #1d4ed8;
+  --color-button-secondary: #6b7280;
+  --color-button-text-primary: #ffffff;
+  --color-button-text-secondary: #ffffff;
+  
+  /* RGB values for Tailwind CSS */
+  --color-primary-rgb: 59 130 246;
+  --color-secondary-rgb: 16 185 129;
+  --color-tertiary-rgb: 245 158 11;
+  --color-button-primary-rgb: 29 78 216;
+  --color-button-secondary-rgb: 107 114 128;
+  --color-button-text-primary-rgb: 255 255 255;
+  --color-button-text-secondary-rgb: 255 255 255;
+}
+
 /* Reset default margins and padding for specific elements, not all */
 html, body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, blockquote {
   margin: 0;

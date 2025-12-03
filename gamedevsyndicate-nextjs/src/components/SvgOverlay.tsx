@@ -34,6 +34,9 @@ export default function SvgOverlay({
       className={className}
       aria-hidden="true"
       style={patternStyle}
+      // Add data attribute to prevent removal during optimization
+      data-svg-overlay="true"
+      data-critical="true"
     />
   );
 }

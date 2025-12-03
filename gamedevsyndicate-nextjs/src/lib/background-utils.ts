@@ -369,24 +369,34 @@ export function generateSVGPatternStyle(
 
   const size = parseInt(patternSize);
   const tileMode = overlayTexture.tileMode || 'repeat';
+  const svgUrl = overlayTexture.svgFile.asset.url;
 
+  // Return explicit inline styles to prevent tree-shaking
   return {
-    background,
-    mask: `url('${overlayTexture.svgFile.asset.url}')`,
-    maskRepeat: tileMode,
+    background: background || 'transparent',
+    // Standard mask properties
+    mask: `url('${svgUrl}')`,
+    maskRepeat: tileMode as React.CSSProperties['maskRepeat'],
     maskSize: `${size}px ${size}px`,
     maskPosition: '0 0',
-    WebkitMask: `url('${overlayTexture.svgFile.asset.url}')`,
+    maskComposite: 'source-over' as React.CSSProperties['maskComposite'],
+    // WebKit-specific mask properties (required for Safari/Chrome)
+    WebkitMask: `url('${svgUrl}')`,
     WebkitMaskRepeat: tileMode,
     WebkitMaskSize: `${size}px ${size}px`,
     WebkitMaskPosition: '0 0',
-    pointerEvents: 'none',
-    position: isSection ? 'absolute' : 'fixed', // Fixed for page-level to cover entire viewport
+    WebkitMaskComposite: 'source-over',
+    // Positioning
+    pointerEvents: 'none' as React.CSSProperties['pointerEvents'],
+    position: (isSection ? 'absolute' : 'fixed') as React.CSSProperties['position'],
     top: 0,
     left: 0,
     width: isSection ? '100%' : '100vw',
     height: isSection ? '100%' : '100vh',
     zIndex: 0,
+    // Force layer creation to ensure rendering
+    willChange: 'transform',
+    transform: 'translateZ(0)',
   };
 }
 
