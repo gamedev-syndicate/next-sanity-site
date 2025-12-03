@@ -1,4 +1,4 @@
 {
-  "buildCommand": "npm --prefix gamedevsyndicate install && npm --prefix gamedevsyndicate-nextjs install && cd gamedevsyndicate-nextjs && npm run build",
-  "outputDirectory": "gamedevsyndicate-nextjs/.next"
+  "buildCommand": "npm --prefix ../gamedevsyndicate install && npm run build",
+  "outputDirectory": ".next"
 }
