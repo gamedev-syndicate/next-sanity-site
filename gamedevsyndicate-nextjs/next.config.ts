@@ -11,6 +11,18 @@ const nextConfig: NextConfig = {
     // Remove console logs in production but keep styles
     removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
   },
+  // Configure webpack to handle parent directory imports
+  webpack: (config, { isServer }) => {
+    // Allow webpack to resolve modules from parent directory
+    if (!config.resolve) {
+      config.resolve = {};
+    }
+    if (!config.resolve.alias) {
+      config.resolve.alias = {};
+    }
+    
+    return config;
+  },
 };
 
 export default nextConfig;
