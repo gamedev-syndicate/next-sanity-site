@@ -1,7 +1,7 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
-import {presentationTool} from 'sanity/presentation'
+import {colorInput} from '@sanity/color-input'
 import {schemaTypes} from '../../gamedevsyndicate/schemaTypes'
 
 export default defineConfig({
@@ -9,20 +9,13 @@ export default defineConfig({
   title: 'Gamedevsyndicate',
 
   projectId: 'iu8qgjyf',
-  dataset: process.env.NODE_ENV === 'development' ? 'dev' : 'production',
+  dataset: 'production',
   basePath: '/studio',
 
   plugins: [
     structureTool(), 
-    visionTool(), 
-    presentationTool({
-      previewUrl: {
-        origin: typeof window !== 'undefined' && window.location.origin || 'http://localhost:3000',
-        previewMode: {
-          enable: '/api/draft',
-        },
-      },
-    })
+    visionTool(),
+    colorInput(),
   ],
 
   schema: {

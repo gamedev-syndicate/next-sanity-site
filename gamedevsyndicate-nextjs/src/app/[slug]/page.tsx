@@ -6,7 +6,7 @@ import { getPage, getSiteConfig, getDesignSystem, getAllPageSlugs } from '../../
 import { sanityColorToCSS, generateSectionBackgroundStyle } from '../../lib/background-utils';
 import type { Metadata } from 'next';
 interface PageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

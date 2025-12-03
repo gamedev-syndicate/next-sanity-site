@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@portabletext/react": "^4.0.2",
+    "@sanity/color-input": "^5.0.1",
     "@sanity/image-url": "^1.2.0",
     "@sanity/react-loader": "^1.11.18",
     "@sanity/vision": "^4.20.0",
