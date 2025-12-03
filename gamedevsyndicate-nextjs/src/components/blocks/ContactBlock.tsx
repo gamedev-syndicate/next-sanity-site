@@ -7,6 +7,14 @@ import { ContactBlock as ContactBlockType } from '../../types/sanity';
 import { useDesignSystem } from '../../hooks/useDesignSystem';
 import { resolveColor } from '../../lib/colorUtils';
 import { designSystemColorToCSS } from '../../lib/background-utils';
+
+// Helper to convert hex color to rgba with opacity (prevents tree-shaking issues)
+function hexToRgba(hex: string, opacity: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
 import { 
   FaTwitter, FaLinkedin, FaFacebook, FaInstagram, FaYoutube, 
   FaGithub, FaDiscord, FaTwitch, FaTiktok, FaReddit, 
@@ -213,9 +221,10 @@ export function ContactBlock({ value }: ContactBlockProps) {
                     <div 
                       className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                       style={{
-                        background: `linear-gradient(135deg, ${accentColor}20 0%, ${buttonBgColor}20 100%)`,
-                        boxShadow: `0 0 20px ${accentColor}40`,
+                        background: `linear-gradient(135deg, ${hexToRgba(accentColor, 0.125)} 0%, ${hexToRgba(buttonBgColor, 0.125)} 100%)`,
+                        boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
                       }}
+                      data-critical="true"
                     />
                     
                     {/* Icon */}
@@ -224,6 +233,7 @@ export function ContactBlock({ value }: ContactBlockProps) {
                       style={{
                         filter: 'drop-shadow(0 0 8px rgba(255,255,255,0))',
                       }}
+                      data-critical="true"
                     >
                       {getSocialIcon(link.platform)}
                     </span>
@@ -256,12 +266,14 @@ export function ContactBlock({ value }: ContactBlockProps) {
             style={{
               background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)`,
             }}
+            data-critical="true"
           />
           <div 
             className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-10 blur-3xl pointer-events-none"
             style={{
               background: `radial-gradient(circle, ${buttonBgColor} 0%, transparent 70%)`,
             }}
+            data-critical="true"
           />
 
           <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
@@ -280,16 +292,18 @@ export function ContactBlock({ value }: ContactBlockProps) {
                   className="w-full px-5 py-4 bg-black/20 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none transition-all duration-300"
                   style={{
                     borderColor: focusedField === 'name' ? accentColor : undefined,
-                    boxShadow: focusedField === 'name' ? `0 0 0 3px ${accentColor}20` : undefined,
+                    boxShadow: focusedField === 'name' ? `0 0 0 3px ${hexToRgba(accentColor, 0.125)}` : undefined,
                   }}
                   placeholder={value.nameLabel || 'Name'}
+                  data-critical="true"
                 />
                 {focusedField === 'name' && (
                   <div 
                     className="absolute inset-0 rounded-lg pointer-events-none"
                     style={{
-                      boxShadow: `0 0 20px ${accentColor}40`,
+                      boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
                     }}
+                    data-critical="true"
                   />
                 )}
               </div>
@@ -310,16 +324,18 @@ export function ContactBlock({ value }: ContactBlockProps) {
                   className="w-full px-5 py-4 bg-black/20 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none transition-all duration-300"
                   style={{
                     borderColor: focusedField === 'email' ? accentColor : undefined,
-                    boxShadow: focusedField === 'email' ? `0 0 0 3px ${accentColor}20` : undefined,
+                    boxShadow: focusedField === 'email' ? `0 0 0 3px ${hexToRgba(accentColor, 0.125)}` : undefined,
                   }}
                   placeholder={value.emailLabel || 'Email'}
+                  data-critical="true"
                 />
                 {focusedField === 'email' && (
                   <div 
                     className="absolute inset-0 rounded-lg pointer-events-none"
                     style={{
-                      boxShadow: `0 0 20px ${accentColor}40`,
+                      boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
                     }}
+                    data-critical="true"
                   />
                 )}
               </div>
@@ -340,16 +356,18 @@ export function ContactBlock({ value }: ContactBlockProps) {
                   className="w-full px-5 py-4 bg-black/20 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none transition-all duration-300 resize-y min-h-[150px]"
                   style={{
                     borderColor: focusedField === 'message' ? accentColor : undefined,
-                    boxShadow: focusedField === 'message' ? `0 0 0 3px ${accentColor}20` : undefined,
+                    boxShadow: focusedField === 'message' ? `0 0 0 3px ${hexToRgba(accentColor, 0.125)}` : undefined,
                   }}
                   placeholder={value.messageLabel || 'Message'}
+                  data-critical="true"
                 />
                 {focusedField === 'message' && (
                   <div 
                     className="absolute inset-0 rounded-lg pointer-events-none"
                     style={{
-                      boxShadow: `0 0 20px ${accentColor}40`,
+                      boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
                     }}
+                    data-critical="true"
                   />
                 )}
               </div>
@@ -399,8 +417,9 @@ export function ContactBlock({ value }: ContactBlockProps) {
               style={{
                 backgroundColor: buttonBgColor,
                 color: buttonTextColor,
-                boxShadow: `0 4px 20px ${buttonBgColor}40`,
+                boxShadow: `0 4px 20px ${hexToRgba(buttonBgColor, 0.25)}`,
               }}
+              data-critical="true"
             >
               {/* Button Shimmer Effect */}
               <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>

@@ -3,6 +3,17 @@ import React, { useEffect, useState } from "react";
 import type { SanityImage } from '../types/sanity';
 import { getImageUrl } from '../lib/sanity-image';
 
+// Helper to convert hex color with alpha to proper format (prevents tree-shaking)
+function colorWithAlpha(color: { hex: string; alpha?: number }): string {
+  if (color.alpha !== undefined && color.alpha < 1) {
+    const r = parseInt(color.hex.slice(1, 3), 16);
+    const g = parseInt(color.hex.slice(3, 5), 16);
+    const b = parseInt(color.hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${color.alpha})`;
+  }
+  return color.hex;
+}
+
 interface CompanyData {
   _id: string;
   name: string;
@@ -31,20 +42,12 @@ const TiltedSquare: React.FC<{
 
   const getBackgroundColor = () => {
     if (!backgroundColor) return "linear-gradient(135deg, #23272f 80%, #1a1d22 100%)";
-    
-    if (backgroundColor.alpha !== undefined && backgroundColor.alpha < 1) {
-      return `${backgroundColor.hex}${Math.floor(backgroundColor.alpha * 255).toString(16).padStart(2, '0')}`;
-    }
-    return backgroundColor.hex;
+    return colorWithAlpha(backgroundColor);
   };
 
   const getBorderColor = () => {
     if (!borderColor) return '#444';
-    
-    if (borderColor.alpha !== undefined && borderColor.alpha < 1) {
-      return `${borderColor.hex}${Math.floor(borderColor.alpha * 255).toString(16).padStart(2, '0')}`;
-    }
-    return borderColor.hex;
+    return colorWithAlpha(borderColor);
   };
 
   const isLightBackground = backgroundColor 
@@ -59,17 +62,18 @@ const TiltedSquare: React.FC<{
       style={{
         width: size,
         height: size,
-        transform: "rotate(45deg)",
+        transform: "rotate(45deg)" as React.CSSProperties['transform'],
         background: getBackgroundColor(),
         border: `2.5px solid ${getBorderColor()}`,
         transition: "box-shadow 0.2s",
         boxShadow: "0 2px 8px 0 #0002",
         flexShrink: 0,
       }}
+      data-critical="true"
     >
       <div
         style={{
-          transform: "rotate(-45deg)",
+          transform: "rotate(-45deg)" as React.CSSProperties['transform'],
           width: "100%",
           height: "100%",
           display: "flex",
@@ -79,6 +83,7 @@ const TiltedSquare: React.FC<{
           textAlign: "center",
           padding: 6,
         }}
+        data-critical="true"
       >
         {logoUrl && (
           <img
@@ -87,7 +92,7 @@ const TiltedSquare: React.FC<{
             style={{ width: 53, height: 53, objectFit: "contain", marginBottom: 8, borderRadius: 4 }}
           />
         )}
-        <div style={{ fontWeight: 700, color: textColor, fontSize: 14, wordBreak: "break-word", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+        <div style={{ fontWeight: 700, color: textColor, fontSize: 14, wordBreak: "break-word", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box" as React.CSSProperties['display'], WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as React.CSSProperties['WebkitBoxOrient'] }} data-critical="true">
           {company.name}
         </div>
       </div>

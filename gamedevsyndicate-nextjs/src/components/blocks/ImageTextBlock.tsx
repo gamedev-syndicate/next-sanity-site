@@ -123,7 +123,7 @@ export const ImageTextBlock: React.FC<ImageTextBlockProps> = ({ value }) => {
   const flexDirection = imagePosition === 'right' ? 'flex-row-reverse' : 'flex-row';
 
   return (
-    <div className={containerClasses} style={containerStyle}>
+    <div className={containerClasses} style={containerStyle} data-critical="true">
       <div className={`flex flex-col md:${flexDirection} gap-6 md:gap-8 ${getAlignmentClasses()}`}>
         {/* Image Column */}
         {imageUrl && (

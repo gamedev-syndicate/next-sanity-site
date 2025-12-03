@@ -103,6 +103,7 @@ export function Callout({ value }: CalloutProps) {
     <div 
       className={`my-6 p-4 rounded-lg border-l-4 ${colors.text}`}
       style={calloutStyle}
+      data-critical="true"
     >
       <div className="flex items-start space-x-3">
         <span className="text-xl">{iconMap[value.type]}</span>
@@ -280,6 +281,7 @@ export function ButtonBlock({ value }: { value: ButtonBlockType }) {
         rel={value.openInNewTab ? 'noopener noreferrer' : undefined}
         className={`${baseClasses} ${styleClasses}`}
         style={buttonStyle}
+        data-critical="true"
       >
         {value.text}
       </a>
@@ -399,6 +401,7 @@ export const customComponents = {
             padding: '2px 4px',
             borderRadius: '3px',
           }}
+          data-critical="true"
         >
           {children}
         </span>
@@ -416,6 +419,7 @@ export const customComponents = {
           style={{
             color: textColor,
           }}
+          data-critical="true"
         >
           {children}
         </span>

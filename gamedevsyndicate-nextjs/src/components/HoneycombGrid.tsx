@@ -4,6 +4,17 @@ import React, { useState, useEffect } from 'react';
 import type { SanityImage } from '../types/sanity';
 import { getImageUrl } from '../lib/sanity-image';
 
+// Helper to convert hex color with alpha to proper format (prevents tree-shaking)
+function colorWithAlpha(color: { hex: string; alpha?: number }): string {
+  if (color.alpha !== undefined && color.alpha < 1) {
+    const r = parseInt(color.hex.slice(1, 3), 16);
+    const g = parseInt(color.hex.slice(3, 5), 16);
+    const b = parseInt(color.hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${color.alpha})`;
+  }
+  return color.hex;
+}
+
 interface CompanyData {
   _id: string;
   name: string;
@@ -142,9 +153,7 @@ const CompanyHoneycomb: React.FC<{
 
   const backgroundStyle = backgroundColor 
     ? { 
-        backgroundColor: backgroundColor.alpha !== undefined && backgroundColor.alpha < 1
-          ? `${backgroundColor.hex}${Math.floor(backgroundColor.alpha * 255).toString(16).padStart(2, '0')}`
-          : backgroundColor.hex
+        backgroundColor: colorWithAlpha(backgroundColor)
       }
     : {};
 
