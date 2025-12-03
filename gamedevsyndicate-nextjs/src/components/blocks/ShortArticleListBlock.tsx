@@ -69,31 +69,31 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
 
   const backgroundColor = resolveBackgroundColor();
 
-  // Get image size classes - much smaller for list view
+  // Get image size classes - much smaller for list view (40% height reduction total)
   const getImageSizeClasses = () => {
     if (layout === 'horizontal') {
-      // For horizontal layout, use fixed small sizes (15% smaller)
+      // For horizontal layout, use fixed small sizes (reduced by 40%)
       switch (imageSize) {
         case 'small':
-          return 'w-20 h-20 md:w-24 md:h-24';
+          return 'w-12 h-12 md:w-16 md:h-16';
         case 'medium':
-          return 'w-24 h-24 md:w-28 md:h-28';
+          return 'w-16 h-16 md:w-20 md:h-20';
         case 'large':
-          return 'w-28 h-28 md:w-34 md:h-34';
+          return 'w-20 h-20 md:w-24 md:h-24';
         default:
-          return 'w-24 h-24 md:w-28 md:h-28';
+          return 'w-16 h-16 md:w-20 md:h-20';
       }
     }
     // For vertical layout
     switch (imageSize) {
       case 'small':
-        return 'md:w-24'; // Fixed small width
+        return 'md:w-16'; // Fixed small width (reduced)
       case 'medium':
-        return 'md:w-28'; // Fixed medium width
+        return 'md:w-20'; // Fixed medium width (reduced)
       case 'large':
-        return 'md:w-34'; // Fixed large width
+        return 'md:w-24'; // Fixed large width (reduced)
       default:
-        return 'md:w-28';
+        return 'md:w-20';
     }
   };
 
@@ -116,17 +116,17 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     }
   };
 
-  // Get spacing classes
+  // Get spacing classes (40% reduction total)
   const getSpacingClasses = () => {
     switch (spacing) {
       case 'compact':
-        return 'gap-3 md:gap-4';
+        return 'gap-1.5 md:gap-2';
       case 'normal':
-        return 'gap-4 md:gap-5';
+        return 'gap-2 md:gap-3';
       case 'relaxed':
-        return 'gap-5 md:gap-6';
+        return 'gap-3 md:gap-4';
       default:
-        return 'gap-4 md:gap-5';
+        return 'gap-2 md:gap-3';
     }
   };
 
@@ -173,12 +173,12 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     if (!imageUrl) {
       return (
         <div key={article._id} className={articleClasses} style={articleStyle}>
-          <div className="flex flex-col gap-2.5 p-6 md:p-7">
-            <h3 className="text-base md:text-lg font-bold text-white line-clamp-2">
+          <div className="flex flex-col gap-1.5 p-3 md:p-4">
+            <h3 className="text-xs md:text-sm font-bold text-white line-clamp-2">
               {article.title}
             </h3>
             {article.text && article.text.length > 0 && (
-              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-4 text-sm leading-relaxed">
+              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-2 text-xs leading-tight">
                 <RichTextRendererClient value={article.text as PortableTextBlock[]} />
               </div>
             )}
@@ -209,18 +209,18 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
             <img
               src={imageUrl}
               alt={article.image?.alt || article.title || 'Article image'}
-              className={`w-full ${isVerticalImage ? 'h-28 md:h-34' : 'h-full'} object-cover`}
+              className={`w-full ${isVerticalImage ? 'h-20 md:h-24' : 'h-full'} object-cover`}
             />
           </div>
 
           {/* Content - with padding */}
-          <div className={`${isVerticalImage ? 'w-full' : getContentSizeClasses()} flex flex-col justify-start gap-2 p-6 md:p-7`}>
-            <h3 className="text-base md:text-lg font-bold text-white line-clamp-2">
+          <div className={`${isVerticalImage ? 'w-full' : getContentSizeClasses()} flex flex-col justify-start gap-1 p-3 md:p-4`}>
+            <h3 className="text-xs md:text-sm font-bold text-white line-clamp-2">
               {article.title}
             </h3>
             
             {article.text && article.text.length > 0 && (
-              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-4 text-sm leading-relaxed">
+              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-2 text-xs leading-tight">
                 <RichTextRendererClient value={article.text as PortableTextBlock[]} />
               </div>
             )}
@@ -238,7 +238,7 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     <div className="w-full max-w-4xl mx-auto">
       {/* Section Title */}
       {title && (
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-white text-center">
+        <h2 className="text-base md:text-lg font-bold mb-2 text-white text-center">
           {title}
         </h2>
       )}
