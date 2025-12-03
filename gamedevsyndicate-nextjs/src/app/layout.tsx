@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import DynamicNavigation from '../components/DynamicNavigation';
-import DynamicStyles from '../components/DynamicStyles';
-import VisualEditingWrapper from '../components/VisualEditingWrapper';
+import ConditionalLayout from '../components/ConditionalLayout';
 import { DesignSystemProvider } from '../components/DesignSystemProvider';
 import { getSiteConfig, getDesignSystem } from '../lib/sanity-queries';
 import { generateBackgroundStyle } from '../lib/background-utils';
@@ -95,14 +93,14 @@ export default async function RootLayout({
         style={backgroundStyle}
       >
         <DesignSystemProvider designSystem={designSystem}>
-          <header className="w-full py-4 flex items-center justify-center bg-black/60 backdrop-blur-md shadow-lg fixed top-0 left-0 z-50" style={{ boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' }}>
-            <DynamicNavigation items={navigationItems} />
-          </header>
-          <DynamicStyles menuColor={menuColor} navigationTextColor={navigationTextColor} navigationActiveColor={navigationActiveColor} />
-          <VisualEditingWrapper />
-          <main className="pt-20 px-4 content-container min-h-screen relative z-10">
+          <ConditionalLayout
+            navigationItems={navigationItems}
+            menuColor={menuColor}
+            navigationTextColor={navigationTextColor}
+            navigationActiveColor={navigationActiveColor}
+          >
             {children}
-          </main>
+          </ConditionalLayout>
         </DesignSystemProvider>
       </body>
     </html>
