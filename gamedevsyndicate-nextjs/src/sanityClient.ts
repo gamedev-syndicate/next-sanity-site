@@ -1,4 +1,4 @@
-import { createClient } from 'next-sanity';
+import { createClient } from '@sanity/client';
 import { sanityClientConfig } from './lib/sanity-client-config';
 
 export const sanityClient = createClient({
@@ -7,11 +7,6 @@ export const sanityClient = createClient({
   apiVersion: sanityClientConfig.apiVersion,
   useCdn: true,
   token: process.env.SANITY_API_TOKEN,
-  // Enable stega for visual editing
-  stega: {
-    enabled: false,
-    studioUrl: '/studio',
-  },
 });
 
 // Updated client for draft mode
@@ -23,10 +18,5 @@ export function getClient(preview = false) {
     useCdn: !preview && process.env.NODE_ENV === 'production',
     token: process.env.SANITY_API_TOKEN,
     perspective: preview ? 'previewDrafts' : 'published',
-    // Enable stega for visual editing in preview mode
-    stega: {
-      enabled: preview,
-      studioUrl: '/studio',
-    },
   });
 }
