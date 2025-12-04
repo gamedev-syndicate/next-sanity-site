@@ -230,90 +230,120 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     legacyBorderColor
   );
 
-  const isLightBackground = finalBackgroundColor 
-    ? getLuminance(finalBackgroundColor.hex) > 0.5 
-    : false;
+  // Render a single company
+  const renderCompany = (company: CompanyData, index: number) => {
+    const logoUrl = company.logo ? getImageUrl(company.logo, 400, 400) : null;
+    // Determine image position: alternate between left and right when enabled
+    const isImageRight = alternateImagePosition && index % 2 === 1;
+    
+    const companyStyle: React.CSSProperties = finalBackgroundColor
+      ? { backgroundColor: finalBackgroundColor.hex }
+      : {};
 
-  const textColorClass = isLightBackground ? 'text-gray-900' : 'text-white';
-  const subTextColorClass = isLightBackground ? 'text-gray-600' : 'text-gray-300';
-  const cardBgClass = finalBackgroundColor ? '' : 'bg-gray-800/30';
-  const borderClass = finalBorderColor ? 'border' : 'border border-gray-700/50';
+    const companyClasses = `
+      rounded-lg
+      overflow-hidden
+      ${finalBackgroundColor ? '' : 'bg-gray-800/30 backdrop-blur-sm'}
+      w-full
+    `.trim().replace(/\s+/g, ' ');
+    
+    // If no logo, render simple text-only layout
+    if (!logoUrl) {
+      return (
+        <div key={`${company._id}-${index}`} className={companyClasses} style={companyStyle}>
+          <div className="flex flex-col gap-0.5 p-3 md:p-4 text-left">
+            <h3 className="text-lg md:text-xl font-bold text-white text-left" style={{ textAlign: 'left', marginBottom: 0 }}>
+              {company.name}
+            </h3>
+            {(company.ceoName || company.email) && (
+              <p className="text-sm text-gray-300 text-left" style={{ textAlign: 'left', marginBottom: 0 }}>
+                {company.ceoName && (
+                  <><span className="font-semibold">CEO:</span> {company.ceoName}</>
+                )}
+                {company.ceoName && company.email && <span> | </span>}
+                {company.email && (
+                  <a 
+                    href={`mailto:${company.email}`} 
+                    className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                  >
+                    {company.email}
+                  </a>
+                )}
+              </p>
+            )}
+            {company.description && (
+              <p className="text-sm text-gray-300 leading-relaxed text-left" style={{ textAlign: 'left', marginBottom: 0, marginTop: '0.25rem' }}>
+                {company.description}
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
+    
+    // Layout with logo on left or right
+    const containerClasses = isImageRight
+      ? `flex flex-row-reverse items-start`
+      : `flex flex-row items-start`;
 
-  const backgroundStyle = finalBackgroundColor 
-    ? { backgroundColor: finalBackgroundColor.hex }
-    : {};
+    return (
+      <div key={`${company._id}-${index}`} className={companyClasses} style={companyStyle}>
+        <div className={containerClasses}>
+          {/* Logo - no padding, extends to edges */}
+          <div className="w-32 md:w-40 flex-shrink-0">
+            <img
+              src={logoUrl}
+              alt={company.logo?.alt || `${company.name} logo`}
+              className="w-full h-full object-cover"
+            />
+          </div>
 
-  const borderStyle = finalBorderColor 
-    ? { borderColor: finalBorderColor.hex }
-    : {};
+          {/* Content - aligned to top, no top padding */}
+          <div className="flex-1 flex flex-col items-start gap-0.5 pl-3 md:pl-4 pr-3 md:pr-4 pb-3 md:pb-4 text-left">
+            <h3 className="text-lg md:text-xl font-bold text-white w-full text-left" style={{ textAlign: 'left', marginBottom: 0 }}>
+              {company.name}
+            </h3>
+            
+            {(company.ceoName || company.email) && (
+              <p className="text-sm text-gray-300 w-full text-left" style={{ textAlign: 'left', marginBottom: 0 }}>
+                {company.ceoName && (
+                  <><span className="font-semibold">CEO:</span> {company.ceoName}</>
+                )}
+                {company.ceoName && company.email && <span> | </span>}
+                {company.email && (
+                  <a 
+                    href={`mailto:${company.email}`} 
+                    className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                  >
+                    {company.email}
+                  </a>
+                )}
+              </p>
+            )}
+            
+            {company.description && (
+              <p className="text-sm text-gray-300 leading-relaxed w-full text-left" style={{ textAlign: 'left', marginBottom: 0, marginTop: '0.25rem' }}>
+                {company.description}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto">
+      {/* Section Title */}
       {title && (
-        <h2 className={`text-3xl font-bold mb-8 text-center ${textColorClass}`}>{title}</h2>
+        <h2 className="text-base md:text-lg font-bold mb-2 text-white text-center">
+          {title}
+        </h2>
       )}
-      <div className="space-y-4">
-        {companies.map((company, index) => {
-          const logoUrl = company.logo ? getImageUrl(company.logo, 100, 100) : null;
-          // Determine image position based on alternateImagePosition setting
-          const isImageRight = alternateImagePosition && index % 2 === 1;
-          const containerClasses = isImageRight
-            ? `flex flex-col md:flex-row-reverse gap-4 md:gap-6 items-start`
-            : `flex flex-col md:flex-row gap-4 md:gap-6 items-start`;
-          
-          return (
-            <div 
-              key={`${company._id}-${index}`}
-              className={`${containerClasses} p-4 rounded-lg backdrop-blur-sm transition-all duration-300 hover:scale-[1.01] ${cardBgClass} ${borderClass}`}
-              style={{...backgroundStyle, ...borderStyle}}
-            >
-              {/* Logo */}
-              {logoUrl && (
-                <div className="w-full md:w-[25%] flex-shrink-0">
-                  <img
-                    src={logoUrl}
-                    alt={company.logo?.alt || `${company.name} logo`}
-                    className="w-full h-auto object-cover rounded-lg shadow-md"
-                  />
-                </div>
-              )}
-              
-              {/* Content */}
-              <div className="w-full md:w-[75%] flex-shrink-0 text-left">
-                {/* Company Name, CEO, and Email with minimal spacing */}
-                <div className="mb-3 leading-none w-full text-left">
-                  <h3 className="text-xl md:text-2xl font-bold text-white text-left">
-                    {company.name}
-                  </h3>
-                  
-                  {company.ceoName && (
-                    <p className={`mt-0.5 ${subTextColorClass} text-left`}>
-                      <span className="font-semibold">CEO:</span> {company.ceoName}
-                    </p>
-                  )}
-                  
-                  {company.email && (
-                    <p className="mt-0.5 text-left">
-                      <a 
-                        href={`mailto:${company.email}`} 
-                        className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
-                      >
-                        {company.email}
-                      </a>
-                    </p>
-                  )}
-                </div>
-                
-                {/* Description */}
-                {company.description && (
-                  <p className={`leading-relaxed ${subTextColorClass} w-full text-left`}>
-                    {company.description}
-                  </p>
-                )}
-              </div>
-            </div>
-          );
-        })}
+
+      {/* Companies Container */}
+      <div className="flex flex-col gap-2 md:gap-3 max-w-2xl mx-auto">
+        {companies.map((company, index) => renderCompany(company, index))}
       </div>
     </div>
   );
