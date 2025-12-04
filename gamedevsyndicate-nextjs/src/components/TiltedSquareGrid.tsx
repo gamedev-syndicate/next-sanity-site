@@ -28,6 +28,7 @@ interface TiltedSquareGridProps {
   size?: number; // px size of the square
   gap?: number; // px gap between squares
   maxItemsPerRow?: number;
+  logoBlendMode?: string;
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
 }
@@ -35,9 +36,10 @@ interface TiltedSquareGridProps {
 const TiltedSquare: React.FC<{
   company: CompanyData;
   size: number;
+  logoBlendMode?: string;
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
-}> = ({ company, size, backgroundColor, borderColor }) => {
+}> = ({ company, size, logoBlendMode = 'normal', backgroundColor, borderColor }) => {
   const logoUrl = company.logo ? getImageUrl(company.logo, 107, 107) : null;
 
   const getBackgroundColor = () => {
@@ -89,7 +91,7 @@ const TiltedSquare: React.FC<{
           <img
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
-            style={{ width: 53, height: 53, objectFit: "contain", marginBottom: 8, borderRadius: 4 }}
+            style={{ width: 53, height: 53, objectFit: "contain", marginBottom: 8, borderRadius: 4, mixBlendMode: logoBlendMode as any }}
           />
         )}
         <div style={{ fontWeight: 700, color: textColor, fontSize: 14, wordBreak: "break-word", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box" as React.CSSProperties['display'], WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as React.CSSProperties['WebkitBoxOrient'] }} data-critical="true">
@@ -114,6 +116,7 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
   size = 140,
   gap = 4,
   maxItemsPerRow = 5,
+  logoBlendMode = 'normal',
   backgroundColor,
   borderColor,
 }) => {
@@ -332,6 +335,7 @@ export const TiltedSquareGrid: React.FC<TiltedSquareGridProps> = ({
                   key={`${company._id}-${rowIdx}-${colIdx}`}
                   company={company}
                   size={size}
+                  logoBlendMode={logoBlendMode}
                   backgroundColor={backgroundColor}
                   borderColor={borderColor}
                 />

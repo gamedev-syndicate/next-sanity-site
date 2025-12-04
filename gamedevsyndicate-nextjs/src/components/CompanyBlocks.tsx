@@ -31,6 +31,7 @@ interface CompanyListBlockProps {
     title?: string;
     companies: CompanyData[];
     alternateImagePosition?: boolean;
+    logoBlendMode?: string;
     backgroundColorSelection?: string;
     customBackgroundColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
     borderColorSelection?: string;
@@ -47,9 +48,10 @@ const CompanyCard: React.FC<{
   showDescription?: boolean;
   showCEO?: boolean;
   showEmail?: boolean;
+  logoBlendMode?: string;
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
-}> = ({ company, layout, showDescription = true, showCEO = true, showEmail = false, backgroundColor, borderColor }) => {
+}> = ({ company, layout, showDescription = true, showCEO = true, showEmail = false, logoBlendMode = 'normal', backgroundColor, borderColor }) => {
   const logoUrl = company.logo ? getImageUrl(company.logo, 220, 220) : null;
 
   const backgroundStyle = backgroundColor 
@@ -80,6 +82,7 @@ const CompanyCard: React.FC<{
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
             className="w-[4.4rem] h-[4.4rem] object-contain rounded"
+            style={{ mixBlendMode: logoBlendMode as any }}
           />
         )}
         <div>
@@ -103,6 +106,7 @@ const CompanyCard: React.FC<{
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
             className="w-[6.6rem] h-[6.6rem] object-contain rounded flex-shrink-0"
+            style={{ mixBlendMode: logoBlendMode as any }}
           />
         )}
         <div className="flex-1">
@@ -138,6 +142,7 @@ const CompanyCard: React.FC<{
           src={logoUrl}
           alt={company.logo?.alt || `${company.name} logo`}
           className="w-[8.8rem] h-[8.8rem] object-contain rounded mx-auto mb-4"
+          style={{ mixBlendMode: logoBlendMode as any }}
         />
       )}
       <h3 className={`text-xl font-bold mb-2 ${textColorClass}`}>{company.name}</h3>
@@ -181,6 +186,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     title, 
     companies,
     alternateImagePosition = false,
+    logoBlendMode = 'normal',
     backgroundColorSelection,
     customBackgroundColor,
     borderColorSelection,
@@ -232,7 +238,11 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
 
   // Render a single company
   const renderCompany = (company: CompanyData, index: number) => {
-    const logoUrl = company.logo ? getImageUrl(company.logo, 400, 400) : null;
+    // Let Sanity auto-detect format to preserve transparency
+    const logoUrl = company.logo ? getImageUrl(company.logo, 400, 400, {
+      fit: 'max' // Preserve aspect ratio and transparency
+    }) : null;
+    
     // Determine image position: alternate between left and right when enabled
     const isImageRight = alternateImagePosition && index % 2 === 1;
     
@@ -289,12 +299,13 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     return (
       <div key={`${company._id}-${index}`} className={companyClasses} style={companyStyle}>
         <div className={containerClasses}>
-          {/* Logo - no padding, extends to edges */}
+          {/* Logo - no padding, preserves transparency */}
           <div className="w-32 md:w-40 flex-shrink-0">
             <img
               src={logoUrl}
               alt={company.logo?.alt || `${company.name} logo`}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
+              style={{ mixBlendMode: logoBlendMode as any }}
             />
           </div>
 
@@ -356,6 +367,7 @@ interface CompactCompanyListBlockProps {
     companies: CompanyData[];
     layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare';
     maxItemsPerRow?: number;
+    logoBlendMode?: string;
     backgroundColorSelection?: string;
     customBackgroundColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
     borderColorSelection?: string;
@@ -373,6 +385,7 @@ export const CompactCompanyListBlock: React.FC<CompactCompanyListBlockProps> = (
     companies, 
     layout = 'grid',
     maxItemsPerRow,
+    logoBlendMode = 'normal',
     backgroundColorSelection,
     customBackgroundColor,
     borderColorSelection,
@@ -451,6 +464,7 @@ export const CompactCompanyListBlock: React.FC<CompactCompanyListBlockProps> = (
           <HoneycombGrid
             companies={companies}
             maxItemsPerRow={maxItemsPerRow}
+            logoBlendMode={logoBlendMode}
             backgroundColor={finalBackgroundColor}
             borderColor={finalBorderColor}
           />
@@ -458,6 +472,7 @@ export const CompactCompanyListBlock: React.FC<CompactCompanyListBlockProps> = (
           <TiltedSquareGrid
             companies={companies}
             maxItemsPerRow={maxItemsPerRow}
+            logoBlendMode={logoBlendMode}
             backgroundColor={finalBackgroundColor}
             borderColor={finalBorderColor}
           />
@@ -473,6 +488,7 @@ export const CompactCompanyListBlock: React.FC<CompactCompanyListBlockProps> = (
                 showDescription={false}
                 showCEO={false}
                 showEmail={false}
+                logoBlendMode={logoBlendMode}
                 backgroundColor={finalBackgroundColor}
                 borderColor={finalBorderColor}
               />

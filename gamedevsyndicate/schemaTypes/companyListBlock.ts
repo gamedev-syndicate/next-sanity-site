@@ -26,6 +26,22 @@ export default defineType({
       description: '🔄 When enabled, every other company will have its image on the opposite side',
       initialValue: false,
     }),
+    defineField({
+      name: 'logoBlendMode',
+      title: 'Logo Blend Mode',
+      type: 'string',
+      description: '🎨 Apply blend mode to logos to help remove dark backgrounds. "Lighten" works well for logos with black backgrounds.',
+      options: {
+        list: [
+          { title: 'None (Default)', value: 'normal' },
+          { title: 'Lighten (Remove Dark Backgrounds)', value: 'lighten' },
+          { title: 'Screen', value: 'screen' },
+          { title: 'Color Dodge', value: 'color-dodge' },
+          { title: 'Multiply', value: 'multiply' },
+        ],
+      },
+      initialValue: 'normal',
+    }),
     colorSelectionField(
       'backgroundColorSelection',
       'Background Color',

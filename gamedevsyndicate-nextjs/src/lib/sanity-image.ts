@@ -14,7 +14,17 @@ export function urlFor(source: SanityImage) {
 }
 
 // Helper function to get optimized image URL with specific dimensions
-export function getImageUrl(image: SanityImage, width?: number, height?: number) {
+export function getImageUrl(
+  image: SanityImage, 
+  width?: number, 
+  height?: number,
+  options?: {
+    removeAlpha?: boolean;
+    backgroundColor?: string;
+    format?: 'jpg' | 'png' | 'webp' | 'auto';
+    fit?: 'clip' | 'crop' | 'fill' | 'fillmax' | 'max' | 'scale' | 'min';
+  }
+) {
   let url = urlFor(image)
   
   if (width) {
@@ -24,6 +34,20 @@ export function getImageUrl(image: SanityImage, width?: number, height?: number)
   if (height) {
     url = url.height(height)
   }
+
+  // Set fit mode if specified
+  if (options?.fit) {
+    url = url.fit(options.fit)
+  }
+
+  // Handle transparency/alpha channel
+  if (options?.removeAlpha && options?.backgroundColor) {
+    // Convert to JPG format which doesn't support transparency and add background
+    url = url.format('jpg').bg(options.backgroundColor)
+  } else if (options?.format && options.format !== 'auto') {
+    url = url.format(options.format)
+  }
+  // If format is 'auto' or not specified, let Sanity auto-detect
   
   return url.url()
 }

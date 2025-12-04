@@ -29,6 +29,7 @@ interface CompanyData {
 interface HoneycombGridProps {
   companies: CompanyData[];
   maxItemsPerRow?: number;
+  logoBlendMode?: string;
   backgroundColor?: { hex: string; alpha?: number };
   borderColor?: { hex: string; alpha?: number };
 }
@@ -222,9 +223,10 @@ const CompanyHoneycomb: React.FC<{
 
 export const HoneycombGrid: React.FC<HoneycombGridProps> = ({ 
   companies, 
-  maxItemsPerRow = 4,
+  maxItemsPerRow,
+  logoBlendMode = 'normal',
   backgroundColor,
-  borderColor 
+  borderColor
 }) => {
   const [windowWidth, setWindowWidth] = useState(1024);
   
