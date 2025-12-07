@@ -137,14 +137,6 @@ function calculateHoneycombLayout(
   };
 }
 
-function getLuminance(hex: string): number {
-  const rgb = hex.replace('#', '');
-  const r = parseInt(rgb.substr(0, 2), 16) / 255;
-  const g = parseInt(rgb.substr(2, 2), 16) / 255;
-  const b = parseInt(rgb.substr(4, 2), 16) / 255;
-  return 0.299 * r + 0.587 * g + 0.114 * b;
-}
-
 const CompanyHoneycomb: React.FC<{
   company: CompanyData;
   backgroundColor?: { hex: string; alpha?: number };
@@ -224,7 +216,6 @@ const CompanyHoneycomb: React.FC<{
 export const HoneycombGrid: React.FC<HoneycombGridProps> = ({ 
   companies, 
   maxItemsPerRow,
-  logoBlendMode = 'normal',
   backgroundColor,
   borderColor
 }) => {

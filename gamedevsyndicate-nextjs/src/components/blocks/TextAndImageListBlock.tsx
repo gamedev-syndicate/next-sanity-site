@@ -9,13 +9,13 @@ import { useDesignSystem } from '../../hooks/useDesignSystem';
 import { colorToCSS } from '../../lib/colorUtils';
 
 interface Article {
-  _id: string;
+  _key: string;
   title: string;
   text: unknown[];
   image?: SanityImage & { alt?: string };
 }
 
-interface ShortArticleListBlockProps {
+interface TextAndImageListBlockProps {
   value: {
     _key: string;
     internalLabel?: string;
@@ -25,6 +25,7 @@ interface ShortArticleListBlockProps {
     imagePosition?: 'top' | 'left' | 'right' | 'bottom';
     imageAlignment?: boolean;
     imageSize?: 'small' | 'medium' | 'large';
+    itemSize?: 'small' | 'medium' | 'large';
     verticalAlignment?: 'start' | 'center' | 'end';
     spacing?: 'compact' | 'normal' | 'relaxed';
     backgroundColorSelection?: string;
@@ -36,7 +37,7 @@ interface ShortArticleListBlockProps {
   };
 }
 
-export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ value }) => {
+export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ value }) => {
   const { designSystem } = useDesignSystem();
   const {
     title,
@@ -45,6 +46,7 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     imagePosition = 'left',
     imageAlignment = false,
     imageSize = 'medium',
+    itemSize = 'small',
     verticalAlignment = 'start',
     spacing = 'normal',
     backgroundColorSelection,
@@ -72,29 +74,21 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
   // Get image size classes - much smaller for list view (40% height reduction total)
   const getImageSizeClasses = () => {
     if (layout === 'horizontal') {
-      // For horizontal layout, use fixed small sizes (reduced by 40%)
+      // For horizontal layout, use fixed small sizes (reduced significantly)
       switch (imageSize) {
         case 'small':
-          return 'w-12 h-12 md:w-16 md:h-16';
+          return 'w-10 h-10 md:w-12 md:h-12';
         case 'medium':
-          return 'w-16 h-16 md:w-20 md:h-20';
+          return 'w-12 h-12 md:w-14 md:h-14';
         case 'large':
-          return 'w-20 h-20 md:w-24 md:h-24';
+          return 'w-14 h-14 md:w-16 md:h-16';
         default:
-          return 'w-16 h-16 md:w-20 md:h-20';
+          return 'w-12 h-12 md:w-14 md:h-14';
       }
     }
-    // For vertical layout
-    switch (imageSize) {
-      case 'small':
-        return 'md:w-16'; // Fixed small width (reduced)
-      case 'medium':
-        return 'md:w-20'; // Fixed medium width (reduced)
-      case 'large':
-        return 'md:w-24'; // Fixed large width (reduced)
-      default:
-        return 'md:w-20';
-    }
+    // For vertical layout with left/right position, use itemSize-based widths
+    const sizeClasses = getItemSizeClasses();
+    return sizeClasses.imageWidth || 'md:w-32';
   };
 
   // Get content size classes (complement of image size)
@@ -130,8 +124,42 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     }
   };
 
+  // Get item size classes (only applies to vertical layout when image is top/bottom)
+  const getItemSizeClasses = () => {
+    if (layout === 'horizontal') {
+      return { imageHeight: '', imageWidth: '', contentPadding: '' };
+    }
+
+    switch (itemSize) {
+      case 'small':
+        return {
+          imageHeight: 'h-24 md:h-32',
+          imageWidth: 'md:w-32',
+          contentPadding: 'p-3 md:p-4'
+        };
+      case 'medium':
+        return {
+          imageHeight: 'h-40 md:h-48',
+          imageWidth: 'md:w-48',
+          contentPadding: 'p-5 md:p-6'
+        };
+      case 'large':
+        return {
+          imageHeight: 'h-56 md:h-64',
+          imageWidth: 'md:w-64',
+          contentPadding: 'p-6 md:p-8'
+        };
+      default:
+        return {
+          imageHeight: 'h-24 md:h-32',
+          imageWidth: 'md:w-32',
+          contentPadding: 'p-3 md:p-4'
+        };
+    }
+  };
+
   // Determine which side image should be on (for left/right positions)
-  const getArticleImageSide = (index: number): 'left' | 'right' => {
+  const getItemImageSide = (index: number): 'left' | 'right' => {
     // For top/bottom positions, side doesn't matter
     if (imagePosition === 'top' || imagePosition === 'bottom') {
       return 'left';
@@ -153,10 +181,11 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     return 'left';
   };
 
-  // Render a single article
+  // Render a single item
   const renderArticle = (article: Article, index: number) => {
     const imageUrl = article.image ? getImageUrl(article.image, 400, 400) : null;
-    const articleImageSide = getArticleImageSide(index);
+    const articleImageSide = getItemImageSide(index);
+    const sizeClasses = getItemSizeClasses();
     
     const articleStyle: React.CSSProperties = backgroundColor
       ? { backgroundColor }
@@ -165,6 +194,7 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     const articleClasses = `
       rounded-lg
       overflow-hidden
+      shadow-2xl
       ${backgroundColor ? '' : 'bg-gray-800/30 backdrop-blur-sm'}
       ${layout === 'horizontal' ? 'flex-shrink-0 w-72' : 'w-full'}
     `.trim().replace(/\s+/g, ' ');
@@ -172,13 +202,13 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     // If no image, render simple text-only layout
     if (!imageUrl) {
       return (
-        <div key={article._id} className={articleClasses} style={articleStyle}>
-          <div className="flex flex-col gap-1.5 p-3 md:p-4">
-            <h3 className="text-xs md:text-sm font-bold text-white line-clamp-2">
+        <div key={article._key} className={articleClasses} style={articleStyle}>
+          <div className={`flex flex-col gap-1 ${sizeClasses.contentPadding || 'p-2 md:p-3'}`}>
+            <h3 className="text-xs font-bold text-white line-clamp-2 text-left">
               {article.title}
             </h3>
             {article.text && article.text.length > 0 && (
-              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-2 text-xs leading-tight">
+              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-2 text-xs leading-tight text-left">
                 <RichTextRendererClient value={article.text as PortableTextBlock[]} />
               </div>
             )}
@@ -202,25 +232,25 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
     const isVerticalImage = imagePosition === 'top' || imagePosition === 'bottom';
 
     return (
-      <div key={article._id} className={articleClasses} style={articleStyle}>
+      <div key={article._key} className={articleClasses} style={articleStyle}>
         <div className={containerClasses}>
           {/* Image - no padding, extends to edges */}
           <div className={`${isVerticalImage ? 'w-full' : getImageSizeClasses()} flex-shrink-0`}>
             <img
               src={imageUrl}
-              alt={article.image?.alt || article.title || 'Article image'}
-              className={`w-full ${isVerticalImage ? 'h-20 md:h-24' : 'h-full'} object-cover`}
+              alt={article.image?.alt || article.title || 'Content image'}
+              className={`w-full ${isVerticalImage ? (sizeClasses.imageHeight || 'h-20 md:h-24') : 'h-full'} object-cover`}
             />
           </div>
 
           {/* Content - with padding */}
-          <div className={`${isVerticalImage ? 'w-full' : getContentSizeClasses()} flex flex-col justify-start gap-1 p-3 md:p-4`}>
-            <h3 className="text-xs md:text-sm font-bold text-white line-clamp-2">
+          <div className={`${isVerticalImage ? 'w-full' : getContentSizeClasses()} flex flex-col justify-start gap-1 ${sizeClasses.contentPadding || 'p-3 md:p-4'}`}>
+            <h3 className="text-xs font-bold text-white line-clamp-2 text-left">
               {article.title}
             </h3>
             
             {article.text && article.text.length > 0 && (
-              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-2 text-xs leading-tight">
+              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-2 text-xs leading-tight text-left">
                 <RichTextRendererClient value={article.text as PortableTextBlock[]} />
               </div>
             )}
@@ -243,7 +273,7 @@ export const ShortArticleListBlock: React.FC<ShortArticleListBlockProps> = ({ va
         </h2>
       )}
 
-      {/* Articles Container */}
+      {/* Content Items Container */}
       {layout === 'horizontal' ? (
         <div className="overflow-x-auto -mx-2 px-2 pb-2">
           <div className={`flex ${getSpacingClasses()}`}>

@@ -1,3 +1,4 @@
+import articlePage from './articlePage'
 import buttonBlock from './buttonBlock'
 import company from './company'
 import companyBlock from './companyBlock'
@@ -11,19 +12,20 @@ import imageTextBlock from './imageTextBlock'
 import page from './page'
 import siteConfig from './siteConfig'
 import textBlock from './textBlock'
-import shortArticle from './shortArticle'
-import shortArticleBlock from './shortArticleBlock'
-import shortArticleListBlock from './shortArticleListBlock'
+import textAndImage from './textAndImage'
+import textAndImageBlock from './textAndImageBlock'
+import textAndImageListBlock from './textAndImageListBlock'
 import contentSeparator from './blocks/contentSeparator'
 import socialMediaLink from './socialMediaLink'
 
 export const schemaTypes = [
   // Document types
+  articlePage,
   company,
   designSystem,
   homepage,
   page,
-  shortArticle,
+  textAndImage,
   siteConfig,
   
   // Block types
@@ -35,8 +37,8 @@ export const schemaTypes = [
   imageBlock,
   imageTextBlock,
   textBlock,
-  shortArticleBlock,
-  shortArticleListBlock,
+  textAndImageBlock,
+  textAndImageListBlock,
   contentSeparator,
   
   // Object types

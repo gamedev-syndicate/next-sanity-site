@@ -122,36 +122,44 @@ export interface ImageTextBlock {
   verticalAlignment?: 'start' | 'center' | 'end';
 }
 
-export interface ShortArticle {
+export interface TextAndImage {
   _id: string;
-  _type: 'shortArticle';
+  _type: 'textAndImage';
   title: string;
   text: unknown[];
   image?: SanityImage & { alt?: string };
   publishedAt?: string;
 }
 
-export interface ShortArticleBlock {
-  _type: 'shortArticleBlock';
+export interface TextAndImageBlock {
+  _type: 'textAndImageBlock';
   _key: string;
   internalLabel?: string; // For CMS organization only - not displayed on website
-  article: ShortArticle;
+  article: TextAndImage;
   imageAlignment?: 'left' | 'right';
   imageSize?: 'small' | 'medium' | 'large';
   verticalAlignment?: 'start' | 'center' | 'end';
   textAlign?: 'left' | 'center' | 'right';
 }
 
-export interface ShortArticleListBlock {
-  _type: 'shortArticleListBlock';
+export interface TextAndImageItem {
+  _key: string;
+  title: string;
+  text: unknown[];
+  image?: SanityImage & { alt?: string };
+}
+
+export interface TextAndImageListBlock {
+  _type: 'textAndImageListBlock';
   _key: string;
   internalLabel?: string;
   title?: string;
-  articles: ShortArticle[];
+  articles: TextAndImageItem[];
   layout?: 'vertical' | 'horizontal';
   imagePosition?: 'top' | 'left' | 'right' | 'bottom';
   imageAlignment?: boolean;
   imageSize?: 'small' | 'medium' | 'large';
+  itemSize?: 'small' | 'medium' | 'large';
   verticalAlignment?: 'start' | 'center' | 'end';
   spacing?: 'compact' | 'normal' | 'relaxed';
   backgroundColorSelection?: string;
@@ -162,7 +170,7 @@ export interface ShortArticleListBlock {
   };
 }
 
-export type ContentBlock = ImageBlock | TextBlock | ButtonBlock | ContactBlock | CompanyBlock | CompanyListBlock | CompactCompanyListBlock | ContentSeparatorBlock | ImageTextBlock | ShortArticleBlock | ShortArticleListBlock;
+export type ContentBlock = ImageBlock | TextBlock | ButtonBlock | ContactBlock | CompanyBlock | CompanyListBlock | CompactCompanyListBlock | ContentSeparatorBlock | ImageTextBlock | TextAndImageBlock | TextAndImageListBlock;
 
 // Document types
 export interface NavigationItem {
@@ -278,6 +286,36 @@ export interface Page {
     alpha?: number;
   };
   sections?: HomepageSection[]; // Content sections with individual backgrounds and styling
+}
+
+export interface ArticlePage {
+  _id: string;
+  _type: 'articlePage';
+  internalLabel?: string;
+  title: string;
+  slug: SanitySlug;
+  excerpt?: string;
+  author?: string;
+  publishedAt?: string;
+  updatedAt?: string;
+  featuredImage?: SanityImage & { alt?: string };
+  showInNavigation?: boolean;
+  navigationOrder?: number;
+  tags?: string[];
+  category?: 'news' | 'blog' | 'tutorial' | 'case-study' | 'announcement' | 'other';
+  backgroundColorSelection?: string;
+  customBackgroundColor?: {
+    hex: string;
+    alpha?: number;
+    rgb: { r: number; g: number; b: number; a: number };
+  };
+  content: unknown[];
+  relatedArticles?: ArticlePage[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
 }
 
 export interface SectionBackground {

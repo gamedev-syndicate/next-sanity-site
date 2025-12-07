@@ -7,8 +7,8 @@ import { CompanyBlock, CompanyListBlock, CompactCompanyListBlock } from './Compa
 import ContentSeparatorBlock from './blocks/ContentSeparatorBlock';
 import { ContactBlock } from './blocks/ContactBlock';
 import { ImageTextBlock } from './blocks/ImageTextBlock';
-import { ShortArticleBlock } from './blocks/ShortArticleBlock';
-import { ShortArticleListBlock } from './blocks/ShortArticleListBlock';
+import { TextAndImageBlock } from './blocks/TextAndImageBlock';
+import { TextAndImageListBlock } from './blocks/TextAndImageListBlock';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { designSystemColorToCSS } from '../lib/background-utils';
 
@@ -290,7 +290,7 @@ export function ButtonBlock({ value }: { value: ButtonBlockType }) {
 }
 
 
-import type { CompanyBlock as CompanyBlockType, CompanyListBlock as CompanyListBlockType, CompactCompanyListBlock as CompactCompanyListBlockType, ContactBlock as ContactBlockType, ImageTextBlock as ImageTextBlockType, ShortArticleBlock as ShortArticleBlockType, ShortArticleListBlock as ShortArticleListBlockType, ContentSeparatorBlock as ContentSeparatorBlockType } from '../types/sanity';
+import type { CompanyBlock as CompanyBlockType, CompanyListBlock as CompanyListBlockType, CompactCompanyListBlock as CompactCompanyListBlockType, ContactBlock as ContactBlockType, ImageTextBlock as ImageTextBlockType, TextAndImageBlock as TextAndImageBlockType, TextAndImageListBlock as TextAndImageListBlockType, ContentSeparatorBlock as ContentSeparatorBlockType } from '../types/sanity';
 
 export const customComponents = {
   types: {
@@ -302,8 +302,8 @@ export const customComponents = {
     compactCompanyListBlock: ({ value }: { value: CompactCompanyListBlockType }) => <CompactCompanyListBlock value={value} />,
     contactBlock: ({ value }: { value: ContactBlockType }) => <ContactBlock value={value} />,
     imageTextBlock: ({ value }: { value: ImageTextBlockType }) => <ImageTextBlock value={value} />,
-    shortArticleBlock: ({ value }: { value: ShortArticleBlockType }) => <ShortArticleBlock value={value} />,
-    shortArticleListBlock: ({ value }: { value: ShortArticleListBlockType }) => <ShortArticleListBlock value={value} />,
+    textAndImageBlock: ({ value }: { value: TextAndImageBlockType }) => <TextAndImageBlock value={value} />,
+    textAndImageListBlock: ({ value }: { value: TextAndImageListBlockType }) => <TextAndImageListBlock value={value} />,
     callout: Callout,
     image: InlineImage,
     contentSeparator: ({ value }: { value: ContentSeparatorBlockType }) => {
@@ -452,7 +452,7 @@ export const customComponents = {
 
 import type { ContentBlock } from '../types/sanity';
 
-export default function CustomBlocks({ blocks, siteConfig }: { blocks: ContentBlock[]; siteConfig?: unknown }) {
+export default function CustomBlocks({ blocks }: { blocks: ContentBlock[] }) {
   console.log('CustomBlocks rendering blocks:', blocks);
   
   return (
@@ -478,10 +478,10 @@ export default function CustomBlocks({ blocks, siteConfig }: { blocks: ContentBl
             return <ContactBlock key={block._key} value={block} />;
           case 'imageTextBlock':
             return <ImageTextBlock key={block._key} value={block} />;
-          case 'shortArticleBlock':
-            return <ShortArticleBlock key={block._key} value={block} />;
-          case 'shortArticleListBlock':
-            return <ShortArticleListBlock key={block._key} value={block} />;
+          case 'textAndImageBlock':
+            return <TextAndImageBlock key={block._key} value={block} />;
+          case 'textAndImageListBlock':
+            return <TextAndImageListBlock key={block._key} value={block} />;
           case 'contentSeparator': {
             const separatorBlock = block as import('../types/sanity').ContentSeparatorBlock;
             return (

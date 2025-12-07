@@ -82,7 +82,7 @@ const CompanyCard: React.FC<{
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
             className="w-[4.4rem] h-[4.4rem] object-contain rounded"
-            style={{ mixBlendMode: logoBlendMode as any }}
+            style={{ mixBlendMode: logoBlendMode as React.CSSProperties['mixBlendMode'] }}
           />
         )}
         <div>
@@ -106,7 +106,7 @@ const CompanyCard: React.FC<{
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
             className="w-[6.6rem] h-[6.6rem] object-contain rounded flex-shrink-0"
-            style={{ mixBlendMode: logoBlendMode as any }}
+            style={{ mixBlendMode: logoBlendMode as React.CSSProperties['mixBlendMode'] }}
           />
         )}
         <div className="flex-1">
@@ -142,7 +142,7 @@ const CompanyCard: React.FC<{
           src={logoUrl}
           alt={company.logo?.alt || `${company.name} logo`}
           className="w-[8.8rem] h-[8.8rem] object-contain rounded mx-auto mb-4"
-          style={{ mixBlendMode: logoBlendMode as any }}
+          style={{ mixBlendMode: logoBlendMode as React.CSSProperties['mixBlendMode'] }}
         />
       )}
       <h3 className={`text-xl font-bold mb-2 ${textColorClass}`}>{company.name}</h3>
@@ -189,11 +189,8 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     logoBlendMode = 'normal',
     backgroundColorSelection,
     customBackgroundColor,
-    borderColorSelection,
-    customBorderColor,
     // Legacy support
-    backgroundColor: legacyBackgroundColor,
-    borderColor: legacyBorderColor
+    backgroundColor: legacyBackgroundColor
   } = value;
 
   if (!companies || companies.length === 0) {
@@ -228,12 +225,6 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     backgroundColorSelection,
     customBackgroundColor,
     legacyBackgroundColor
-  );
-
-  const finalBorderColor = resolveColorToObject(
-    borderColorSelection,
-    customBorderColor,
-    legacyBorderColor
   );
 
   // Render a single company
@@ -305,7 +296,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
               src={logoUrl}
               alt={company.logo?.alt || `${company.name} logo`}
               className="w-full h-full object-contain"
-              style={{ mixBlendMode: logoBlendMode as any }}
+              style={{ mixBlendMode: logoBlendMode as React.CSSProperties['mixBlendMode'] }}
             />
           </div>
 

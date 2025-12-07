@@ -1,7 +1,6 @@
 import { getClient } from '../sanityClient';
 import { draftMode } from 'next/headers';
 import { SiteConfig, Page, Homepage } from '../types/sanity';
-import type { DesignSystem } from '../types/designSystem';
 
 // Helper to get the right client based on draft mode
 async function getQueryClient() {
@@ -220,7 +219,7 @@ export async function getHomepage(): Promise<Homepage | null> {
             customBackgroundColor,
             verticalAlignment
           },
-          _type == "shortArticleBlock" => {
+          _type == "textAndImageBlock" => {
             internalLabel,
             article->{
               _id,
@@ -239,19 +238,18 @@ export async function getHomepage(): Promise<Homepage | null> {
             verticalAlignment,
             textAlign
           },
-          _type == "shortArticleListBlock" => {
+          _type == "textAndImageListBlock" => {
             internalLabel,
             title,
-            articles[]->{
-              _id,
+            articles[]{
+              _key,
               title,
               text,
               image{
                 ...,
                 asset->,
                 alt
-              },
-              publishedAt
+              }
             },
             layout,
             imagePosition,
@@ -394,7 +392,7 @@ export async function getPage(slug: string): Promise<Page | null> {
             customBackgroundColor,
             verticalAlignment
           },
-          _type == "shortArticleBlock" => {
+          _type == "textAndImageBlock" => {
             internalLabel,
             article->{
               _id,
@@ -413,19 +411,18 @@ export async function getPage(slug: string): Promise<Page | null> {
             verticalAlignment,
             textAlign
           },
-          _type == "shortArticleListBlock" => {
+          _type == "textAndImageListBlock" => {
             internalLabel,
             title,
-            articles[]->{
-              _id,
+            articles[]{
+              _key,
               title,
               text,
               image{
                 ...,
                 asset->,
                 alt
-              },
-              publishedAt
+              }
             },
             layout,
             imagePosition,
@@ -521,10 +518,10 @@ export async function getDesignSystem() {
   }
 }
 
-// Short Article queries
-export async function getShortArticle(id: string) {
+// Text and Image queries
+export async function getTextAndImage(id: string) {
   try {
-    const query = `*[_type == "shortArticle" && _id == $id][0]{
+    const query = `*[_type == "textAndImage" && _id == $id][0]{
       _id,
       title,
       text,
@@ -538,14 +535,14 @@ export async function getShortArticle(id: string) {
     const client = await getQueryClient();
     return await client.fetch(query, { id }, getCacheConfig());
   } catch (error) {
-    console.error('Failed to fetch short article:', error);
+    console.error('Failed to fetch text and image:', error);
     return null;
   }
 }
 
-export async function getAllShortArticles() {
+export async function getAllTextAndImages() {
   try {
-    const query = `*[_type == "shortArticle"] | order(publishedAt desc) {
+    const query = `*[_type == "textAndImage"] | order(publishedAt desc) {
       _id,
       title,
       text,
@@ -559,7 +556,248 @@ export async function getAllShortArticles() {
     const client = await getQueryClient();
     return await client.fetch(query, {}, getCacheConfig());
   } catch (error) {
-    console.error('Failed to fetch short articles:', error);
+    console.error('Failed to fetch text and images:', error);
+    return [];
+  }
+}
+
+// Article Page queries
+export async function getArticlePage(slug: string) {
+  try {
+    const query = `*[_type == "articlePage" && slug.current == $slug][0]{
+      _id,
+      _type,
+      internalLabel,
+      title,
+      slug,
+      excerpt,
+      author,
+      publishedAt,
+      updatedAt,
+      featuredImage{
+        ...,
+        asset->,
+        alt
+      },
+      showInNavigation,
+      navigationOrder,
+      tags,
+      category,
+      backgroundColorSelection,
+      customBackgroundColor,
+      content[]{
+        ...,
+        _type == "imageBlock" => {
+          image{
+            ...,
+            asset->,
+            alt
+          },
+          caption,
+          size
+        },
+        _type == "textBlock" => {
+          text,
+          textAlign,
+          fontSize
+        },
+        _type == "buttonBlock" => {
+          text,
+          url,
+          style,
+          openInNewTab,
+          buttonColorSelection,
+          customButtonColor
+        },
+        _type == "companyBlock" => {
+          company->{
+            _id,
+            name,
+            description,
+            logo{
+              ...,
+              asset->,
+              alt
+            },
+            website,
+            socialMedia
+          },
+          layout,
+          showDescription
+        },
+        _type == "contactBlock" => {
+          title,
+          description,
+          email,
+          phone,
+          address,
+          showSocialLinks,
+          backgroundColorSelection,
+          customBackgroundColor
+        },
+        _type == "imageTextBlock" => {
+          title,
+          text,
+          image{
+            ...,
+            asset->,
+            alt
+          },
+          imagePosition,
+          imageSize,
+          backgroundColorSelection,
+          customBackgroundColor,
+          verticalAlignment
+        },
+        _type == "textAndImageBlock" => {
+          internalLabel,
+          article->{
+            _id,
+            title,
+            text,
+            image{
+              ...,
+              asset->,
+              alt
+            },
+            excerpt,
+            publishedAt
+          },
+          imageAlignment,
+          imageSize,
+          verticalAlignment,
+          textAlign
+        },
+        _type == "textAndImageListBlock" => {
+          internalLabel,
+          title,
+          articles[]{
+            _key,
+            title,
+            text,
+            image{
+              ...,
+              asset->,
+              alt
+            }
+          },
+          layout,
+          imagePosition,
+          imageAlignment,
+          imageSize,
+          verticalAlignment,
+          spacing,
+          backgroundColorSelection,
+          customBackgroundColor
+        },
+        _type == "contentSeparator" => {
+          lineColorSelection,
+          customLineColor,
+          diamondColorSelection,
+          customDiamondColor,
+          lineColor,
+          diamondColor,
+          strokeWidth,
+          height,
+          margin
+        }
+      },
+      relatedArticles[]->{
+        _id,
+        title,
+        slug,
+        excerpt,
+        author,
+        publishedAt,
+        featuredImage{
+          ...,
+          asset->,
+          alt
+        },
+        category
+      },
+      seo
+    }`;
+    const client = await getQueryClient();
+    return await client.fetch(query, { slug }, getCacheConfig());
+  } catch (error) {
+    console.error('Failed to fetch article page:', error);
+    return null;
+  }
+}
+
+export async function getAllArticlePages() {
+  try {
+    const query = `*[_type == "articlePage"] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      excerpt,
+      author,
+      publishedAt,
+      updatedAt,
+      featuredImage{
+        ...,
+        asset->,
+        alt
+      },
+      category,
+      tags
+    }`;
+    const client = await getQueryClient();
+    return await client.fetch(query, {}, getCacheConfig());
+  } catch (error) {
+    console.error('Failed to fetch article pages:', error);
+    return [];
+  }
+}
+
+export async function getArticlePagesByCategory(category: string) {
+  try {
+    const query = `*[_type == "articlePage" && category == $category] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      excerpt,
+      author,
+      publishedAt,
+      featuredImage{
+        ...,
+        asset->,
+        alt
+      },
+      category,
+      tags
+    }`;
+    const client = await getQueryClient();
+    return await client.fetch(query, { category }, getCacheConfig());
+  } catch (error) {
+    console.error('Failed to fetch article pages by category:', error);
+    return [];
+  }
+}
+
+export async function getArticlePagesByTag(tag: string) {
+  try {
+    const query = `*[_type == "articlePage" && $tag in tags] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      excerpt,
+      author,
+      publishedAt,
+      featuredImage{
+        ...,
+        asset->,
+        alt
+      },
+      category,
+      tags
+    }`;
+    const client = await getQueryClient();
+    return await client.fetch(query, { tag }, getCacheConfig());
+  } catch (error) {
+    console.error('Failed to fetch article pages by tag:', error);
     return [];
   }
 }

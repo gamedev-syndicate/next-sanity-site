@@ -1,8 +1,8 @@
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
-  name: 'shortArticle',
-  title: 'Short Article',
+  name: 'textAndImage',
+  title: 'Text and Image',
   type: 'document',
   fields: [
     defineField({
@@ -92,7 +92,7 @@ export default defineType({
       const { title, publishedAt } = selection
       const date = publishedAt ? new Date(publishedAt).toLocaleDateString() : 'No date'
       return {
-        title: title || 'Untitled Article',
+        title: title || 'Untitled',
         subtitle: `📅 ${date}`,
         media: selection.media,
       }

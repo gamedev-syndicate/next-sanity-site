@@ -91,7 +91,7 @@ const TiltedSquare: React.FC<{
           <img
             src={logoUrl}
             alt={company.logo?.alt || `${company.name} logo`}
-            style={{ width: 53, height: 53, objectFit: "contain", marginBottom: 8, borderRadius: 4, mixBlendMode: logoBlendMode as any }}
+            style={{ width: 53, height: 53, objectFit: "contain", marginBottom: 8, borderRadius: 4, mixBlendMode: logoBlendMode as React.CSSProperties['mixBlendMode'] }}
           />
         )}
         <div style={{ fontWeight: 700, color: textColor, fontSize: 14, wordBreak: "break-word", overflow: "hidden", textOverflow: "ellipsis", display: "-webkit-box" as React.CSSProperties['display'], WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as React.CSSProperties['WebkitBoxOrient'] }} data-critical="true">

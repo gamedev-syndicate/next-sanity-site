@@ -6,7 +6,7 @@ import type { SanityImage } from '../../types/sanity';
 import RichTextRendererClient from '../RichTextRendererClient';
 import type { PortableTextBlock } from '@portabletext/types';
 
-interface ShortArticleBlockProps {
+interface TextAndImageBlockProps {
   value: {
     _key: string;
     article: {
@@ -22,7 +22,7 @@ interface ShortArticleBlockProps {
   };
 }
 
-export const ShortArticleBlock: React.FC<ShortArticleBlockProps> = ({ value }) => {
+export const TextAndImageBlock: React.FC<TextAndImageBlockProps> = ({ value }) => {
   const {
     article,
     imageAlignment = 'left',
@@ -39,7 +39,7 @@ export const ShortArticleBlock: React.FC<ShortArticleBlockProps> = ({ value }) =
   const imageUrl = image ? getImageUrl(image, 400, 400) : null;
 
   if (!imageUrl) {
-    // Render without image
+    // Render text-only layout
     return (
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col">
@@ -112,7 +112,7 @@ export const ShortArticleBlock: React.FC<ShortArticleBlockProps> = ({ value }) =
           <div className={`w-full ${getImageSizeClasses()} flex-shrink-0`}>
             <img
               src={imageUrl}
-              alt={image?.alt || title || 'Article image'}
+              alt={image?.alt || title || 'Content image'}
               className="w-full h-auto object-cover rounded-lg shadow-md"
             />
           </div>

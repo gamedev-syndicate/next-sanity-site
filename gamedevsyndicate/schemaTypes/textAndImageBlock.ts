@@ -1,23 +1,23 @@
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
-  name: 'shortArticleBlock',
-  title: 'Short Article Block',
+  name: 'textAndImageBlock',
+  title: 'Text and Image Block',
   type: 'object',
   fields: [
     defineField({
       name: 'internalLabel',
       title: 'Internal Label',
       type: 'string',
-      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this block in the editor (e.g., "Feature Highlight", "News Item")',
+      description: '🏷️ For CMS organization only - not displayed on the website. Use this to identify this block in the editor (e.g., "Feature Highlight", "Content Section")',
       placeholder: 'e.g., Feature Highlight',
     }),
     defineField({
       name: 'article',
-      title: 'Article',
+      title: 'Content',
       type: 'reference',
-      description: '📄 Select an article to display',
-      to: [{ type: 'shortArticle' }],
+      description: '📄 Select content to display',
+      to: [{ type: 'textAndImage' }],
       validation: Rule => Rule.required(),
     }),
     defineField({
@@ -90,8 +90,8 @@ export default defineType({
       const { internalLabel, title, imageAlignment } = selection
       const side = imageAlignment === 'left' ? '⬅️' : '➡️'
       return {
-        title: internalLabel || title || 'Short Article Block',
-        subtitle: `${side} Image ${imageAlignment || 'left'} • Article content`,
+        title: internalLabel || title || 'Text and Image Block',
+        subtitle: `${side} Image ${imageAlignment || 'left'} • Content`,
         media: selection.media,
       }
     },
