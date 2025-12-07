@@ -237,11 +237,11 @@ export const HoneycombGrid: React.FC<HoneycombGridProps> = ({
   const { hexWidth, hexHeight } = hexDimensions;
 
   // Adjust max items based on screen size
-  let responsiveMax = maxItemsPerRow;
+  let responsiveMax = maxItemsPerRow || 5;
   if (windowWidth <= HEXAGON_CONFIG.mobile.breakpoint) {
-    responsiveMax = Math.max(2, Math.min(3, maxItemsPerRow - 2));
+    responsiveMax = Math.max(2, Math.min(3, responsiveMax - 2));
   } else if (windowWidth <= HEXAGON_CONFIG.tablet.breakpoint) {
-    responsiveMax = Math.max(3, maxItemsPerRow - 1);
+    responsiveMax = Math.max(3, responsiveMax - 1);
   }
 
   // Calculate layout
