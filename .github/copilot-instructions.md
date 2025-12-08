@@ -14,6 +14,17 @@ This is a Next.js application integrated with Sanity CMS for content management.
 - **Package Manager**: npm/yarn/pnpm
 - **Design System**: Custom color management system integrated with Sanity
 
+## Strict Tech Stack constraints
+- **Styling**: Tailwind CSS + CSS Variables (Design System). Do not use styled-components or SCSS modules.
+- **Icons**: Use `lucide-react` (or whatever you use). Do not import FontAwesome.
+- **Sanity Client**: Use `next-sanity` for fetching.
+- **Forms**: Use `react-hook-form` + `zod` for validation.
+
+## This is a monorepo
+The project is structured as a monorepo with separate folders for the Next.js application and the Sanity studio. Ensure that any changes respect the boundaries between these two parts of the codebase.
+- **Next.js App**: `gamedevsyndicate-nextjs/`
+- **Sanity Studio**: `gamedevsyndicate/`
+
 ## Design System Guidelines
 
 ### Color Management
@@ -161,7 +172,7 @@ export function MyClientComponent() {
 
 ## Project Architecture
 
-### Next.js Architecture
+### Next.js Architecture in `gamedevsyndicate-nextjs/`
 ```
 src/
 ├── app/                    # App Router pages and layouts
@@ -183,7 +194,7 @@ src/
 
 ### Sanity Architecture
 ```
-sanity/
+gamedevsyndicate/
 ├── schemas/              # Content schemas
 │   ├── documents/        # Document types
 │   ├── objects/          # Object types
@@ -217,7 +228,6 @@ sanity/
 - Use Next.js Image component for all images
 - Implement code splitting and lazy loading
 - Optimize bundle size with proper imports
-- Use ISR (Incremental Static Regeneration) where appropriate
 
 ### Security Considerations
 - Always consider security best practices when generating code
@@ -254,48 +264,25 @@ sanity/
 - Always preserve existing functionality when making changes
 - Ask for clarification if the scope is unclear
 
-## Implementation Guidelines
+### Implementation Workflow
 
-### When Adding New Features
-1. Gather project context by examining existing patterns
-2. Check how similar problems are solved in the project
-3. **Always use the design system for colors**:
-   - Check if the feature needs color configuration
-   - Use `colorSelectionField` and `customColorField` in schemas
-   - Import and use `useDesignSystem` hook in components
-   - Prefer CSS variables over hardcoded colors
-4. Update Sanity schemas if content structure changes are needed
-5. Create or update components for rendering new content
-6. Implement proper TypeScript types
-7. Add appropriate error handling and loading states
-8. Consider SEO and accessibility implications
+1. **Context First**: Gather context by examining existing patterns.
+2. **Design System Check**:
+   - Check if the feature needs color configuration.
+   - Use `colorSelectionField` (NOT standard color pickers).
+   - Import `useDesignSystem` hook in components.
+3. **Schema**: Update Sanity schemas if content structure changes.
+   - **Crucial**: Replace color picker fields with design system dropdowns.
+   - Maintain backward compatibility.
+4. **Components**: Create components for rendering.
+5. **Types**: Update TypeScript interfaces to match schema changes.
+6. **Safety**: Add error boundaries and loading states.
 
 ### Color Implementation Checklist
-When working with colors in any component or schema:
-- [ ] Use `colorSelectionField` for design system color selection
-- [ ] Add `customColorField` for custom color fallback
-- [ ] Import `useDesignSystem` hook in components
-- [ ] Use `resolveColor` or `getCSSVariableForColor` functions
-- [ ] Test with both design system and custom colors
-- [ ] Ensure backward compatibility with existing color fields
-
-### Schema Updates
-- Always update Sanity schemas when adding new content types
-- **Replace color picker fields with design system dropdowns**
-- Maintain backward compatibility when possible
-- Update TypeScript interfaces to match schema changes
-- Consider migration strategies for existing content
-3. Update Sanity schemas if content structure changes are needed
-4. Create or update components for rendering new content
-5. Implement proper TypeScript types
-6. Add appropriate error handling and loading states
-7. Consider SEO and accessibility implications
-
-### Schema Updates
-- Always update Sanity schemas when adding new content types
-- Maintain backward compatibility when possible
-- Update TypeScript interfaces to match schema changes
-- Consider migration strategies for existing content
+- [ ] Use `colorSelectionField` (Schema)
+- [ ] Add `customColorField` (Schema)
+- [ ] Import `useDesignSystem` (Component)
+- [ ] Use `resolveColor` or `getCSSVariableForColor`
 
 ### Component Updates
 - Ensure components handle all possible data states
@@ -324,3 +311,22 @@ When working with colors in any component or schema:
 6. Consider the impact on existing functionality
 
 Remember: Always maintain consistency with the existing codebase patterns and architecture decisions.
+
+## Change Management and Version Control
+
+### Incremental Change Protocol
+When making code changes, follow this strict protocol:
+
+1. **Never revert a working change** - Once a fix is applied and verified, do not undo it in subsequent attempts
+2. **Build on previous changes** - Each modification should add to or refine the previous state, not replace it
+3. **Track what works** - Explicitly note which changes successfully resolved issues
+4. **One problem at a time** - If multiple issues exist, fix them sequentially, not simultaneously
+5. **Don't go in circles** - Avoid repeating the same types of changes that have already been tested and failed - look through the history of attempts to ensure new strategies are employed
+
+### When Stuck on a Problem
+If an approach isn't working after 2 attempts:
+1. **STOP** - Do not try a third similar approach
+2. **ANALYZE** - Examine what's different between working and non-working code
+3. **RESEARCH** - Look at ALL similar patterns in the codebase, not just one example
+4. **ASK** - Request clarification or propose multiple approaches for user decision
+5. **DOCUMENT** - Explain why the previous attempts failed before trying a new approach
