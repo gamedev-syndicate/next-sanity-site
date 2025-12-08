@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getImageUrl } from '../../lib/sanity-image';
 import type { SanityImage } from '../../types/sanity';
 import RichTextRendererClient from '../RichTextRendererClient';
@@ -39,6 +39,9 @@ interface TextAndImageListBlockProps {
 
 export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ value }) => {
   const { designSystem } = useDesignSystem();
+  const [visibleItems, setVisibleItems] = useState<Set<number>>(new Set());
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  
   const {
     title,
     articles,
@@ -52,6 +55,37 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
     backgroundColorSelection,
     customBackgroundColor,
   } = value;
+
+  // Set up Intersection Observer for viewport detection
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    
+    itemRefs.current.forEach((ref, index) => {
+      if (!ref) return;
+      
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setVisibleItems((prev) => new Set(prev).add(index));
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1, // Trigger when 10% visible
+          rootMargin: '50px', // Start animation slightly before entering viewport
+        }
+      );
+      
+      observer.observe(ref);
+      observers.push(observer);
+    });
+    
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, [articles]);
 
   // Resolve background color using design system
   const resolveBackgroundColor = (): string | undefined => {
@@ -186,10 +220,16 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
     const imageUrl = article.image ? getImageUrl(article.image, 400, 400) : null;
     const articleImageSide = getItemImageSide(index);
     const sizeClasses = getItemSizeClasses();
+    const isVisible = visibleItems.has(index);
     
     const articleStyle: React.CSSProperties = backgroundColor
       ? { backgroundColor }
       : {};
+
+    // Add animation direction based on image side (only for left/right positions)
+    const animationClass = (imagePosition === 'left' || imagePosition === 'right') 
+      ? (articleImageSide === 'left' ? 'animate-slide-in-left' : 'animate-slide-in-right')
+      : '';
 
     const articleClasses = `
       rounded-lg
@@ -197,12 +237,18 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
       shadow-2xl
       ${backgroundColor ? '' : 'bg-gray-800/30 backdrop-blur-sm'}
       ${layout === 'horizontal' ? 'flex-shrink-0 w-72' : 'w-full'}
+      ${isVisible ? animationClass : 'opacity-0'}
     `.trim().replace(/\s+/g, ' ');
     
     // If no image, render simple text-only layout
     if (!imageUrl) {
       return (
-        <div key={article._key} className={articleClasses} style={articleStyle}>
+        <div 
+          key={article._key}
+          ref={(el) => (itemRefs.current[index] = el)}
+          className={articleClasses} 
+          style={articleStyle}
+        >
           <div className={`flex flex-col gap-1 ${sizeClasses.contentPadding || 'p-2 md:p-3'}`}>
             <h3 className="text-xs font-bold text-white line-clamp-2 text-left">
               {article.title}
@@ -232,7 +278,12 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
     const isVerticalImage = imagePosition === 'top' || imagePosition === 'bottom';
 
     return (
-      <div key={article._key} className={articleClasses} style={articleStyle}>
+      <div 
+        key={article._key}
+        ref={(el) => (itemRefs.current[index] = el)}
+        className={articleClasses} 
+        style={articleStyle}
+      >
         <div className={containerClasses}>
           {/* Image - no padding, extends to edges */}
           <div className={`${isVerticalImage ? 'w-full' : getImageSizeClasses()} flex-shrink-0`}>
@@ -281,7 +332,7 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
           </div>
         </div>
       ) : (
-        <div className={`flex flex-col ${getSpacingClasses()} max-w-2xl mx-auto`}>
+        <div className={`flex flex-col ${getSpacingClasses()}`}>
           {articles.map((article, index) => renderArticle(article, index))}
         </div>
       )}
