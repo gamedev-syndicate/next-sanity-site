@@ -245,7 +245,7 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
       return (
         <div 
           key={article._key}
-          ref={(el) => (itemRefs.current[index] = el)}
+          ref={(el) => { itemRefs.current[index] = el; }}
           className={articleClasses} 
           style={articleStyle}
         >
@@ -280,7 +280,7 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
     return (
       <div 
         key={article._key}
-        ref={(el) => (itemRefs.current[index] = el)}
+        ref={(el) => { itemRefs.current[index] = el; }}
         className={articleClasses} 
         style={articleStyle}
       >
