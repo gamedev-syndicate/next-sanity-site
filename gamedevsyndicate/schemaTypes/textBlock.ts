@@ -53,6 +53,13 @@ export default defineType({
       },
       initialValue: 'left',
     }),
+    defineField({
+      name: 'enableAnimation',
+      title: 'Enable Fade-In Animation',
+      type: 'boolean',
+      description: '✨ When enabled, the text block will fade in when it scrolls into view',
+      initialValue: false,
+    }),
   ],
   preview: {
     select: {

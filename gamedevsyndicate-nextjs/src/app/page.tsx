@@ -2,6 +2,7 @@ import RichTextRenderer from '../components/RichTextRendererClient';
 import CustomBlocks from '../components/CustomBlocks';
 import DynamicStyles from '../components/DynamicStyles';
 import SvgOverlay from '../components/SvgOverlay';
+import { AnimatedHomepageSection } from '../components/AnimatedHomepageSection';
 import { getHomepage, getSiteConfig, getDesignSystem } from '../lib/sanity-queries';
 import { getImageUrl } from '../lib/sanity-image';
 import { generateSectionBackgroundStyle } from '../lib/background-utils';
@@ -75,7 +76,12 @@ export default async function Home() {
       
       {/* Banner Image */}
       {homepage.bannerImage && (
-        <section className={`${styles.bannerSection} py-8`}>
+        <AnimatedHomepageSection
+          enableAnimation={homepage.enableBannerAnimation}
+          animateOnLoad={true}
+          animationType="slide-left"
+          className={`${styles.bannerSection} py-8`}
+        >
           <img
             src={getImageUrl(homepage.bannerImage, 1200, 400)}
             alt="Homepage Banner"
@@ -85,16 +91,20 @@ export default async function Home() {
               transformOrigin: 'center center',
             }}
           />
-        </section>
+        </AnimatedHomepageSection>
       )}
 
       {/* Text Area */}
       {homepage.textArea && (
-        <section className={styles.textSection}>
+        <AnimatedHomepageSection
+          enableAnimation={homepage.enableTextAreaAnimation}
+          animationType="slide-right"
+          className={styles.textSection}
+        >
           <div className={styles.textContent}>
             <RichTextRenderer value={homepage.textArea as PortableTextBlock[]} />
           </div>
-        </section>
+        </AnimatedHomepageSection>
       )}
 
       {/* Homepage Sections */}

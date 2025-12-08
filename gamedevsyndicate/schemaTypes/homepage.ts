@@ -56,6 +56,14 @@ export default defineType({
       },
     }),
     
+    defineField({
+      name: 'enableBannerAnimation',
+      title: 'Enable Banner Fade-In Animation',
+      type: 'boolean',
+      description: '✨ When enabled, the banner will fade in when the page loads',
+      initialValue: false,
+    }),
+    
     // Text Area
     defineField({
       name: 'textArea',
@@ -293,6 +301,14 @@ export default defineType({
           },
         }
       ],
+    }),
+    
+    defineField({
+      name: 'enableTextAreaAnimation',
+      title: 'Enable Text Area Fade-In Animation',
+      type: 'boolean',
+      description: '✨ When enabled, the text area will slide in when it scrolls into view',
+      initialValue: false,
     }),
 
     // Homepage Sections

@@ -4,6 +4,7 @@ export default defineType({
   name: 'textAndImage',
   title: 'Text and Image',
   type: 'document',
+  hidden: true,
   fields: [
     defineField({
       name: 'title',

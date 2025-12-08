@@ -41,6 +41,7 @@ export interface TextBlock {
   headingLevel: 'h1' | 'h2' | 'h3' | 'h4';
   text: unknown[];
   textAlign: 'left' | 'center' | 'right';
+  enableAnimation?: boolean;
 }
 
 export interface ButtonBlock {
@@ -382,11 +383,13 @@ export interface Homepage {
   _type: 'homepage';
   bannerImage: SanityImage;
   bannerPosition?: {
-    offsetX: number;
-    offsetY: number;
-    scale: number;
+    offsetX?: number;
+    offsetY?: number;
+    scale?: number;
   };
+  enableBannerAnimation?: boolean;
   textArea?: unknown[];
+  enableTextAreaAnimation?: boolean;
   sections?: HomepageSection[];
   blockArea?: (ImageBlock | TextBlock | ButtonBlock)[];
   backgroundColor?: {

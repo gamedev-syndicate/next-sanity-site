@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react';
 import { urlFor } from '../lib/sanity-image';
 import { PortableText } from '@portabletext/react';
 import { ImageBlock as ImageBlockType, TextBlock as TextBlockType, ButtonBlock as ButtonBlockType } from '../types/sanity';
@@ -173,11 +174,40 @@ export function ImageBlock({ value }: ImageBlockProps) {
 }
 
 export function TextBlock({ value }: TextBlockProps) {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const blockRef = React.useRef<HTMLDivElement>(null);
+  
   const alignClasses = {
     left: 'text-left',
     center: 'text-center',
     right: 'text-right',
   };
+
+  // Set up intersection observer for animation
+  React.useEffect(() => {
+    if (!value.enableAnimation || !blockRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px',
+      }
+    );
+    
+    observer.observe(blockRef.current);
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, [value.enableAnimation]);
 
   const renderHeading = () => {
     const className = "text-white font-bold mb-4";
@@ -190,8 +220,15 @@ export function TextBlock({ value }: TextBlockProps) {
     }
   };
 
+  const animationClass = value.enableAnimation 
+    ? (isVisible ? 'animate-slide-in-left' : 'opacity-0') 
+    : '';
+
   return (
-    <div className={`${alignClasses[value.textAlign]}`}>
+    <div 
+      ref={blockRef}
+      className={`${alignClasses[value.textAlign]} ${animationClass}`}
+    >
       {value.heading && renderHeading()}
       <div className="prose prose-invert max-w-none">
         <PortableText value={value.text as import('@portabletext/types').PortableTextBlock[]} />
@@ -387,25 +424,9 @@ export const customComponents = {
         </span>
       );
     },
-    highlight: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
-      if (!value?.color?.hex) return <>{children}</>;
-      
-      const backgroundColor = value.color.alpha 
-        ? `rgba(${parseInt(value.color.hex.slice(1, 3), 16)}, ${parseInt(value.color.hex.slice(3, 5), 16)}, ${parseInt(value.color.hex.slice(5, 7), 16)}, ${value.color.alpha})`
-        : value.color.hex;
-        
-      return (
-        <span
-          style={{
-            backgroundColor,
-            padding: '2px 4px',
-            borderRadius: '3px',
-          }}
-          data-critical="true"
-        >
-          {children}
-        </span>
-      );
+    highlight: ({ children }: { children: React.ReactNode }) => {
+      // Highlight mark removed - no background color applied
+      return <>{children}</>;
     },
     textColor: ({ children, value }: { children: React.ReactNode; value?: { color: { hex: string; alpha?: number } } }) => {
       if (!value?.color?.hex) return <>{children}</>;

@@ -113,7 +113,9 @@ export async function getHomepage(): Promise<Homepage | null> {
         offsetY,
         scale
       },
+      enableBannerAnimation,
       textArea,
+      enableTextAreaAnimation,
       sections[]{
         _key,
         title,
