@@ -795,6 +795,7 @@ export async function getArticlePagesByTag(tag: string) {
       tags
     }`;
     const client = await getQueryClient();
+    // @ts-expect-error - Sanity's type inference doesn't handle 'in' operator well
     return await client.fetch(query, { tag }, getCacheConfig());
   } catch (error) {
     console.error('Failed to fetch article pages by tag:', error);
