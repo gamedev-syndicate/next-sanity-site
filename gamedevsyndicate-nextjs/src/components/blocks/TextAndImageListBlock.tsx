@@ -216,7 +216,9 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
 
   // Render a single item
   const renderArticle = (article: Article, index: number) => {
-    const imageUrl = article.image ? getImageUrl(article.image, 400, 400) : null;
+    const imageUrl = article.image 
+      ? getImageUrl(article.image, 400, 600, { fit: 'crop' })
+      : null;
     const articleImageSide = getItemImageSide(index);
     const sizeClasses = getItemSizeClasses();
     const isVisible = visibleItems.has(index);
@@ -274,7 +276,7 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
       containerClasses = `flex flex-row ${getAlignmentClasses()}`;
     }
 
-    const isVerticalImage = imagePosition === 'top' || imagePosition === 'bottom';
+    const isHorizontalImage = imagePosition === 'top' || imagePosition === 'bottom';
 
     return (
       <div 
@@ -285,16 +287,16 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
       >
         <div className={containerClasses}>
           {/* Image - no padding, extends to edges */}
-          <div className={`${isVerticalImage ? 'w-full' : getImageSizeClasses()} flex-shrink-0`}>
+          <div className={`${isHorizontalImage ? 'w-full' : getImageSizeClasses()} ${!isHorizontalImage ? sizeClasses.imageHeight || 'h-24 md:h-32' : ''} flex-shrink-0`}>
             <img
               src={imageUrl}
               alt={article.image?.alt || article.title || 'Content image'}
-              className={`w-full ${isVerticalImage ? (sizeClasses.imageHeight || 'h-20 md:h-24') : 'h-full'} object-cover`}
+              className={`w-full ${isHorizontalImage ? (sizeClasses.imageHeight || 'h-20 md:h-24') : 'h-full'} object-cover`}
             />
           </div>
 
           {/* Content - with padding */}
-          <div className={`${isVerticalImage ? 'w-full' : getContentSizeClasses()} flex flex-col justify-start gap-1 ${sizeClasses.contentPadding || 'p-3 md:p-4'}`}>
+          <div className={`${isHorizontalImage ? 'w-full' : getContentSizeClasses()} flex flex-col justify-start gap-1 ${sizeClasses.contentPadding || 'p-3 md:p-4'}`}>
             <h3 className="text-lg font-bold text-white text-left">
               {article.title}
             </h3>
