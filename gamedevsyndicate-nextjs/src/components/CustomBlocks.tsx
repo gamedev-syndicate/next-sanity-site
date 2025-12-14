@@ -7,9 +7,11 @@ import { ImageBlock as ImageBlockType, TextBlock as TextBlockType, ButtonBlock a
 import { CompanyBlock, CompanyListBlock, CompactCompanyListBlock } from './CompanyBlocks';
 import ContentSeparatorBlock from './blocks/ContentSeparatorBlock';
 import { ContactBlock } from './blocks/ContactBlock';
+import { SocialMediaBlock } from './blocks/SocialMediaBlock';
 import { ImageTextBlock } from './blocks/ImageTextBlock';
 import { TextAndImageBlock } from './blocks/TextAndImageBlock';
 import { TextAndImageListBlock } from './blocks/TextAndImageListBlock';
+import { ButtonListBlock } from './blocks/ButtonListBlock';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { designSystemColorToCSS } from '../lib/background-utils';
 
@@ -327,17 +329,19 @@ export function ButtonBlock({ value }: { value: ButtonBlockType }) {
 }
 
 
-import type { CompanyBlock as CompanyBlockType, CompanyListBlock as CompanyListBlockType, CompactCompanyListBlock as CompactCompanyListBlockType, ContactBlock as ContactBlockType, ImageTextBlock as ImageTextBlockType, TextAndImageBlock as TextAndImageBlockType, TextAndImageListBlock as TextAndImageListBlockType, ContentSeparatorBlock as ContentSeparatorBlockType } from '../types/sanity';
+import type { CompanyBlock as CompanyBlockType, CompanyListBlock as CompanyListBlockType, CompactCompanyListBlock as CompactCompanyListBlockType, ContactBlock as ContactBlockType, SocialMediaBlock as SocialMediaBlockType, ImageTextBlock as ImageTextBlockType, TextAndImageBlock as TextAndImageBlockType, TextAndImageListBlock as TextAndImageListBlockType, ContentSeparatorBlock as ContentSeparatorBlockType, ButtonListBlock as ButtonListBlockType } from '../types/sanity';
 
 export const customComponents = {
   types: {
     imageBlock: ImageBlock,
     textBlock: TextBlock,
     buttonBlock: ButtonBlock,
+    buttonListBlock: ({ value }: { value: ButtonListBlockType }) => <ButtonListBlock value={value} />,
     companyBlock: ({ value }: { value: CompanyBlockType }) => <CompanyBlock value={value} />,
     companyListBlock: ({ value }: { value: CompanyListBlockType }) => <CompanyListBlock value={value} />,
     compactCompanyListBlock: ({ value }: { value: CompactCompanyListBlockType }) => <CompactCompanyListBlock value={value} />,
     contactBlock: ({ value }: { value: ContactBlockType }) => <ContactBlock value={value} />,
+    socialMediaBlock: ({ value }: { value: SocialMediaBlockType }) => <SocialMediaBlock value={value} />,
     imageTextBlock: ({ value }: { value: ImageTextBlockType }) => <ImageTextBlock value={value} />,
     textAndImageBlock: ({ value }: { value: TextAndImageBlockType }) => <TextAndImageBlock value={value} />,
     textAndImageListBlock: ({ value }: { value: TextAndImageListBlockType }) => <TextAndImageListBlock value={value} />,
@@ -488,6 +492,8 @@ export default function CustomBlocks({ blocks }: { blocks: ContentBlock[] }) {
             return <TextBlock key={block._key} value={block} />;
           case 'buttonBlock':
             return <ButtonBlock key={block._key} value={block} />;
+          case 'buttonListBlock':
+            return <ButtonListBlock key={block._key} value={block} />;
           case 'companyBlock':
             return <CompanyBlock key={block._key} value={block} />;
           case 'companyListBlock':
@@ -497,6 +503,8 @@ export default function CustomBlocks({ blocks }: { blocks: ContentBlock[] }) {
           case 'contactBlock':
             console.log('Rendering ContactBlock with data:', block);
             return <ContactBlock key={block._key} value={block} />;
+          case 'socialMediaBlock':
+            return <SocialMediaBlock key={block._key} value={block} />;
           case 'imageTextBlock':
             return <ImageTextBlock key={block._key} value={block} />;
           case 'textAndImageBlock':

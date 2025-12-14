@@ -21,13 +21,6 @@ export default defineType({
       initialValue: 'Get in Touch',
     }),
     defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'array',
-      description: 'Optional description text shown below the title',
-      of: [{type: 'block'}],
-    }),
-    defineField({
       name: 'nameLabel',
       title: 'Name Field Label',
       type: 'string',
@@ -52,6 +45,58 @@ export default defineType({
       initialValue: 'Send',
       validation: Rule => Rule.required(),
     }),
+    // Form container styling with design system
+    colorSelectionField(
+      'containerBackgroundColorSelection',
+      'Form Container Background Color',
+      'Choose form container background color from design system'
+    ),
+    customColorField(
+      'customContainerBackgroundColor',
+      'Custom Container Background Color',
+      'Custom background color for form container'
+    ),
+    colorSelectionField(
+      'containerBorderColorSelection',
+      'Form Container Border Color',
+      'Choose form container border color from design system'
+    ),
+    customColorField(
+      'customContainerBorderColor',
+      'Custom Container Border Color',
+      'Custom border color for form container'
+    ),
+    // Input field styling with design system
+    colorSelectionField(
+      'inputBackgroundColorSelection',
+      'Input Background Color',
+      'Choose input field background color from design system'
+    ),
+    customColorField(
+      'customInputBackgroundColor',
+      'Custom Input Background Color',
+      'Custom background color for input fields'
+    ),
+    colorSelectionField(
+      'inputBorderColorSelection',
+      'Input Border Color',
+      'Choose input field border color from design system'
+    ),
+    customColorField(
+      'customInputBorderColor',
+      'Custom Input Border Color',
+      'Custom border color for input fields'
+    ),
+    colorSelectionField(
+      'inputTextColorSelection',
+      'Input Text Color',
+      'Choose input field text color from design system'
+    ),
+    customColorField(
+      'customInputTextColor',
+      'Custom Input Text Color',
+      'Custom text color for input fields'
+    ),
     // Button styling with design system
     colorSelectionField(
       'buttonBackgroundColorSelection',
@@ -107,13 +152,6 @@ export default defineType({
       type: 'string',
       description: 'Email address where form submissions should be sent. Leave empty to use default site contact email.',
       validation: Rule => Rule.email(),
-    }),
-    defineField({
-      name: 'socialLinks',
-      title: 'Social Media Links',
-      type: 'array',
-      description: 'Add social media links to display below the contact form',
-      of: [{type: 'socialMediaLink'}],
     }),
   ],
   preview: {

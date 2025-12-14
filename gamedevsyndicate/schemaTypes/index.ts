@@ -1,5 +1,6 @@
 import articlePage from './articlePage'
 import buttonBlock from './buttonBlock'
+import buttonListBlock from './buttonListBlock'
 import company from './company'
 import companyBlock from './companyBlock'
 import companyListBlock from './companyListBlock'
@@ -17,6 +18,7 @@ import textAndImageBlock from './textAndImageBlock'
 import textAndImageListBlock from './textAndImageListBlock'
 import contentSeparator from './blocks/contentSeparator'
 import socialMediaLink from './socialMediaLink'
+import socialMediaBlock from './socialMediaBlock'
 
 export const schemaTypes = [
   // Document types
@@ -30,6 +32,7 @@ export const schemaTypes = [
   
   // Block types
   buttonBlock,
+  buttonListBlock,
   companyBlock,
   companyListBlock,
   compactCompanyListBlock,
@@ -40,6 +43,7 @@ export const schemaTypes = [
   textAndImageBlock,
   textAndImageListBlock,
   contentSeparator,
+  socialMediaBlock,
   
   // Object types
   socialMediaLink,

@@ -1,34 +1,16 @@
 'use client'
 
 import { useState } from 'react';
-import { PortableText } from '@portabletext/react';
-import type { PortableTextBlock } from '@portabletext/types';
 import { ContactBlock as ContactBlockType } from '../../types/sanity';
 import { useDesignSystem } from '../../hooks/useDesignSystem';
 import { resolveColor } from '../../lib/colorUtils';
 import { designSystemColorToCSS } from '../../lib/background-utils';
-
-// Helper to convert hex color to rgba with opacity (prevents tree-shaking issues)
-function hexToRgba(hex: string, opacity: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-}
-import { 
-  FaTwitter, FaLinkedin, FaFacebook, FaInstagram, FaYoutube, 
-  FaGithub, FaDiscord, FaTwitch, FaTiktok, FaReddit, 
-  FaMedium, FaMastodon, FaGlobe, FaEnvelope 
-} from 'react-icons/fa';
-import { SiBluesky, SiThreads } from 'react-icons/si';
 
 interface ContactBlockProps {
   value: ContactBlockType;
 }
 
 export function ContactBlock({ value }: ContactBlockProps) {
-  console.log('ContactBlock rendering with value:', value);
-  
   const { designSystem } = useDesignSystem();
   const [formData, setFormData] = useState({
     name: '',
@@ -68,6 +50,53 @@ export function ContactBlock({ value }: ContactBlockProps) {
     },
     designSystem,
     '#ffffff' // fallback
+  );
+
+  // Resolve form container colors using design system
+  const containerBgColor = resolveColor(
+    {
+      colorSelection: value.containerBackgroundColorSelection,
+      customColor: convertToColorReference(value.customContainerBackgroundColor),
+    },
+    designSystem,
+    'rgba(31, 41, 55, 0.4)' // fallback: gray-800/40
+  );
+
+  const containerBorderColor = resolveColor(
+    {
+      colorSelection: value.containerBorderColorSelection,
+      customColor: convertToColorReference(value.customContainerBorderColor),
+    },
+    designSystem,
+    'rgba(55, 65, 81, 0.5)' // fallback: gray-700/50
+  );
+
+  // Resolve input field colors using design system
+  const inputBgColor = resolveColor(
+    {
+      colorSelection: value.inputBackgroundColorSelection,
+      customColor: convertToColorReference(value.customInputBackgroundColor),
+    },
+    designSystem,
+    'rgba(0, 0, 0, 0.2)' // fallback: black/20
+  );
+
+  const inputBorderColor = resolveColor(
+    {
+      colorSelection: value.inputBorderColorSelection,
+      customColor: convertToColorReference(value.customInputBorderColor),
+    },
+    designSystem,
+    'rgba(55, 65, 81, 0.5)' // fallback: gray-700/50
+  );
+
+  const inputTextColor = resolveColor(
+    {
+      colorSelection: value.inputTextColorSelection,
+      customColor: convertToColorReference(value.customInputTextColor),
+    },
+    designSystem,
+    '#ffffff' // fallback: white
   );
 
   // Get accent color from design system for focus states
@@ -125,329 +154,147 @@ export function ContactBlock({ value }: ContactBlockProps) {
   const buttonSize = value.buttonSize || 'large';
   const sizeClass = buttonSizeClasses[buttonSize as keyof typeof buttonSizeClasses] || buttonSizeClasses.large;
 
-  // Social media icon mapper
-  const getSocialIcon = (platform: string) => {
-    const iconProps = { size: 24 };
-    switch (platform) {
-      case 'twitter': return <FaTwitter {...iconProps} />;
-      case 'linkedin': return <FaLinkedin {...iconProps} />;
-      case 'facebook': return <FaFacebook {...iconProps} />;
-      case 'instagram': return <FaInstagram {...iconProps} />;
-      case 'youtube': return <FaYoutube {...iconProps} />;
-      case 'github': return <FaGithub {...iconProps} />;
-      case 'discord': return <FaDiscord {...iconProps} />;
-      case 'twitch': return <FaTwitch {...iconProps} />;
-      case 'tiktok': return <FaTiktok {...iconProps} />;
-      case 'reddit': return <FaReddit {...iconProps} />;
-      case 'medium': return <FaMedium {...iconProps} />;
-      case 'mastodon': return <FaMastodon {...iconProps} />;
-      case 'bluesky': return <SiBluesky {...iconProps} />;
-      case 'threads': return <SiThreads {...iconProps} />;
-      case 'website': return <FaGlobe {...iconProps} />;
-      case 'email': return <FaEnvelope {...iconProps} />;
-      default: return <FaGlobe {...iconProps} />;
-    }
-  };
-
-  const getPlatformLabel = (platform: string) => {
-    const labels: Record<string, string> = {
-      twitter: 'Twitter / X',
-      linkedin: 'LinkedIn',
-      facebook: 'Facebook',
-      instagram: 'Instagram',
-      youtube: 'YouTube',
-      github: 'GitHub',
-      discord: 'Discord',
-      twitch: 'Twitch',
-      tiktok: 'TikTok',
-      reddit: 'Reddit',
-      medium: 'Medium',
-      mastodon: 'Mastodon',
-      bluesky: 'Bluesky',
-      threads: 'Threads',
-      website: 'Website',
-      email: 'Email',
-    };
-    return labels[platform] || platform;
-  };
-
   return (
-    <div className="w-full mx-auto my-12 px-4">
-      {/* Header Section */}
-      {value.title && (
-        <div className="text-center mb-12">
-          <h2 
-            className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent"
-            style={{
-              textShadow: '0 0 30px rgba(255,255,255,0.1)',
-            }}
-          >
-            {value.title}
-          </h2>
-        </div>
-      )}
+    <div className="w-full py-12">
+      <div className="container mx-auto px-4 max-w-2xl">
+        {/* Header Section */}
+        {value.title && (
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              {value.title}
+            </h2>
+          </div>
+        )}
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-start">
-        
-        {/* Left Column - Text Area (2 cols) */}
-        <div className="lg:col-span-2 space-y-6">
-          {value.description && (
-            <div className="prose prose-invert prose-lg max-w-none text-gray-300">
-              <PortableText value={value.description as PortableTextBlock[]} />
-            </div>
-          )}
-          
-          {/* Social Media Links */}
-          {value.socialLinks && value.socialLinks.length > 0 && (
-            <div className="flex flex-col items-center gap-6 pt-4">
-              <div className="h-px w-full bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
-              
-              <div className="flex flex-wrap items-center justify-center gap-3">
-                {value.socialLinks.map((link) => (
-                  <a
-                    key={link._key}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative flex items-center gap-2 px-4 py-2.5 rounded-lg transition-all duration-300 backdrop-blur-sm"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                    }}
-                    title={link.label || getPlatformLabel(link.platform)}
-                  >
-                    {/* Hover glow effect */}
-                    <div 
-                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                      style={{
-                        background: `linear-gradient(135deg, ${hexToRgba(accentColor, 0.125)} 0%, ${hexToRgba(buttonBgColor, 0.125)} 100%)`,
-                        boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
-                      }}
-                      data-critical="true"
-                    />
-                    
-                    {/* Icon */}
-                    <span 
-                      className="relative z-10 text-gray-300 group-hover:text-white transition-colors duration-300"
-                      style={{
-                        filter: 'drop-shadow(0 0 8px rgba(255,255,255,0))',
-                      }}
-                      data-critical="true"
-                    >
-                      {getSocialIcon(link.platform)}
-                    </span>
-                    
-                    {/* Label */}
-                    {link.label && (
-                      <span className="relative z-10 text-gray-300 group-hover:text-white transition-colors duration-300 font-medium text-sm">
-                        {link.label}
-                      </span>
-                    )}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right Column - Form Container with Glass Morphism (3 cols) */}
+        {/* Form Container - Simplified */}
         <div 
-          className="lg:col-span-3 relative backdrop-blur-xl rounded-lg p-8 md:p-10 shadow-2xl"
+          className="rounded-lg p-8 shadow-lg"
           style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            boxShadow: `0 8px 32px 0 rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)`,
+            backgroundColor: containerBgColor,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: containerBorderColor,
           }}
         >
-          {/* Decorative Elements */}
-          <div 
-            className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10 blur-3xl pointer-events-none"
-            style={{
-              background: `radial-gradient(circle, ${accentColor} 0%, transparent 70%)`,
-            }}
-            data-critical="true"
-          />
-          <div 
-            className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-10 blur-3xl pointer-events-none"
-            style={{
-              background: `radial-gradient(circle, ${buttonBgColor} 0%, transparent 70%)`,
-            }}
-            data-critical="true"
-          />
-
-          <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Name Field */}
-            <div className="relative group">
-              <div className="relative">
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  onFocus={() => setFocusedField('name')}
-                  onBlur={() => setFocusedField(null)}
-                  required
-                  className="w-full px-5 py-4 bg-black/20 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none transition-all duration-300"
-                  style={{
-                    borderColor: focusedField === 'name' ? accentColor : undefined,
-                    boxShadow: focusedField === 'name' ? `0 0 0 3px ${hexToRgba(accentColor, 0.125)}` : undefined,
-                  }}
-                  placeholder={value.nameLabel || 'Name'}
-                  data-critical="true"
-                />
-                {focusedField === 'name' && (
-                  <div 
-                    className="absolute inset-0 rounded-lg pointer-events-none"
-                    style={{
-                      boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
-                    }}
-                    data-critical="true"
-                  />
-                )}
-              </div>
+            <div>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                onFocus={() => setFocusedField('name')}
+                onBlur={() => setFocusedField(null)}
+                required
+                className="w-full px-5 py-4 rounded-lg placeholder-gray-400 focus:outline-none transition-all duration-300"
+                style={{
+                  backgroundColor: inputBgColor,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: focusedField === 'name' ? accentColor : inputBorderColor,
+                  color: inputTextColor,
+                }}
+                placeholder={value.nameLabel || 'Name'}
+              />
             </div>
 
             {/* Email Field */}
-            <div className="relative group">
-              <div className="relative">
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                  required
-                  className="w-full px-5 py-4 bg-black/20 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none transition-all duration-300"
-                  style={{
-                    borderColor: focusedField === 'email' ? accentColor : undefined,
-                    boxShadow: focusedField === 'email' ? `0 0 0 3px ${hexToRgba(accentColor, 0.125)}` : undefined,
-                  }}
-                  placeholder={value.emailLabel || 'Email'}
-                  data-critical="true"
-                />
-                {focusedField === 'email' && (
-                  <div 
-                    className="absolute inset-0 rounded-lg pointer-events-none"
-                    style={{
-                      boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
-                    }}
-                    data-critical="true"
-                  />
-                )}
-              </div>
+            <div>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField(null)}
+                required
+                className="w-full px-5 py-4 rounded-lg placeholder-gray-400 focus:outline-none transition-all duration-300"
+                style={{
+                  backgroundColor: inputBgColor,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: focusedField === 'email' ? accentColor : inputBorderColor,
+                  color: inputTextColor,
+                }}
+                placeholder={value.emailLabel || 'Email'}
+              />
             </div>
 
             {/* Message Field */}
-            <div className="relative group">
-              <div className="relative">
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  onFocus={() => setFocusedField('message')}
-                  onBlur={() => setFocusedField(null)}
-                  required
-                  rows={6}
-                  className="w-full px-5 py-4 bg-black/20 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none transition-all duration-300 resize-y min-h-[150px]"
-                  style={{
-                    borderColor: focusedField === 'message' ? accentColor : undefined,
-                    boxShadow: focusedField === 'message' ? `0 0 0 3px ${hexToRgba(accentColor, 0.125)}` : undefined,
-                  }}
-                  placeholder={value.messageLabel || 'Message'}
-                  data-critical="true"
-                />
-                {focusedField === 'message' && (
-                  <div 
-                    className="absolute inset-0 rounded-lg pointer-events-none"
-                    style={{
-                      boxShadow: `0 0 20px ${hexToRgba(accentColor, 0.25)}`,
-                    }}
-                    data-critical="true"
-                  />
-                )}
+            <div>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                onFocus={() => setFocusedField('message')}
+                onBlur={() => setFocusedField(null)}
+                required
+                rows={6}
+                className="w-full px-5 py-4 rounded-lg placeholder-gray-400 focus:outline-none transition-all duration-300 resize-y min-h-[150px]"
+                style={{
+                  backgroundColor: inputBgColor,
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: focusedField === 'message' ? accentColor : inputBorderColor,
+                  color: inputTextColor,
+                }}
+                placeholder={value.messageLabel || 'Message'}
+              />
+            </div>
+
+            {/* Success/Error Messages */}
+            {status === 'success' && (
+              <div className="p-4 rounded-lg bg-green-900/30 border border-green-700/50 flex items-center gap-3">
+                <svg className="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <p className="text-green-100 text-sm">
+                  {value.successMessage || 'Thank you! Your message has been sent.'}
+                </p>
               </div>
-            </div>
+            )}
 
-          {/* Success/Error Messages */}
-          {status === 'success' && (
-            <div 
-              className="p-5 rounded-lg border flex items-center gap-3 animate-fadeIn"
-              style={{
-                background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)',
-                borderColor: '#10b981',
-              }}
-            >
-              <svg className="w-6 h-6 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="text-green-100 font-medium">
-                {value.successMessage || 'Thank you! Your message has been sent.'}
-              </p>
-            </div>
-          )}
+            {status === 'error' && (
+              <div className="p-4 rounded-lg bg-red-900/30 border border-red-700/50 flex items-center gap-3">
+                <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <p className="text-red-100 text-sm">
+                  {value.errorMessage || 'Something went wrong. Please try again.'}
+                </p>
+              </div>
+            )}
 
-          {status === 'error' && (
-            <div 
-              className="p-5 rounded-lg border flex items-center gap-3 animate-fadeIn"
-              style={{
-                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%)',
-                borderColor: '#ef4444',
-              }}
-            >
-              <svg className="w-6 h-6 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <p className="text-red-100 font-medium">
-                {value.errorMessage || 'Something went wrong. Please try again.'}
-              </p>
-            </div>
-          )}
-
-          {/* Submit Button */}
-          <div className="flex justify-center pt-4">
-            <button
-              type="submit"
-              disabled={status === 'loading'}
-              className={`${sizeClass} font-bold rounded-lg transition-all duration-300 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-2xl`}
-              style={{
-                backgroundColor: buttonBgColor,
-                color: buttonTextColor,
-                boxShadow: `0 4px 20px ${hexToRgba(buttonBgColor, 0.25)}`,
-              }}
-              data-critical="true"
-            >
-              {/* Button Shimmer Effect */}
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
-              
-              {/* Button Content */}
-              <span className="relative flex items-center gap-2">
+            {/* Submit Button */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className={`${sizeClass} w-full font-semibold rounded-lg transition-all duration-300 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl`}
+                style={{
+                  backgroundColor: buttonBgColor,
+                  color: buttonTextColor,
+                }}
+              >
                 {status === 'loading' ? (
-                  <>
+                  <span className="flex items-center justify-center gap-2">
                     <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     Sending...
-                  </>
+                  </span>
                 ) : (
-                  <>
-                    {value.buttonText || 'Send Message'}
-                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </>
+                  value.buttonText || 'Send Message'
                 )}
-              </span>
-            </button>
-          </div>
-        </form>
-      </div>
-      
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

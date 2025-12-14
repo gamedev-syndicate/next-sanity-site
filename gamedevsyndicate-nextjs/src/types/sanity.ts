@@ -60,12 +60,32 @@ export interface ButtonBlock {
     hex: string;
     alpha?: number;
   };
+  backgroundOpacityPreset?: string;
   textColorSelection?: ColorSelection;
   customTextColor?: {
     _type: 'color';
     hex: string;
     alpha?: number;
   };
+  textOpacityPreset?: string;
+}
+
+export interface ButtonListBlock {
+  _type: 'buttonListBlock';
+  _key: string;
+  internalLabel?: string; // For CMS organization only - not displayed on website
+  title?: string;
+  buttons: ButtonBlock[];
+  layout: 'vertical' | 'horizontal';
+  spacing?: 'compact' | 'normal' | 'relaxed';
+  alignment?: 'left' | 'center' | 'right';
+  backgroundColorSelection?: ColorSelection;
+  customBackgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  backgroundOpacityPreset?: string;
 }
 
 export interface SocialMediaLink {
@@ -76,16 +96,64 @@ export interface SocialMediaLink {
   label?: string;
 }
 
+export interface SocialMediaBlock {
+  _type: 'socialMediaBlock';
+  _key: string;
+  internalLabel?: string;
+  title?: string;
+  links: SocialMediaLink[];
+  layout?: 'horizontal' | 'vertical' | 'grid';
+  showLabels?: boolean;
+  iconSize?: 'medium' | 'large';
+  linkColorSelection?: string;
+  customLinkColor?: {
+    hex: string;
+    alpha?: number;
+  };
+}
+
 export interface ContactBlock {
   _type: 'contactBlock';
   _key: string;
   internalLabel?: string; // For CMS organization only - not displayed on website
   title?: string;
-  description?: unknown[];
   nameLabel?: string;
   emailLabel?: string;
   messageLabel?: string;
   buttonText?: string;
+  // Form container styling
+  containerBackgroundColorSelection?: ColorSelection;
+  customContainerBackgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  containerBorderColorSelection?: ColorSelection;
+  customContainerBorderColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  // Input field styling
+  inputBackgroundColorSelection?: ColorSelection;
+  customInputBackgroundColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  inputBorderColorSelection?: ColorSelection;
+  customInputBorderColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  inputTextColorSelection?: ColorSelection;
+  customInputTextColor?: {
+    _type: 'color';
+    hex: string;
+    alpha?: number;
+  };
+  // Button styling
   buttonBackgroundColorSelection?: ColorSelection;
   customButtonBackgroundColor?: {
     _type: 'color';
@@ -102,7 +170,6 @@ export interface ContactBlock {
   successMessage?: string;
   errorMessage?: string;
   recipientEmail?: string;
-  socialLinks?: SocialMediaLink[];
 }
 
 export interface ImageTextBlock {
@@ -171,7 +238,7 @@ export interface TextAndImageListBlock {
   };
 }
 
-export type ContentBlock = ImageBlock | TextBlock | ButtonBlock | ContactBlock | CompanyBlock | CompanyListBlock | CompactCompanyListBlock | ContentSeparatorBlock | ImageTextBlock | TextAndImageBlock | TextAndImageListBlock;
+export type ContentBlock = ImageBlock | TextBlock | ButtonBlock | ButtonListBlock | ContactBlock | SocialMediaBlock | CompanyBlock | CompanyListBlock | CompactCompanyListBlock | ContentSeparatorBlock | ImageTextBlock | TextAndImageBlock | TextAndImageListBlock;
 
 // Document types
 export interface NavigationItem {

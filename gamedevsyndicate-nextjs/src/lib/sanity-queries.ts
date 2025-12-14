@@ -628,14 +628,45 @@ export async function getArticlePage(slug: string) {
           showDescription
         },
         _type == "contactBlock" => {
+          internalLabel,
           title,
-          description,
-          email,
-          phone,
-          address,
-          showSocialLinks,
-          backgroundColorSelection,
-          customBackgroundColor
+          nameLabel,
+          emailLabel,
+          messageLabel,
+          buttonText,
+          containerBackgroundColorSelection,
+          customContainerBackgroundColor,
+          containerBorderColorSelection,
+          customContainerBorderColor,
+          inputBackgroundColorSelection,
+          customInputBackgroundColor,
+          inputBorderColorSelection,
+          customInputBorderColor,
+          inputTextColorSelection,
+          customInputTextColor,
+          buttonBackgroundColorSelection,
+          customButtonBackgroundColor,
+          buttonTextColorSelection,
+          customButtonTextColor,
+          buttonSize,
+          successMessage,
+          errorMessage,
+          recipientEmail
+        },
+        _type == "socialMediaBlock" => {
+          internalLabel,
+          title,
+          links[]{
+            _key,
+            platform,
+            url,
+            label
+          },
+          layout,
+          showLabels,
+          iconSize,
+          linkColorSelection,
+          customLinkColor
         },
         _type == "imageTextBlock" => {
           title,
