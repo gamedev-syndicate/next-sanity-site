@@ -213,6 +213,19 @@ p {
   text-align: right !important;
 }
 
+/* Ensure block elements in prose maintain max-width centering */
+.prose p,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Ensure text-left class works on individual elements too */
 .text-left {
   text-align: left !important;

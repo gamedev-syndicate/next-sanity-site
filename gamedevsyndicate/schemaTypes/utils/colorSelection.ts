@@ -1,5 +1,24 @@
 import { defineField } from 'sanity'
 
+export const opacityPresetField = (name: string, title: string, description?: string) =>
+  defineField({
+    name,
+    title,
+    type: 'string',
+    description: description || '⚠️ Set transparency level. If the selected design system color already has transparency, this preset will multiply with it (e.g., 50% preset on a 50% transparent color = 25% final opacity).',
+    options: {
+      list: [
+        { title: '100% (Solid)', value: '100' },
+        { title: '75% (Strong)', value: '75' },
+        { title: '50% (Medium)', value: '50' },
+        { title: '25% (Subtle)', value: '25' },
+      ],
+      layout: 'dropdown',
+    },
+    initialValue: '100',
+    hidden: ({ parent }) => parent?.colorSelection === 'custom',
+  })
+
 export const colorSelectionField = (name: string, title: string, description?: string) => 
   defineField({
     name,
@@ -84,3 +103,20 @@ export const backgroundColorGroup = (groupName = 'backgroundColor') => ({
     'Custom color when not using design system colors'
   ),
 })
+
+// Helper to create a group with color selection, opacity preset, and custom color
+export const colorFieldsWithOpacity = (
+  colorFieldName: string,
+  opacityFieldName: string,
+  customColorFieldName: string,
+  colorTitle: string,
+  colorDescription?: string
+) => [
+  colorSelectionField(colorFieldName, colorTitle, colorDescription),
+  opacityPresetField(
+    opacityFieldName,
+    'Opacity',
+    '⚠️ WARNING: If the selected design system color already has transparency, this preset will multiply with it. For example: 50% preset on a 50% transparent color = 25% final opacity.'
+  ),
+  customColorField(customColorFieldName, `Custom ${colorTitle}`, `Use custom color instead of design system`),
+]

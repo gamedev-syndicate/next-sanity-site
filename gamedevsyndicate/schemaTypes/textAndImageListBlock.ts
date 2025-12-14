@@ -1,5 +1,5 @@
 import { defineField, defineType } from 'sanity'
-import { colorSelectionField, customColorField } from './utils/colorSelection'
+import { colorSelectionField, customColorField, opacityPresetField } from './utils/colorSelection'
 
 export default defineType({
   name: 'textAndImageListBlock',
@@ -23,6 +23,10 @@ export default defineType({
       'backgroundColorSelection',
       'Background Color',
       'Choose background color from design system or use custom color'
+    ),
+    opacityPresetField(
+      'backgroundOpacityPreset',
+      'Background Opacity'
     ),
     customColorField(
       'customBackgroundColor',

@@ -1,6 +1,6 @@
 import { PageBackground, SectionBackground, OverlayTexture } from '../types/sanity';
 import { getImageUrl } from './sanity-image';
-import { resolveBackgroundStyle, type BackgroundConfig } from './colorUtils';
+import { resolveBackgroundStyle, colorToCSS, type BackgroundConfig } from './colorUtils';
 import type { DesignSystem } from '@/types/designSystem';
 
 interface SanityColor {
@@ -62,12 +62,70 @@ export function generateSectionBackgroundCSS(
   // Use new design system approach if available
   const sectionBg = sectionBackground as SectionBackground & {
     solidColorSelection?: string;
+    solidOpacityPreset?: string;
     customSolidColor?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
     gradientFromSelection?: string;
+    gradientFromOpacityPreset?: string;
     customGradientFrom?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
     gradientToSelection?: string;
+    gradientToOpacityPreset?: string;
     customGradientTo?: { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } };
   };
+  
+  // For solid colors with design system
+  if (sectionBackground.type === 'solid' && sectionBg.solidColorSelection && sectionBg.solidColorSelection !== 'custom' && designSystem?.colors) {
+    const colorValue = designSystem.colors[sectionBg.solidColorSelection as keyof typeof designSystem.colors];
+    if (colorValue) {
+      const opacityMultiplier = sectionBg.solidOpacityPreset ? parseInt(sectionBg.solidOpacityPreset) / 100 : 1;
+      return colorToCSS(colorValue, opacityMultiplier);
+    }
+  }
+  
+  // For gradients with design system
+  if (sectionBackground.type === 'gradient') {
+    let fromColor = 'transparent';
+    let toColor = 'transparent';
+    
+    if (sectionBg.gradientFromSelection && sectionBg.gradientFromSelection !== 'custom' && designSystem?.colors) {
+      const colorValue = designSystem.colors[sectionBg.gradientFromSelection as keyof typeof designSystem.colors];
+      if (colorValue) {
+        const opacityMultiplier = sectionBg.gradientFromOpacityPreset ? parseInt(sectionBg.gradientFromOpacityPreset) / 100 : 1;
+        fromColor = colorToCSS(colorValue, opacityMultiplier);
+      }
+    } else if (sectionBg.gradientFromSelection === 'custom' && sectionBg.customGradientFrom) {
+      fromColor = sanityColorToCSS(sectionBg.customGradientFrom);
+    } else if (sectionBackground.gradientFrom) {
+      fromColor = sanityColorToCSS(sectionBackground.gradientFrom);
+    }
+    
+    if (sectionBg.gradientToSelection && sectionBg.gradientToSelection !== 'custom' && designSystem?.colors) {
+      const colorValue = designSystem.colors[sectionBg.gradientToSelection as keyof typeof designSystem.colors];
+      if (colorValue) {
+        const opacityMultiplier = sectionBg.gradientToOpacityPreset ? parseInt(sectionBg.gradientToOpacityPreset) / 100 : 1;
+        toColor = colorToCSS(colorValue, opacityMultiplier);
+      }
+    } else if (sectionBg.gradientToSelection === 'custom' && sectionBg.customGradientTo) {
+      toColor = sanityColorToCSS(sectionBg.customGradientTo);
+    } else if (sectionBackground.gradientTo) {
+      toColor = sanityColorToCSS(sectionBackground.gradientTo);
+    }
+    
+    const direction = sectionBackground.gradientDirection || 'to-b';
+    const startPos = sectionBackground.gradientStartPosition ?? 0;
+    const endPos = sectionBackground.gradientEndPosition ?? 100;
+    
+    if (direction === 'radial') {
+      return `radial-gradient(circle, ${fromColor} ${startPos}%, ${toColor} ${endPos}%)`;
+    }
+    
+    const cssDirection = {
+      'to-b': 'to bottom',
+      'to-r': 'to right',
+      'to-br': 'to bottom right',
+    }[direction] || 'to bottom';
+    
+    return `linear-gradient(${cssDirection}, ${fromColor} ${startPos}%, ${toColor} ${endPos}%)`;
+  }
   
   const backgroundConfig: BackgroundConfig = {
     type: sectionBackground.type,
@@ -98,31 +156,10 @@ export function generateSectionBackgroundCSS(
     return styles.backgroundColor;
   }
 
-  // Fallback to legacy logic
+  // Fallback to legacy logic for solid and image types only
   switch (sectionBackground.type) {
     case 'solid':
       return sanityColorToCSS(sectionBackground.solidColor);
-
-    case 'gradient':
-      const fromColor = sanityColorToCSS(sectionBackground.gradientFrom);
-      const toColor = sanityColorToCSS(sectionBackground.gradientTo);
-      const direction = sectionBackground.gradientDirection || 'to-b';
-      const startPos = sectionBackground.gradientStartPosition ?? 0;
-      const endPos = sectionBackground.gradientEndPosition ?? 100;
-      
-      // Handle radial gradient
-      if (direction === 'radial') {
-        return `radial-gradient(circle, ${fromColor} ${startPos}%, ${toColor} ${endPos}%)`;
-      }
-      
-      // Convert direction to CSS
-      const cssDirection = {
-        'to-b': 'to bottom',
-        'to-r': 'to right',
-        'to-br': 'to bottom right',
-      }[direction] || 'to bottom';
-      
-      return `linear-gradient(${cssDirection}, ${fromColor} ${startPos}%, ${toColor} ${endPos}%)`;
 
     case 'image':
       if (sectionBackground.backgroundImage) {

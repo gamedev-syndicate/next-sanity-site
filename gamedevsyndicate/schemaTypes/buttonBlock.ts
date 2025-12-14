@@ -1,5 +1,5 @@
 import {defineType, defineField} from 'sanity'
-import { colorSelectionField, customColorField } from './utils/colorSelection'
+import { colorSelectionField, customColorField, opacityPresetField } from './utils/colorSelection'
 
 const buttonStyleOptions = [
   {title: 'Primary', value: 'primary'},
@@ -58,6 +58,10 @@ export default defineType({
       'Button Background Color',
       'Choose button background color from design system or use custom color'
     ),
+    opacityPresetField(
+      'backgroundOpacityPreset',
+      'Background Opacity'
+    ),
     customColorField(
       'customBackgroundColor',
       'Custom Background Color',
@@ -67,6 +71,10 @@ export default defineType({
       'textColorSelection',
       'Button Text Color',
       'Choose button text color from design system or use custom color'
+    ),
+    opacityPresetField(
+      'textOpacityPreset',
+      'Text Opacity'
     ),
     customColorField(
       'customTextColor',

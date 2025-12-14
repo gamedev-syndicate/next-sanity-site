@@ -7,6 +7,7 @@ export interface ColorReference {
     alpha?: number
     rgb: { r: number; g: number; b: number; a: number }
   }
+  opacityPreset?: string  // '100', '75', '50', or '25'
 }
 
 // Extended interfaces for new schema structure
@@ -79,6 +80,7 @@ export function resolveColor(
     return fallback
   }
 
+  // Custom colors don't use opacity preset
   if (colorRef.colorSelection === 'custom' && colorRef.customColor) {
     const alpha = colorRef.customColor.alpha ?? 1
     if (alpha < 1) {
@@ -88,10 +90,22 @@ export function resolveColor(
     return colorRef.customColor.hex
   }
 
+  // Design system colors with opacity preset multiplication
   if (colorRef.colorSelection !== 'custom' && designSystem?.colors) {
     const colorValue = designSystem.colors[colorRef.colorSelection as keyof typeof designSystem.colors]
     if (colorValue) {
-      return colorToCSS(colorValue)
+      // Apply opacity preset - defaults to 100% (1.0) if not specified
+      const opacityMultiplier = colorRef.opacityPreset ? parseInt(colorRef.opacityPreset) / 100 : 1
+      
+      // Log warning if color already has transparency and preset is being applied
+      if (colorValue.alpha < 1 && opacityMultiplier < 1 && typeof window !== 'undefined') {
+        console.warn(
+          `Color "${colorRef.colorSelection}" already has ${(colorValue.alpha * 100).toFixed(0)}% opacity. ` +
+          `Applying ${colorRef.opacityPreset}% preset will result in ${(colorValue.alpha * opacityMultiplier * 100).toFixed(0)}% final opacity.`
+        )
+      }
+      
+      return colorToCSS(colorValue, opacityMultiplier)
     }
   }
 
@@ -209,11 +223,14 @@ export function resolveBackgroundStyle(
   }
 }
 
-export function colorToCSS(color: ColorValue): string {
+export function colorToCSS(color: ColorValue, opacityMultiplier = 1): string {
   if (!color) return '#000000'
   
-  if (color.alpha < 1) {
-    return `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${color.alpha})`
+  // Multiply existing alpha with the preset multiplier
+  const finalAlpha = color.alpha * opacityMultiplier
+  
+  if (finalAlpha < 1) {
+    return `rgba(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b}, ${finalAlpha})`
   }
   
   return color.hex

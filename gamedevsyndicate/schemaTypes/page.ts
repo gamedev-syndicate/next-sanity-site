@@ -1,5 +1,5 @@
 import {defineType, defineField} from 'sanity'
-import { colorSelectionField, customColorField } from './utils/colorSelection'
+import { colorSelectionField, customColorField, opacityPresetField } from './utils/colorSelection'
 
 export default defineType({
   name: 'page',
@@ -44,16 +44,6 @@ export default defineType({
       initialValue: 100,
       hidden: ({parent}) => !parent?.showInNavigation,
     }),
-    colorSelectionField(
-      'backgroundColorSelection',
-      'Background Color',
-      'Choose background color from design system or use custom color'
-    ),
-    customColorField(
-      'customBackgroundColor',
-      'Custom Background Color',
-      'Custom background color when not using design system colors'
-    ),
     // Page Sections
     defineField({
       name: 'sections',
@@ -122,6 +112,23 @@ export default defineType({
                   hidden: ({parent}) => parent?.type !== 'solid' || parent?.solidColorSelection !== 'custom',
                 },
                 {
+                  name: 'solidOpacityPreset',
+                  title: 'Solid Color Opacity',
+                  type: 'string',
+                  description: '⚠️ Set transparency level. If the selected design system color already has transparency, this preset will multiply with it.',
+                  options: {
+                    list: [
+                      { title: '100% (Solid)', value: '100' },
+                      { title: '75% (Strong)', value: '75' },
+                      { title: '50% (Medium)', value: '50' },
+                      { title: '25% (Subtle)', value: '25' },
+                    ],
+                    layout: 'dropdown',
+                  },
+                  initialValue: '100',
+                  hidden: ({parent}) => parent?.type !== 'solid' || parent?.solidColorSelection === 'custom',
+                },
+                {
                   name: 'gradientFromSelection',
                   title: 'Gradient Start Color',
                   type: 'string',
@@ -139,6 +146,23 @@ export default defineType({
                   },
                   initialValue: 'primary',
                   hidden: ({parent}) => parent?.type !== 'gradient',
+                },
+                {
+                  name: 'gradientFromOpacityPreset',
+                  title: 'Start Color Opacity',
+                  type: 'string',
+                  description: '⚠️ Set transparency level for gradient start color.',
+                  options: {
+                    list: [
+                      { title: '100% (Solid)', value: '100' },
+                      { title: '75% (Strong)', value: '75' },
+                      { title: '50% (Medium)', value: '50' },
+                      { title: '25% (Subtle)', value: '25' },
+                    ],
+                    layout: 'dropdown',
+                  },
+                  initialValue: '100',
+                  hidden: ({parent}) => parent?.type !== 'gradient' || parent?.gradientFromSelection === 'custom',
                 },
                 {
                   name: 'customGradientFrom',
@@ -168,6 +192,23 @@ export default defineType({
                   },
                   initialValue: 'secondary',
                   hidden: ({parent}) => parent?.type !== 'gradient',
+                },
+                {
+                  name: 'gradientToOpacityPreset',
+                  title: 'End Color Opacity',
+                  type: 'string',
+                  description: '⚠️ Set transparency level for gradient end color.',
+                  options: {
+                    list: [
+                      { title: '100% (Solid)', value: '100' },
+                      { title: '75% (Strong)', value: '75' },
+                      { title: '50% (Medium)', value: '50' },
+                      { title: '25% (Subtle)', value: '25' },
+                    ],
+                    layout: 'dropdown',
+                  },
+                  initialValue: '100',
+                  hidden: ({parent}) => parent?.type !== 'gradient' || parent?.gradientToSelection === 'custom',
                 },
                 {
                   name: 'customGradientTo',

@@ -6,7 +6,7 @@ import type { SanityImage } from '../../types/sanity';
 import RichTextRendererClient from '../RichTextRendererClient';
 import type { PortableTextBlock } from '@portabletext/types';
 import { useDesignSystem } from '../../hooks/useDesignSystem';
-import { colorToCSS } from '../../lib/colorUtils';
+import { resolveColor } from '../../lib/colorUtils';
 
 interface Article {
   _key: string;
@@ -34,6 +34,7 @@ interface TextAndImageListBlockProps {
       alpha?: number;
       rgb: { r: number; g: number; b: number; a: number };
     };
+    backgroundOpacityPreset?: string;
   };
 }
 
@@ -54,6 +55,7 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
     spacing = 'normal',
     backgroundColorSelection,
     customBackgroundColor,
+    backgroundOpacityPreset,
   } = value;
 
   // Set up Intersection Observer for viewport detection
@@ -87,20 +89,17 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
     };
   }, [articles]);
 
-  // Resolve background color using design system
+  // Resolve background color using design system with opacity preset
   const resolveBackgroundColor = (): string | undefined => {
-    if (backgroundColorSelection && backgroundColorSelection !== 'custom' && designSystem?.colors) {
-      const colorValue = designSystem.colors[backgroundColorSelection as keyof typeof designSystem.colors];
-      if (colorValue) {
-        return colorToCSS(colorValue);
-      }
-    }
-    
-    if (backgroundColorSelection === 'custom' && customBackgroundColor) {
-      return customBackgroundColor.hex;
-    }
-    
-    return undefined;
+    return resolveColor(
+      {
+        colorSelection: backgroundColorSelection as any,
+        customColor: customBackgroundColor,
+        opacityPreset: backgroundOpacityPreset,
+      },
+      designSystem,
+      undefined
+    ) || undefined;
   };
 
   const backgroundColor = resolveBackgroundColor();

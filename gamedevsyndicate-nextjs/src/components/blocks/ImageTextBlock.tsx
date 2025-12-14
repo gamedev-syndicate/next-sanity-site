@@ -4,7 +4,7 @@ import React from 'react';
 import { getImageUrl } from '../../lib/sanity-image';
 import type { SanityImage } from '../../types/sanity';
 import { useDesignSystem } from '../../hooks/useDesignSystem';
-import { colorToCSS } from '../../lib/colorUtils';
+import { resolveColor } from '../../lib/colorUtils';
 import RichTextRendererClient from '../RichTextRendererClient';
 import type { PortableTextBlock } from '@portabletext/types';
 
@@ -22,6 +22,7 @@ interface ImageTextBlockProps {
       alpha?: number;
       rgb: { r: number; g: number; b: number; a: number };
     };
+    backgroundOpacityPreset?: string;
     verticalAlignment?: 'start' | 'center' | 'end';
   };
 }
@@ -36,23 +37,21 @@ export const ImageTextBlock: React.FC<ImageTextBlockProps> = ({ value }) => {
     imageSize = 'medium',
     backgroundColorSelection,
     customBackgroundColor,
+    backgroundOpacityPreset,
     verticalAlignment = 'center',
   } = value;
 
-  // Resolve background color using design system
+  // Resolve background color using design system with opacity preset
   const resolveBackgroundColor = (): string | undefined => {
-    if (backgroundColorSelection && backgroundColorSelection !== 'custom' && designSystem?.colors) {
-      const colorValue = designSystem.colors[backgroundColorSelection as keyof typeof designSystem.colors];
-      if (colorValue) {
-        return colorToCSS(colorValue);
-      }
-    }
-    
-    if (backgroundColorSelection === 'custom' && customBackgroundColor) {
-      return customBackgroundColor.hex;
-    }
-    
-    return undefined;
+    return resolveColor(
+      {
+        colorSelection: backgroundColorSelection as any,
+        customColor: customBackgroundColor,
+        opacityPreset: backgroundOpacityPreset,
+      },
+      designSystem,
+      undefined
+    ) || undefined;
   };
 
   const backgroundColor = resolveBackgroundColor();

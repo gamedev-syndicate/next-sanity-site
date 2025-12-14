@@ -210,7 +210,7 @@ export function TextBlock({ value }: TextBlockProps) {
   }, [value.enableAnimation]);
 
   const renderHeading = () => {
-    const className = "text-white font-bold mb-4";
+    const className = `text-white font-bold mb-4 ${alignClasses[value.textAlign]}`;
     switch (value.headingLevel) {
       case 'h1': return <h1 className={className}>{value.heading}</h1>;
       case 'h2': return <h2 className={className}>{value.heading}</h2>;
@@ -227,10 +227,10 @@ export function TextBlock({ value }: TextBlockProps) {
   return (
     <div 
       ref={blockRef}
-      className={`${alignClasses[value.textAlign]} ${animationClass}`}
+      className={animationClass}
     >
       {value.heading && renderHeading()}
-      <div className="prose prose-invert max-w-none">
+      <div className={`prose prose-invert max-w-4xl mx-auto ${alignClasses[value.textAlign]}`}>
         <PortableText value={value.text as import('@portabletext/types').PortableTextBlock[]} />
       </div>
     </div>
