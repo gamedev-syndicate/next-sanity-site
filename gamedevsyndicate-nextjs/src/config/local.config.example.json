@@ -12,7 +12,6 @@
   },
   "features": {
     "visualEditing": true,
-    "caching": false,
-    "analytics": false
+    "caching": false
   }
 }

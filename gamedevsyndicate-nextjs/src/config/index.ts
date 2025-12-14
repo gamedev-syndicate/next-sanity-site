@@ -1,3 +1,22 @@
+/**
+ * Application Configuration Module
+ * 
+ * ⚠️ WARNING: This module uses Node.js `fs` module and is SERVER-ONLY.
+ * DO NOT import this in client components - it will cause build errors.
+ * 
+ * Configuration Priority (highest to lowest):
+ * 1. Environment Variables (process.env)
+ * 2. Local Config File (c:\devsecrets\syndicate\local.config.json) - Development only
+ * 3. Default Config (hardcoded values below)
+ * 
+ * In Production/Vercel:
+ * - Local config file is automatically skipped
+ * - Only environment variables and defaults are used
+ * - Set all required env vars in Vercel dashboard
+ * 
+ * For client-safe Sanity config, use: src/lib/sanity-client-config.ts
+ */
+
 import fs from 'fs'
 
 interface AppConfig {
@@ -16,7 +35,6 @@ interface AppConfig {
   features: {
     visualEditing: boolean
     caching: boolean
-    analytics: boolean
   }
 }
 
@@ -36,11 +54,18 @@ const defaultConfig: AppConfig = {
   features: {
     visualEditing: true,
     caching: true,
-    analytics: false,
   },
 }
 
-// Load local config file if it exists (development only)
+/**
+ * Load local configuration file from dev secrets location
+ * 
+ * Only runs in development (NODE_ENV !== 'production')
+ * Looks for: c:\devsecrets\syndicate\local.config.json
+ * 
+ * This allows sensitive config to be stored outside the repo while
+ * keeping it accessible across multiple projects on the same machine.
+ */
 function loadLocalConfig(): Partial<AppConfig> {
   if (process.env.NODE_ENV === 'production') {
     return {}
@@ -69,7 +94,12 @@ function loadLocalConfig(): Partial<AppConfig> {
   return {}
 }
 
-// Load configuration from environment variables
+/**
+ * Load configuration from environment variables
+ * 
+ * Supports both NEXT_PUBLIC_ (client-safe) and server-only variables.
+ * See .env.example for full list of supported variables.
+ */
 function loadEnvConfig(): Partial<AppConfig> {
   const envConfig: Partial<AppConfig> = {}
 
@@ -127,11 +157,6 @@ function loadEnvConfig(): Partial<AppConfig> {
     envConfig.features.caching = process.env.ENABLE_CACHING === 'true'
   }
 
-  if (process.env.ENABLE_ANALYTICS !== undefined) {
-    if (!envConfig.features) envConfig.features = {} as AppConfig['features'];
-    envConfig.features.analytics = process.env.ENABLE_ANALYTICS === 'true'
-  }
-
   // Clean up empty objects
   if (Object.keys(envConfig.sanity || {}).length === 0) delete envConfig.sanity
   if (Object.keys(envConfig.app || {}).length === 0) delete envConfig.app
@@ -140,7 +165,9 @@ function loadEnvConfig(): Partial<AppConfig> {
   return envConfig
 }
 
-// Deep merge function
+/**
+ * Deep merge utility for combining configuration objects
+ */
 function deepMerge<T>(target: T, source: Partial<T>): T {
   const result = { ...target }
   
@@ -155,7 +182,12 @@ function deepMerge<T>(target: T, source: Partial<T>): T {
   return result
 }
 
-// Create final configuration
+/**
+ * Create final configuration by merging all sources
+ * 
+ * Merge order: default → local → environment
+ * Later sources override earlier ones
+ */
 function createConfig(): AppConfig {
   const localConfig = loadLocalConfig()
   const envConfig = loadEnvConfig()
