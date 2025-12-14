@@ -43,12 +43,12 @@ export const TextAndImageBlock: React.FC<TextAndImageBlockProps> = ({ value }) =
     return (
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col">
-          <h2 className="text-xl md:text-2xl font-bold mb-3 text-white" style={{ textAlign }}>
+          <h2 className="text-2xl md:text-4xl font-bold mb-3 text-white text-left">
             {title}
           </h2>
           
           {text && text.length > 0 && (
-            <div className="prose prose-base max-w-none text-gray-300" style={{ textAlign }}>
+            <div className="prose prose-lg max-w-none text-gray-300 text-left">
               <RichTextRendererClient value={text as PortableTextBlock[]} />
             </div>
           )}
@@ -119,13 +119,13 @@ export const TextAndImageBlock: React.FC<TextAndImageBlockProps> = ({ value }) =
         )}
 
         {/* Content Column */}
-        <div className={`w-full ${getContentSizeClasses()} flex-shrink-0 flex flex-col items-start`}>
-          <h2 className="text-xl md:text-2xl font-bold mb-3 text-white" style={{ textAlign }}>
+        <div className={`w-full ${getContentSizeClasses()} flex-shrink-0 flex flex-col`}>
+          <h2 className="text-2xl md:text-4xl font-bold mb-3 text-white text-left">
             {title}
           </h2>
           
           {text && text.length > 0 && (
-            <div className="prose prose-base max-w-none text-gray-300" style={{ textAlign }}>
+            <div className="prose prose-lg max-w-none text-gray-300 text-left">
               <RichTextRendererClient value={text as PortableTextBlock[]} />
             </div>
           )}

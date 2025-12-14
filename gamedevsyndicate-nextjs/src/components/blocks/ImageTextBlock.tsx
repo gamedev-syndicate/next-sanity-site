@@ -139,13 +139,13 @@ export const ImageTextBlock: React.FC<ImageTextBlockProps> = ({ value }) => {
         {/* Content Column */}
         <div className={`w-full ${getContentSizeClasses()} flex-shrink-0`}>
           {title && (
-            <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${textColorClass}`}>
+            <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${textColorClass}`}>
               {title}
             </h2>
           )}
           
           {text && text.length > 0 && (
-            <div className={`prose prose-lg max-w-none ${subTextColorClass}`}>
+            <div className={`prose prose-xl max-w-none ${subTextColorClass}`}>
               <RichTextRendererClient value={text as PortableTextBlock[]} />
             </div>
           )}

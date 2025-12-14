@@ -197,6 +197,27 @@ p {
   margin-right: auto;
 }
 
+/* Override global centering for prose content with explicit alignment classes */
+.prose.text-left,
+.prose.text-left * {
+  text-align: left !important;
+}
+
+.prose.text-center,
+.prose.text-center * {
+  text-align: center !important;
+}
+
+.prose.text-right,
+.prose.text-right * {
+  text-align: right !important;
+}
+
+/* Ensure text-left class works on individual elements too */
+.text-left {
+  text-align: left !important;
+}
+
 /* Lists centered */
 ul, ol {
   max-width: 1000px;

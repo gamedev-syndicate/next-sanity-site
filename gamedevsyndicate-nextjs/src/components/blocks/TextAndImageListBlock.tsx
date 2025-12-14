@@ -296,12 +296,12 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
 
           {/* Content - with padding */}
           <div className={`${isVerticalImage ? 'w-full' : getContentSizeClasses()} flex flex-col justify-start gap-1 ${sizeClasses.contentPadding || 'p-3 md:p-4'}`}>
-            <h3 className="text-xs font-bold text-white line-clamp-2 text-left">
+            <h3 className="text-lg font-bold text-white text-left">
               {article.title}
             </h3>
             
             {article.text && article.text.length > 0 && (
-              <div className="prose prose-sm max-w-none text-gray-300 line-clamp-2 text-xs leading-tight text-left">
+              <div className="prose prose-base max-w-none text-gray-300 text-base text-left">
                 <RichTextRendererClient value={article.text as PortableTextBlock[]} />
               </div>
             )}
