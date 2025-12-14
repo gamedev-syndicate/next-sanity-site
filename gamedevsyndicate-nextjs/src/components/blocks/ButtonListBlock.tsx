@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useDesignSystem } from '../../hooks/useDesignSystem'
-import { resolveColor, getCSSVariableForColor, type ColorReference } from '../../lib/colorUtils'
+import { resolveColor, type ColorReference } from '../../lib/colorUtils'
 import type { ButtonListBlock as ButtonListBlockType, ButtonBlock as ButtonBlockType } from '../../types/sanity'
 import { designSystemColorToCSS } from '../../lib/background-utils'
 

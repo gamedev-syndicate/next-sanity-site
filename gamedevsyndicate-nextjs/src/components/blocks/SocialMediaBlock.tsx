@@ -47,7 +47,10 @@ export function SocialMediaBlock({ value }: SocialMediaBlockProps) {
 
   // Resolve link color
   const linkColor = resolveColor(
-    { colorSelection: linkColorSelection, customColor: customLinkColor },
+    { 
+      colorSelection: linkColorSelection as 'primary' | 'secondary' | 'tertiary' | 'buttonPrimary' | 'buttonSecondary' | 'custom' | undefined, 
+      customColor: customLinkColor as { hex: string; alpha?: number; rgb: { r: number; g: number; b: number; a: number } } | undefined
+    },
     designSystem,
     '#9ca3af' // Default gray-400
   );

@@ -93,7 +93,7 @@ export const TextAndImageListBlock: React.FC<TextAndImageListBlockProps> = ({ va
   const resolveBackgroundColor = (): string | undefined => {
     return resolveColor(
       {
-        colorSelection: backgroundColorSelection as any,
+        colorSelection: backgroundColorSelection as 'primary' | 'secondary' | 'tertiary' | 'buttonPrimary' | 'buttonSecondary' | 'custom' | undefined,
         customColor: customBackgroundColor,
         opacityPreset: backgroundOpacityPreset,
       },

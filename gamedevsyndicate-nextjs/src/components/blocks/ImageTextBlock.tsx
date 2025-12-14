@@ -45,7 +45,7 @@ export const ImageTextBlock: React.FC<ImageTextBlockProps> = ({ value }) => {
   const resolveBackgroundColor = (): string | undefined => {
     return resolveColor(
       {
-        colorSelection: backgroundColorSelection as any,
+        colorSelection: backgroundColorSelection as 'primary' | 'secondary' | 'tertiary' | 'buttonPrimary' | 'buttonSecondary' | 'custom' | undefined,
         customColor: customBackgroundColor,
         opacityPreset: backgroundOpacityPreset,
       },
