@@ -13,5 +13,9 @@
   "features": {
     "visualEditing": true,
     "caching": false
+  },
+  "resend": {
+    "apiKey": "re_your_api_key_here",
+    "fromEmail": "contact@yourdomain.com"
   }
 }

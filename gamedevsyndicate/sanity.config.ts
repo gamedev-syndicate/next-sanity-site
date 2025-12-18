@@ -5,6 +5,7 @@ import {visionTool} from '@sanity/vision'
 import {colorInput} from '@sanity/color-input'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemaTypes'
+import {loadPreviewSecret} from './lib/config'
 
 export default defineConfig({
   name: 'default',
@@ -21,7 +22,7 @@ export default defineConfig({
       previewUrl: {
         origin: process.env.PREVIEW_URL || 'http://localhost:3000',
         previewMode: {
-          enable: `/api/draft?secret=${process.env.SANITY_PREVIEW_SECRET || 'use-env-variable'}&slug=`,
+          enable: `/api/draft?secret=${loadPreviewSecret()}&slug=`,
           disable: '/api/disable-draft'
         }
       },

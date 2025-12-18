@@ -36,6 +36,10 @@ interface AppConfig {
     visualEditing: boolean
     caching: boolean
   }
+  resend?: {
+    apiKey?: string
+    fromEmail?: string
+  }
 }
 
 // Default configuration
@@ -54,6 +58,10 @@ const defaultConfig: AppConfig = {
   features: {
     visualEditing: true,
     caching: true,
+  },
+  resend: {
+    apiKey: undefined,
+    fromEmail: undefined,
   },
 }
 
@@ -157,10 +165,22 @@ function loadEnvConfig(): Partial<AppConfig> {
     envConfig.features.caching = process.env.ENABLE_CACHING === 'true'
   }
 
+  // Resend email configuration
+  if (process.env.RESEND_API_KEY) {
+    if (!envConfig.resend) envConfig.resend = {} as AppConfig['resend'];
+    envConfig.resend.apiKey = process.env.RESEND_API_KEY
+  }
+
+  if (process.env.RESEND_FROM_EMAIL) {
+    if (!envConfig.resend) envConfig.resend = {} as AppConfig['resend'];
+    envConfig.resend.fromEmail = process.env.RESEND_FROM_EMAIL
+  }
+
   // Clean up empty objects
   if (Object.keys(envConfig.sanity || {}).length === 0) delete envConfig.sanity
   if (Object.keys(envConfig.app || {}).length === 0) delete envConfig.app
   if (Object.keys(envConfig.features || {}).length === 0) delete envConfig.features
+  if (Object.keys(envConfig.resend || {}).length === 0) delete envConfig.resend
 
   return envConfig
 }

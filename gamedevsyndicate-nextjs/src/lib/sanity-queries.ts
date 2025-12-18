@@ -200,7 +200,13 @@ export async function getHomepage(): Promise<Homepage | null> {
             "companies": *[_type == "company"] | order(name asc) {
               _id,
               name,
-              logo
+              logo,
+              nameIncludedInLogo,
+              heroImage{
+                ...,
+                asset->,
+                alt
+              }
             },
             layout,
             backgroundColorSelection,
@@ -356,6 +362,11 @@ export async function getPage(slug: string): Promise<Page | null> {
               _id,
               name,
               logo,
+              heroImage{
+                ...,
+                asset->,
+                alt
+              },
               ceoName,
               email,
               description
@@ -372,7 +383,13 @@ export async function getPage(slug: string): Promise<Page | null> {
             "companies": *[_type == "company"] | order(name asc) {
               _id,
               name,
-              logo
+              logo,
+              nameIncludedInLogo,
+              heroImage{
+                ...,
+                asset->,
+                alt
+              }
             },
             layout,
             backgroundColorSelection,
@@ -466,6 +483,11 @@ export async function getCompany(id: string) {
       _id,
       name,
       logo,
+      heroImage{
+        ...,
+        asset->,
+        alt
+      },
       ceoName,
       email,
       description
@@ -484,6 +506,11 @@ export async function getAllCompanies() {
       _id,
       name,
       logo,
+      heroImage{
+        ...,
+        asset->,
+        alt
+      },
       ceoName,
       email,
       description
@@ -617,6 +644,11 @@ export async function getArticlePage(slug: string) {
             name,
             description,
             logo{
+              ...,
+              asset->,
+              alt
+            },
+            heroImage{
               ...,
               asset->,
               alt

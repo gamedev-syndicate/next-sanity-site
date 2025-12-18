@@ -30,6 +30,7 @@ export default defineType({
           { title: 'Carousel', value: 'carousel' },
           { title: 'Honeycomb', value: 'honeycomb' },
           { title: 'Tilted Square', value: 'tiltedsquare' },
+          { title: 'Grid with Hero Image', value: 'heroGrid' },
         ],
       },
       initialValue: 'grid',

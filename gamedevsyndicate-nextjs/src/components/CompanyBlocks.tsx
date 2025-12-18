@@ -1,10 +1,11 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getImageUrl } from '../lib/sanity-image';
 import type { SanityImage } from '../types/sanity';
 import { HoneycombGrid } from './HoneycombGrid';
 import { TiltedSquareGrid } from './TiltedSquareGrid';
+import HeroGrid from './HeroGrid';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { colorToCSS } from '../lib/colorUtils';
 
@@ -12,6 +13,10 @@ interface CompanyData {
   _id: string;
   name: string;
   logo?: SanityImage & {
+    alt?: string;
+  };
+  nameIncludedInLogo?: boolean;
+  heroImage?: SanityImage & {
     alt?: string;
   };
   ceoName?: string;
@@ -193,9 +198,42 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     backgroundColor: legacyBackgroundColor
   } = value;
 
-  if (!companies || companies.length === 0) {
-    return null;
-  }
+  // Animation state management
+  const [visibleCompanies, setVisibleCompanies] = useState<Set<number>>(new Set());
+  const companyRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Set up Intersection Observer for scroll animations
+  useEffect(() => {
+    if (!companies || companies.length === 0) return;
+    
+    const observers: IntersectionObserver[] = [];
+    
+    companyRefs.current.forEach((ref, index) => {
+      if (!ref) return;
+      
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setVisibleCompanies((prev) => new Set(prev).add(index));
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '50px',
+        }
+      );
+      
+      observer.observe(ref);
+      observers.push(observer);
+    });
+    
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, [companies]);
 
   // Helper function to resolve color and convert to expected format
   const resolveColorToObject = (
@@ -227,6 +265,11 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     legacyBackgroundColor
   );
 
+  // Early return after all hooks
+  if (!companies || companies.length === 0) {
+    return null;
+  }
+
   // Render a single company
   const renderCompany = (company: CompanyData, index: number) => {
     // Let Sanity auto-detect format to preserve transparency
@@ -237,6 +280,10 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
     // Determine image position: alternate between left and right when enabled
     const isImageRight = alternateImagePosition && index % 2 === 1;
     
+    // Animation classes
+    const isVisible = visibleCompanies.has(index);
+    const animationClass = 'animate-fadeIn';
+    
     const companyStyle: React.CSSProperties = finalBackgroundColor
       ? { backgroundColor: finalBackgroundColor.hex }
       : {};
@@ -246,12 +293,18 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
       overflow-hidden
       ${finalBackgroundColor ? '' : 'bg-gray-800/30 backdrop-blur-sm'}
       w-full
+      ${isVisible ? animationClass : 'opacity-0'}
     `.trim().replace(/\s+/g, ' ');
     
     // If no logo, render simple text-only layout
     if (!logoUrl) {
       return (
-        <div key={`${company._id}-${index}`} className={companyClasses} style={companyStyle}>
+        <div 
+          key={`${company._id}-${index}`} 
+          ref={(el) => { companyRefs.current[index] = el; }}
+          className={companyClasses} 
+          style={companyStyle}
+        >
           <div className="flex flex-col gap-0.5 p-3 md:p-4 text-left">
             <h3 className="text-lg md:text-xl font-bold text-white text-left" style={{ textAlign: 'left', marginBottom: 0 }}>
               {company.name}
@@ -288,7 +341,12 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
       : `flex flex-row items-start`;
 
     return (
-      <div key={`${company._id}-${index}`} className={companyClasses} style={companyStyle}>
+      <div 
+        key={`${company._id}-${index}`} 
+        ref={(el) => { companyRefs.current[index] = el; }}
+        className={companyClasses} 
+        style={companyStyle}
+      >
         <div className={containerClasses}>
           {/* Logo - no padding, preserves transparency */}
           <div className="w-32 md:w-40 flex-shrink-0">
@@ -351,12 +409,12 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
   );
 };
 
-// CompactCompanyListBlock: Shows all companies with layout options (grid, list, carousel, honeycomb, tiltedsquare)
+// CompactCompanyListBlock: Shows all companies with layout options (grid, list, carousel, honeycomb, tiltedsquare, heroGrid)
 interface CompactCompanyListBlockProps {
   value: {
     title?: string;
     companies: CompanyData[];
-    layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare';
+    layout?: 'grid' | 'list' | 'carousel' | 'honeycomb' | 'tiltedsquare' | 'heroGrid';
     maxItemsPerRow?: number;
     logoBlendMode?: string;
     backgroundColorSelection?: string;
@@ -440,6 +498,8 @@ export const CompactCompanyListBlock: React.FC<CompactCompanyListBlockProps> = (
         return 'honeycomb-grid';
       case 'tiltedsquare':
         return '';
+      case 'heroGrid':
+        return '';
       default: // grid
         return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
     }
@@ -461,6 +521,14 @@ export const CompactCompanyListBlock: React.FC<CompactCompanyListBlockProps> = (
           />
         ) : layout === 'tiltedsquare' ? (
           <TiltedSquareGrid
+            companies={companies}
+            maxItemsPerRow={maxItemsPerRow}
+            logoBlendMode={logoBlendMode}
+            backgroundColor={finalBackgroundColor}
+            borderColor={finalBorderColor}
+          />
+        ) : layout === 'heroGrid' ? (
+          <HeroGrid
             companies={companies}
             maxItemsPerRow={maxItemsPerRow}
             logoBlendMode={logoBlendMode}

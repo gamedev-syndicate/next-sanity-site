@@ -16,8 +16,10 @@ export function ContactBlock({ value }: ContactBlockProps) {
     name: '',
     email: '',
     message: '',
+    honeypot: '', // Anti-spam field
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   // Convert Sanity color to ColorReference format
@@ -112,35 +114,42 @@ export function ContactBlock({ value }: ContactBlockProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('loading');
+    setErrorMessage('');
 
     try {
-      // Here you would typically send the form data to an API endpoint
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          honeypot: formData.honeypot,
+          recipientEmail: value.recipientEmail,
+        }),
+      });
+
+      const data = await response.json();
       
-      // Example API call (uncomment and modify as needed):
-      // const response = await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     ...formData,
-      //     recipientEmail: value.recipientEmail,
-      //   }),
-      // });
-      // 
-      // if (!response.ok) throw new Error('Failed to send message');
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to send message');
+      }
 
       setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: '', email: '', message: '', honeypot: '' });
       
       // Reset success message after 5 seconds
       setTimeout(() => setStatus('idle'), 5000);
     } catch (error) {
       console.error('Error submitting form:', error);
       setStatus('error');
+      setErrorMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again.');
       
       // Reset error message after 5 seconds
-      setTimeout(() => setStatus('idle'), 5000);
+      setTimeout(() => {
+        setStatus('idle');
+        setErrorMessage('');
+      }, 5000);
     }
   };
 
@@ -246,6 +255,18 @@ export function ContactBlock({ value }: ContactBlockProps) {
               />
             </div>
 
+            {/* Honeypot field - Hidden from users, visible to bots */}
+            <div style={{ position: 'absolute', left: '-9999px', height: '0', overflow: 'hidden' }} aria-hidden="true">
+              <input
+                type="text"
+                name="honeypot"
+                value={formData.honeypot}
+                onChange={handleChange}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
             {/* Success/Error Messages */}
             {status === 'success' && (
               <div className="p-4 rounded-lg bg-green-900/30 border border-green-700/50 flex items-center gap-3">
@@ -264,7 +285,7 @@ export function ContactBlock({ value }: ContactBlockProps) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
                 <p className="text-red-100 text-sm">
-                  {value.errorMessage || 'Something went wrong. Please try again.'}
+                  {errorMessage || value.errorMessage || 'Something went wrong. Please try again.'}
                 </p>
               </div>
             )}

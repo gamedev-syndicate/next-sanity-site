@@ -471,6 +471,8 @@ export interface Company {
   _type: 'company';
   name: string;
   logo?: SanityImage;
+  nameIncludedInLogo?: boolean;
+  heroImage?: SanityImage & { alt?: string };
   ceoName?: string;
   email?: string;
   description?: string;
