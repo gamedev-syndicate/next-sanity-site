@@ -48,7 +48,7 @@ export const TextAndImageBlock: React.FC<TextAndImageBlockProps> = ({ value }) =
           </h2>
           
           {text && text.length > 0 && (
-            <div className={`prose prose-lg max-w-none text-gray-300 ${textAlign === 'left' ? 'text-left' : textAlign === 'center' ? 'text-center' : 'text-right'}`}>
+            <div className={`prose prose-xl max-w-none text-gray-300 ${textAlign === 'left' ? 'text-left' : textAlign === 'center' ? 'text-center' : 'text-right'}`}>
               <RichTextRendererClient value={text as PortableTextBlock[]} />
             </div>
           )}
@@ -125,7 +125,7 @@ export const TextAndImageBlock: React.FC<TextAndImageBlockProps> = ({ value }) =
           </h2>
           
           {text && text.length > 0 && (
-            <div className={`prose prose-lg max-w-none text-gray-300 ${textAlign === 'left' ? 'text-left' : textAlign === 'center' ? 'text-center' : 'text-right'}`}>
+            <div className={`prose prose-xl max-w-none text-gray-300 ${textAlign === 'left' ? 'text-left' : textAlign === 'center' ? 'text-center' : 'text-right'}`}>
               <RichTextRendererClient value={text as PortableTextBlock[]} />
             </div>
           )}
