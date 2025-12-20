@@ -2,9 +2,6 @@ import { Resend } from 'resend';
 import { NextResponse } from 'next/server';
 import { config } from '../../../config';
 
-// Initialize Resend with API key from config system
-const resend = new Resend(config.resend?.apiKey);
-
 interface ContactFormData {
   name: string;
   email: string;
@@ -67,6 +64,9 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    // Instantiate Resend client now that we know API key is configured
+    const resend = new Resend(config.resend.apiKey!);
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({

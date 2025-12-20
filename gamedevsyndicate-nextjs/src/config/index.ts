@@ -168,12 +168,12 @@ function loadEnvConfig(): Partial<AppConfig> {
   // Resend email configuration
   if (process.env.RESEND_API_KEY) {
     if (!envConfig.resend) envConfig.resend = {} as AppConfig['resend'];
-    envConfig.resend.apiKey = process.env.RESEND_API_KEY
+    envConfig.resend!.apiKey = process.env.RESEND_API_KEY
   }
 
   if (process.env.RESEND_FROM_EMAIL) {
     if (!envConfig.resend) envConfig.resend = {} as AppConfig['resend'];
-    envConfig.resend.fromEmail = process.env.RESEND_FROM_EMAIL
+    envConfig.resend!.fromEmail = process.env.RESEND_FROM_EMAIL
   }
 
   // Clean up empty objects
