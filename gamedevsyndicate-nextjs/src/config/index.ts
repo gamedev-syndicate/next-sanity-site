@@ -180,7 +180,6 @@ function loadEnvConfig(): Partial<AppConfig> {
   if (Object.keys(envConfig.sanity || {}).length === 0) delete envConfig.sanity
   if (Object.keys(envConfig.app || {}).length === 0) delete envConfig.app
   if (Object.keys(envConfig.features || {}).length === 0) delete envConfig.features
-  if (Object.keys(envConfig.resend || {}).length === 0) delete envConfig.resend
 
   return envConfig
 }
