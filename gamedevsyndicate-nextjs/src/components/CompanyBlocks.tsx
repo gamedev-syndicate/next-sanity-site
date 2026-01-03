@@ -305,7 +305,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
           className={companyClasses} 
           style={companyStyle}
         >
-          <div className="flex flex-col gap-0.5 p-3 md:p-4 text-left">
+          <div className="flex flex-col gap-0.5 p-3 md:p-4 text-left max-h-36 md:max-h-44 overflow-hidden">
             <h3 className="text-lg md:text-xl font-bold text-white text-left" style={{ textAlign: 'left', marginBottom: 0 }}>
               {company.name}
             </h3>
@@ -326,7 +326,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
               </p>
             )}
             {company.description && (
-              <p className="text-sm text-gray-300 leading-relaxed text-left" style={{ textAlign: 'left', marginBottom: 0, marginTop: '0.25rem' }}>
+              <p className="text-sm text-gray-300 leading-relaxed text-left line-clamp-4" style={{ textAlign: 'left', marginBottom: 0, marginTop: '0.25rem' }}>
                 {company.description}
               </p>
             )}
@@ -349,7 +349,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
       >
         <div className={containerClasses}>
           {/* Logo - no padding, preserves transparency */}
-          <div className="w-32 md:w-40 flex-shrink-0">
+          <div className="w-36 md:w-44 flex-shrink-0">
             <img
               src={logoUrl}
               alt={company.logo?.alt || `${company.name} logo`}
@@ -359,7 +359,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
           </div>
 
           {/* Content - aligned to top, no top padding */}
-          <div className="flex-1 flex flex-col items-start gap-0.5 pl-3 md:pl-4 pr-3 md:pr-4 pb-3 md:pb-4 text-left">
+          <div className="flex-1 flex flex-col items-start gap-0.5 pl-3 md:pl-4 pr-3 md:pr-4 pb-3 md:pb-4 text-left max-h-36 md:max-h-44 overflow-hidden">
             <h3 className="text-lg md:text-xl font-bold text-white w-full text-left" style={{ textAlign: 'left', marginBottom: 0 }}>
               {company.name}
             </h3>
@@ -382,7 +382,7 @@ export const CompanyListBlock: React.FC<CompanyListBlockProps> = ({ value }) => 
             )}
             
             {company.description && (
-              <p className="text-sm text-gray-300 leading-relaxed w-full text-left" style={{ textAlign: 'left', marginBottom: 0, marginTop: '0.25rem' }}>
+              <p className="text-sm text-gray-300 leading-relaxed w-full text-left line-clamp-4" style={{ textAlign: 'left', marginBottom: 0, marginTop: '0.25rem' }}>
                 {company.description}
               </p>
             )}
