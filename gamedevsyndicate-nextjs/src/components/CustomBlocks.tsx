@@ -332,7 +332,7 @@ export function ButtonBlock({ value }: { value: ButtonBlockType }) {
 
 import type { CompanyBlock as CompanyBlockType, CompanyListBlock as CompanyListBlockType, CompactCompanyListBlock as CompactCompanyListBlockType, ContactBlock as ContactBlockType, SocialMediaBlock as SocialMediaBlockType, ImageTextBlock as ImageTextBlockType, TextAndImageBlock as TextAndImageBlockType, TextAndImageListBlock as TextAndImageListBlockType, ContentSeparatorBlock as ContentSeparatorBlockType, ButtonListBlock as ButtonListBlockType } from '../types/sanity';
 
-export const customComponents = {
+export const createCustomComponents = (designSystem: DesignSystem | null) => ({
   types: {
     imageBlock: ImageBlock,
     textBlock: TextBlock,
@@ -341,7 +341,7 @@ export const customComponents = {
     companyBlock: ({ value }: { value: CompanyBlockType }) => <CompanyBlock value={value} />,
     companyListBlock: ({ value }: { value: CompanyListBlockType }) => <CompanyListBlock value={value} />,
     compactCompanyListBlock: ({ value }: { value: CompactCompanyListBlockType }) => <CompactCompanyListBlock value={value} />,
-    contactBlock: ({ value }: { value: ContactBlockType }) => <ContactBlock value={value} />,
+    contactBlock: ({ value }: { value: ContactBlockType }) => <ContactBlock value={value} designSystem={designSystem} />,
     socialMediaBlock: ({ value }: { value: SocialMediaBlockType }) => <SocialMediaBlock value={value} />,
     imageTextBlock: ({ value }: { value: ImageTextBlockType }) => <ImageTextBlock value={value} />,
     textAndImageBlock: ({ value }: { value: TextAndImageBlockType }) => <TextAndImageBlock value={value} />,
@@ -474,7 +474,7 @@ export const customComponents = {
       <p className="text-white leading-relaxed mb-4">{children}</p>
     ),
   },
-};
+});
 
 import type { ContentBlock } from '../types/sanity';
 
