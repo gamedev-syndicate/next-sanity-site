@@ -14,6 +14,7 @@ import { TextAndImageListBlock } from './blocks/TextAndImageListBlock';
 import { ButtonListBlock } from './blocks/ButtonListBlock';
 import { useDesignSystem } from '../hooks/useDesignSystem';
 import { designSystemColorToCSS } from '../lib/background-utils';
+import type { DesignSystem } from '../types/designSystem';
 
 interface ImageBlockProps {
   value: ImageBlockType;
@@ -479,6 +480,7 @@ import type { ContentBlock } from '../types/sanity';
 
 export default function CustomBlocks({ blocks }: { blocks: ContentBlock[] }) {
   console.log('CustomBlocks rendering blocks:', blocks);
+  const { designSystem } = useDesignSystem();
   
   return (
     <div className="custom-blocks">
@@ -502,7 +504,7 @@ export default function CustomBlocks({ blocks }: { blocks: ContentBlock[] }) {
             return <CompactCompanyListBlock key={block._key} value={block} />;
           case 'contactBlock':
             console.log('Rendering ContactBlock with data:', block);
-            return <ContactBlock key={block._key} value={block} />;
+            return <ContactBlock key={block._key} value={block} designSystem={designSystem} />;
           case 'socialMediaBlock':
             return <SocialMediaBlock key={block._key} value={block} />;
           case 'imageTextBlock':

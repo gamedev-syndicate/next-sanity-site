@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { ContactBlock as ContactBlockType } from '../../types/sanity';
-import { useDesignSystem } from '../../hooks/useDesignSystem';
+import { DesignSystem } from '../../types/designSystem';
 import { resolveColor } from '../../lib/colorUtils';
 import { designSystemColorToCSS } from '../../lib/background-utils';
 
 interface ContactBlockProps {
   value: ContactBlockType;
+  designSystem: DesignSystem | null;
 }
 
-export function ContactBlock({ value }: ContactBlockProps) {
-  const { designSystem } = useDesignSystem();
+export function ContactBlock({ value, designSystem }: ContactBlockProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -35,76 +35,86 @@ export function ContactBlock({ value }: ContactBlockProps) {
     };
   };
 
-  // Resolve button colors using design system
-  const buttonBgColor = resolveColor(
-    {
-      colorSelection: value.buttonBackgroundColorSelection,
-      customColor: convertToColorReference(value.customButtonBackgroundColor),
-    },
-    designSystem,
-    'var(--color-button-primary)' // fallback
-  );
+  // Memoize all color resolutions to prevent recalculation on every render
+  const colors = useMemo(() => {
+    const buttonBgColor = resolveColor(
+      {
+        colorSelection: value.buttonBackgroundColorSelection,
+        customColor: convertToColorReference(value.customButtonBackgroundColor),
+      },
+      designSystem,
+      'var(--color-button-primary)' // fallback
+    );
 
-  const buttonTextColor = resolveColor(
-    {
-      colorSelection: value.buttonTextColorSelection,
-      customColor: convertToColorReference(value.customButtonTextColor),
-    },
-    designSystem,
-    '#ffffff' // fallback
-  );
+    const buttonTextColor = resolveColor(
+      {
+        colorSelection: value.buttonTextColorSelection,
+        customColor: convertToColorReference(value.customButtonTextColor),
+      },
+      designSystem,
+      '#ffffff' // fallback
+    );
 
-  // Resolve form container colors using design system
-  const containerBgColor = resolveColor(
-    {
-      colorSelection: value.containerBackgroundColorSelection,
-      customColor: convertToColorReference(value.customContainerBackgroundColor),
-    },
-    designSystem,
-    'rgba(31, 41, 55, 0.4)' // fallback: gray-800/40
-  );
+    const containerBgColor = resolveColor(
+      {
+        colorSelection: value.containerBackgroundColorSelection,
+        customColor: convertToColorReference(value.customContainerBackgroundColor),
+      },
+      designSystem,
+      'rgba(31, 41, 55, 0.4)' // fallback: gray-800/40
+    );
 
-  const containerBorderColor = resolveColor(
-    {
-      colorSelection: value.containerBorderColorSelection,
-      customColor: convertToColorReference(value.customContainerBorderColor),
-    },
-    designSystem,
-    'rgba(55, 65, 81, 0.5)' // fallback: gray-700/50
-  );
+    const containerBorderColor = resolveColor(
+      {
+        colorSelection: value.containerBorderColorSelection,
+        customColor: convertToColorReference(value.customContainerBorderColor),
+      },
+      designSystem,
+      'rgba(55, 65, 81, 0.5)' // fallback: gray-700/50
+    );
 
-  // Resolve input field colors using design system
-  const inputBgColor = resolveColor(
-    {
-      colorSelection: value.inputBackgroundColorSelection,
-      customColor: convertToColorReference(value.customInputBackgroundColor),
-    },
-    designSystem,
-    'rgba(0, 0, 0, 0.2)' // fallback: black/20
-  );
+    const inputBgColor = resolveColor(
+      {
+        colorSelection: value.inputBackgroundColorSelection,
+        customColor: convertToColorReference(value.customInputBackgroundColor),
+      },
+      designSystem,
+      'rgba(0, 0, 0, 0.2)' // fallback: black/20
+    );
 
-  const inputBorderColor = resolveColor(
-    {
-      colorSelection: value.inputBorderColorSelection,
-      customColor: convertToColorReference(value.customInputBorderColor),
-    },
-    designSystem,
-    'rgba(55, 65, 81, 0.5)' // fallback: gray-700/50
-  );
+    const inputBorderColor = resolveColor(
+      {
+        colorSelection: value.inputBorderColorSelection,
+        customColor: convertToColorReference(value.customInputBorderColor),
+      },
+      designSystem,
+      'rgba(55, 65, 81, 0.5)' // fallback: gray-700/50
+    );
 
-  const inputTextColor = resolveColor(
-    {
-      colorSelection: value.inputTextColorSelection,
-      customColor: convertToColorReference(value.customInputTextColor),
-    },
-    designSystem,
-    '#ffffff' // fallback: white
-  );
+    const inputTextColor = resolveColor(
+      {
+        colorSelection: value.inputTextColorSelection,
+        customColor: convertToColorReference(value.customInputTextColor),
+      },
+      designSystem,
+      '#ffffff' // fallback: white
+    );
 
-  // Get accent color from design system for focus states
-  const accentColor = designSystem?.colors?.primary 
-    ? designSystemColorToCSS(designSystem.colors.primary)
-    : buttonBgColor;
+    const accentColor = designSystem?.colors?.primary 
+      ? designSystemColorToCSS(designSystem.colors.primary)
+      : buttonBgColor;
+
+    return {
+      buttonBgColor,
+      buttonTextColor,
+      containerBgColor,
+      containerBorderColor,
+      inputBgColor,
+      inputBorderColor,
+      inputTextColor,
+      accentColor,
+    };
+  }, [value, designSystem]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value: inputValue } = e.target;
@@ -179,10 +189,10 @@ export function ContactBlock({ value }: ContactBlockProps) {
         <div 
           className="rounded-lg p-8 shadow-lg"
           style={{
-            backgroundColor: containerBgColor,
+            backgroundColor: colors.containerBgColor,
             borderWidth: '1px',
             borderStyle: 'solid',
-            borderColor: containerBorderColor,
+            borderColor: colors.containerBorderColor,
           }}
         >
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -199,11 +209,11 @@ export function ContactBlock({ value }: ContactBlockProps) {
                 required
                 className="w-full px-5 py-4 rounded-lg placeholder-gray-400 focus:outline-none transition-all duration-300"
                 style={{
-                  backgroundColor: inputBgColor,
+                  backgroundColor: colors.inputBgColor,
                   borderWidth: '1px',
                   borderStyle: 'solid',
-                  borderColor: focusedField === 'name' ? accentColor : inputBorderColor,
-                  color: inputTextColor,
+                  borderColor: focusedField === 'name' ? colors.accentColor : colors.inputBorderColor,
+                  color: colors.inputTextColor,
                 }}
                 placeholder={value.nameLabel || 'Name'}
               />
@@ -222,11 +232,11 @@ export function ContactBlock({ value }: ContactBlockProps) {
                 required
                 className="w-full px-5 py-4 rounded-lg placeholder-gray-400 focus:outline-none transition-all duration-300"
                 style={{
-                  backgroundColor: inputBgColor,
+                  backgroundColor: colors.inputBgColor,
                   borderWidth: '1px',
                   borderStyle: 'solid',
-                  borderColor: focusedField === 'email' ? accentColor : inputBorderColor,
-                  color: inputTextColor,
+                  borderColor: focusedField === 'email' ? colors.accentColor : colors.inputBorderColor,
+                  color: colors.inputTextColor,
                 }}
                 placeholder={value.emailLabel || 'Email'}
               />
@@ -245,11 +255,11 @@ export function ContactBlock({ value }: ContactBlockProps) {
                 rows={6}
                 className="w-full px-5 py-4 rounded-lg placeholder-gray-400 focus:outline-none transition-all duration-300 resize-y min-h-[150px]"
                 style={{
-                  backgroundColor: inputBgColor,
+                  backgroundColor: colors.inputBgColor,
                   borderWidth: '1px',
                   borderStyle: 'solid',
-                  borderColor: focusedField === 'message' ? accentColor : inputBorderColor,
-                  color: inputTextColor,
+                  borderColor: focusedField === 'message' ? colors.accentColor : colors.inputBorderColor,
+                  color: colors.inputTextColor,
                 }}
                 placeholder={value.messageLabel || 'Message'}
               />
@@ -297,8 +307,8 @@ export function ContactBlock({ value }: ContactBlockProps) {
                 disabled={status === 'loading'}
                 className={`${sizeClass} w-full font-semibold rounded-lg transition-all duration-300 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl`}
                 style={{
-                  backgroundColor: buttonBgColor,
-                  color: buttonTextColor,
+                  backgroundColor: colors.buttonBgColor,
+                  color: colors.buttonTextColor,
                 }}
               >
                 {status === 'loading' ? (

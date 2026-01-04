@@ -73,7 +73,7 @@ export interface BackgroundConfig {
 
 export function resolveColor(
   colorRef: ColorReference,
-  designSystem: DesignSystem,
+  designSystem: DesignSystem | null,
   fallback = '#000000'
 ): string {
   if (!colorRef || !colorRef.colorSelection) {

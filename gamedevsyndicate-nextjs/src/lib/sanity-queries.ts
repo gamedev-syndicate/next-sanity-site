@@ -233,6 +233,32 @@ export async function getHomepage(): Promise<Homepage | null> {
             borderColorSelection,
             customBorderColor
           },
+          _type == "contactBlock" => {
+            internalLabel,
+            title,
+            nameLabel,
+            emailLabel,
+            messageLabel,
+            buttonText,
+            containerBackgroundColorSelection,
+            customContainerBackgroundColor,
+            containerBorderColorSelection,
+            customContainerBorderColor,
+            inputBackgroundColorSelection,
+            customInputBackgroundColor,
+            inputBorderColorSelection,
+            customInputBorderColor,
+            inputTextColorSelection,
+            customInputTextColor,
+            buttonBackgroundColorSelection,
+            customButtonBackgroundColor,
+            buttonTextColorSelection,
+            customButtonTextColor,
+            buttonSize,
+            successMessage,
+            errorMessage,
+            recipientEmail
+          },
           _type == "imageTextBlock" => {
             title,
             image{
