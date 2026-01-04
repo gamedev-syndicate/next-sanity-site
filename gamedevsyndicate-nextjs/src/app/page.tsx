@@ -10,6 +10,9 @@ import styles from './homepage.module.css';
 import type { Metadata } from 'next';
 import type { PortableTextBlock } from '@portabletext/types';
 
+// Revalidate this page every 5 minutes in production
+export const revalidate = 300;
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'GameDev Syndicate',

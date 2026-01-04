@@ -8,10 +8,29 @@ async function getQueryClient() {
   return getClient(draft.isEnabled);
 }
 
-// Helper to get cache settings
-function getCacheConfig() {
-  // Always disable cache for immediate updates during development
-  return { next: { revalidate: 0 } };
+// Helper to get cache settings based on content type
+type CacheContentType = 'static' | 'semi-static' | 'dynamic' | 'real-time';
+
+function getCacheConfig(contentType: CacheContentType = 'semi-static') {
+  // Always disable cache in development for immediate updates
+  if (process.env.NODE_ENV !== 'production') {
+    return { next: { revalidate: 0 } };
+  }
+
+  // Production caching strategy
+  const cacheSettings: Record<CacheContentType, number> = {
+    'static': 3600,      // 1 hour - design system, site config (rarely changes)
+    'semi-static': 300,  // 5 minutes - pages, companies (occasional updates)
+    'dynamic': 60,       // 1 minute - articles (frequent updates)
+    'real-time': 0,      // no cache - draft mode, preview
+  };
+
+  return { 
+    next: { 
+      revalidate: cacheSettings[contentType],
+      tags: [contentType] // For potential tag-based revalidation
+    } 
+  };
 }
 
 export async function getSiteConfig(): Promise<SiteConfig | null> {
@@ -92,7 +111,7 @@ export async function getSiteConfig(): Promise<SiteConfig | null> {
     }`;
     
     const client = await getQueryClient();
-    const result = await client.fetch(query, {}, getCacheConfig());
+    const result = await client.fetch(query, {}, getCacheConfig('static'));
     
     console.log('Site config fetched:', result); // Debug log
     return result;
@@ -275,7 +294,7 @@ export async function getHomepage(): Promise<Homepage | null> {
     }`;
     
     const client = await getQueryClient();
-    return await client.fetch(query, {}, getCacheConfig());
+    return await client.fetch(query, {}, getCacheConfig('semi-static'));
   } catch (error) {
     console.error('Failed to fetch homepage:', error);
     return null;
@@ -457,7 +476,7 @@ export async function getPage(slug: string): Promise<Page | null> {
     }`;
     
     const client = await getQueryClient();
-    return await client.fetch(query, { slug }, getCacheConfig());
+    return await client.fetch(query, { slug }, getCacheConfig('semi-static'));
   } catch (error) {
     console.error('Failed to fetch page:', error);
     return null;
@@ -469,7 +488,7 @@ export async function getAllPageSlugs(): Promise<string[]> {
     const query = `*[_type == "page" && defined(slug.current)].slug.current`;
     // Use non-preview client for static generation
     const client = getClient(false);
-    return await client.fetch(query, {}, getCacheConfig());
+    return await client.fetch(query, {}, getCacheConfig('semi-static'));
   } catch (error) {
     console.error('Failed to fetch page slugs:', error);
     return [];
@@ -493,7 +512,7 @@ export async function getCompany(id: string) {
       description
     }`;
     const client = await getQueryClient();
-    return await client.fetch(query, { id }, getCacheConfig());
+    return await client.fetch(query, { id }, getCacheConfig('semi-static'));
   } catch (error) {
     console.error('Failed to fetch company:', error);
     return null;
@@ -516,7 +535,7 @@ export async function getAllCompanies() {
       description
     }`;
     const client = await getQueryClient();
-    return await client.fetch(query, {}, getCacheConfig());
+    return await client.fetch(query, {}, getCacheConfig('semi-static'));
   } catch (error) {
     console.error('Failed to fetch companies:', error);
     return [];
@@ -540,7 +559,7 @@ export async function getDesignSystem() {
       }
     }`;
     const client = await getQueryClient();
-    return await client.fetch(query, {}, getCacheConfig());
+    return await client.fetch(query, {}, getCacheConfig('static'));
   } catch (error) {
     console.error('Failed to fetch design system:', error);
     return null;
@@ -562,7 +581,7 @@ export async function getTextAndImage(id: string) {
       publishedAt
     }`;
     const client = await getQueryClient();
-    return await client.fetch(query, { id }, getCacheConfig());
+    return await client.fetch(query, { id }, getCacheConfig('dynamic'));
   } catch (error) {
     console.error('Failed to fetch text and image:', error);
     return null;
@@ -583,7 +602,7 @@ export async function getAllTextAndImages() {
       publishedAt
     }`;  
     const client = await getQueryClient();
-    return await client.fetch(query, {}, getCacheConfig());
+    return await client.fetch(query, {}, getCacheConfig('dynamic'));
   } catch (error) {
     console.error('Failed to fetch text and images:', error);
     return [];
@@ -784,7 +803,7 @@ export async function getArticlePage(slug: string) {
       seo
     }`;
     const client = await getQueryClient();
-    return await client.fetch(query, { slug }, getCacheConfig());
+    return await client.fetch(query, { slug }, getCacheConfig('dynamic'));
   } catch (error) {
     console.error('Failed to fetch article page:', error);
     return null;
@@ -810,7 +829,7 @@ export async function getAllArticlePages() {
       tags
     }`;
     const client = await getQueryClient();
-    return await client.fetch(query, {}, getCacheConfig());
+    return await client.fetch(query, {}, getCacheConfig('dynamic'));
   } catch (error) {
     console.error('Failed to fetch article pages:', error);
     return [];
@@ -835,7 +854,7 @@ export async function getArticlePagesByCategory(category: string) {
       tags
     }`;
     const client = await getQueryClient();
-    return await client.fetch(query, { category }, getCacheConfig());
+    return await client.fetch(query, { category }, getCacheConfig('dynamic'));
   } catch (error) {
     console.error('Failed to fetch article pages by category:', error);
     return [];
@@ -861,7 +880,7 @@ export async function getArticlePagesByTag(tag: string) {
     }`;
     const client = await getQueryClient();
     // @ts-expect-error - Sanity's type inference doesn't handle 'in' operator well
-    return await client.fetch(query, { tag }, getCacheConfig());
+    return await client.fetch(query, { tag }, getCacheConfig('dynamic'));
   } catch (error) {
     console.error('Failed to fetch article pages by tag:', error);
     return [];

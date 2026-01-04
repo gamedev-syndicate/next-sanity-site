@@ -5,6 +5,9 @@ import type { ArticlePage } from '../../../types/sanity';
 import CustomBlocks from '../../../components/CustomBlocks';
 import { Metadata } from 'next';
 
+// Revalidate this page every 1 minute in production (articles change frequently)
+export const revalidate = 60;
+
 interface ArticlePageProps {
   params: Promise<{
     slug: string;

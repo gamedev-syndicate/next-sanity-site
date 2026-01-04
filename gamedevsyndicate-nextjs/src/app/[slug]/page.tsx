@@ -5,6 +5,10 @@ import CustomBlocks from '../../components/CustomBlocks';
 import { getPage, getSiteConfig, getDesignSystem, getAllPageSlugs } from '../../lib/sanity-queries';
 import { sanityColorToCSS, generateSectionBackgroundStyle } from '../../lib/background-utils';
 import type { Metadata } from 'next';
+
+// Revalidate this page every 5 minutes in production
+export const revalidate = 300;
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }

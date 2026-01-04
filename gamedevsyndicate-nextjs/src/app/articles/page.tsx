@@ -3,6 +3,9 @@ import { getImageUrl } from '../../lib/sanity-image';
 import type { ArticlePage } from '../../types/sanity';
 import { Metadata } from 'next';
 
+// Revalidate this page every 1 minute in production (articles change frequently)
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Articles',
   description: 'Browse our latest articles, news, and insights',
